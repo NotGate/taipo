@@ -1,0 +1,8 @@
+[package]
+name = "oru"
+version = "0.1.0"
+authors = ["Michael Millwood <imanotgate@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
