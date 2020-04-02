@@ -3,6 +3,7 @@ stdenv.mkDerivation {
   name = "build-environment";
   buildInputs = with pkgs; [
     cargo
+    rustup
     #libbass
     #libbass_fx
     #gcc-unwrapped.lib
@@ -15,5 +16,9 @@ stdenv.mkDerivation {
   ];
   shellHook = ''
 		echo Hello
+  '';
+  installPhase = ''
+    rustup install stable
+    rustup default stable
   '';
 }
