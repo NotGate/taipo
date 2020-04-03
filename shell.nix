@@ -1,11 +1,11 @@
-with import <nixpkgs> { config.allowUnfree = true; };
-stdenv.mkDerivation {
-  name = "build-environment";
+{ pkgs ? import <nixpkgs> { config.allowUnfree = true; }}:
+pkgs.mkShell {
   buildInputs = with pkgs; [
+    libbass
     cargo
     rustup
-    #libbass
     #libbass_fx
+    #(import ./libbass.nix)
     #gcc-unwrapped.lib
     #xorg.libX11
     #xorg.libXcursor
@@ -22,3 +22,4 @@ stdenv.mkDerivation {
     rustup default stable
   '';
 }
+
