@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::{fs::File, io::Read};
 use libc;
 
@@ -15,6 +17,7 @@ const BASS_STREAM_DECODE: u32 = 0x200000;
 
 #[link(name = "bass")]
 extern "C" {
+    pub fn BASS_GetVersion() -> i32;
     pub fn BASS_ErrorGetCode() -> i32;
     pub fn BASS_Init(
         device: i32,
