@@ -13,6 +13,8 @@ A rhythm game written in Rust
 * *Steam*: https://store.steampowered.com/app/{id}/taipo  
 * *Source*: 
 ```bash
-$ nix-shell
-[nix-shell]$ cargo run --release
+git clone https://github.com/notgate/taipo
+cd taipo
+nix-shell
+cargo run --release
 ```
