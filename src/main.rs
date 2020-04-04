@@ -11,7 +11,7 @@ fn main() -> Result<(), String> {
     mp.seek(0.0)?;
     mp.play()?;
     loop {
-        println!("{}",mp.pos()?);
+        println!("{}", mp.pos()?);
     }
 }
 
