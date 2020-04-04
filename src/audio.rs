@@ -8,16 +8,11 @@ include!("bass/wrapper.rs");
 include!("bass/bindings.rs");
 
 // TODO: 
-// need getters to sync up speed, volume, etc.
 // what is the enum for volume? (2)
 
 pub struct MusicPlayer {
     handle: u32,
     buffer: Vec<u8>,
-    pub playing: bool,
-    pub looping: bool,
-    pub speed: f32,
-    pub volume: f32,
 }
 
 impl MusicPlayer {
@@ -26,10 +21,6 @@ impl MusicPlayer {
         Ok(MusicPlayer {
             handle: 0,
             buffer: vec![],
-            playing: false,
-            looping: false,
-            speed: 1.0,
-            volume: 0.5,
         })
     }
     pub fn load(&mut self, path: &str) -> Result<(), String> {
@@ -61,7 +52,17 @@ impl MusicPlayer {
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO, (val - 1.0) * 100.0)
     }
     pub fn set_volume(&mut self, val: f32) -> Result<(), String> {
-        Bass::channel_set_attribute(self.handle, 2, val)
+        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_VOL, val)
+    }
+    pub fn get_speed(&mut self) -> Result<f32, String> {
+        let mut v = 0.0;
+        Bass::channel_get_attribute(self.handle, BASS_ATTRIB_TEMPO, &mut v)?;
+        Ok(1.0+(v/100.0))
+    }
+    pub fn get_volume(&mut self) -> Result<f32, String> {
+        let mut v = 0.0;
+        Bass::channel_get_attribute(self.handle, BASS_ATTRIB_VOL, &mut v)?;
+        Ok(v)
     }
 }
 

@@ -50,6 +50,9 @@ impl Bass {
     pub fn channel_set_attribute(handle: DWORD, attrib: DWORD, val: f32) -> Result<(), String> {
         call!("channel_set_attribute", BASS_ChannelSetAttribute(handle, attrib, val))
     }
+    pub fn channel_get_attribute(handle: DWORD, attrib: DWORD, val: *mut f32) -> Result<(), String> {
+        call!("channel_get_attribute", BASS_ChannelGetAttribute(handle, attrib, val))
+    }
     pub fn stream_create_file(buffer: &[u8], flags: DWORD) -> Result<HSTREAM, String> {
         callv!(
             "stream_create_file",
