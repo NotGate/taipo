@@ -1,12 +1,14 @@
 #![allow(dead_code)]
 
-use std::{fs::File, io::Read};
 use libc;
+use std::{fs::File, io::Read};
 
 /*
 TODO:
 enums and consts
 cleaner load
+test with: opus, mp3, wav, etc
+youtube-dl https://www.youtube.com/watch?v=sP7lp8UD1Xw -x --audio-format "mp3" -o test.mp3
 */
 
 // Raw FFI
@@ -61,7 +63,12 @@ pub struct MusicPlayer {
 
 impl MusicPlayer {
     pub fn init() -> MusicPlayer {
-        unsafe { BASS_Init(-1, 44100, 0, 0, 0) };
+        let i = unsafe { BASS_Init(-1, 44100, 0, 0, 0) };
+        println!("{}", i);
+        match get_error() {
+            Ok(_) => println!("BASS_Init successful"),
+            Err(e) => println!("BASS_Init failed: {}", e),
+        }
         MusicPlayer {
             handle: 0,
             buffer: vec![],
@@ -72,21 +79,46 @@ impl MusicPlayer {
         }
     }
     pub fn load(&mut self, path: &str) -> Result<(), &'static str> {
+        println!("1");
         if self.handle != 0 {
             free_stream(self.handle)?;
         }
+        println!("2");
         match File::open(path) {
             Ok(mut f) => {
+                println!("3");
                 self.buffer = Vec::new();
                 if let Err(_) = f.read_to_end(&mut self.buffer) {
                     return Err("Could not read audio file");
                 }
-                self.handle = create_tempo(
-                    create_stream(&self.buffer, BASS_STREAM_DECODE)?,
-                    BASS_FX_FREESOURCE | BASS_SAMPLE_LOOP,
-                )?;
+                println!("4");
+                // let chan = create_stream(&self.buffer, BASS_STREAM_DECODE)?;
+                // let chan = unsafe { BASS_StreamCreateFile(1, self.buffer.as_ptr(), 0, self.buffer.len() as u64, BASS_STREAM_DECODE) };
+                // println!("chan: {}",chan);
+                // self.handle = create_tempo(chan, BASS_FX_FREESOURCE | BASS_SAMPLE_LOOP)?;
+                // println!("{:?}",self.buffer);
+                self.handle = unsafe {
+                    let ptr = self.buffer.as_ptr();
+                    let chan = BASS_StreamCreateFile(1, ptr, 0, self.buffer.len() as u64, 0x200000); //BASS_STREAM_DECODE
+                    match get_error() {
+                        Ok(_) => println!("BASS_Init successful"),
+                        Err(e) => println!("BASS_StreamCreateFile failed: {}", e),
+                    }
+                    println!("chan: {}", chan);
+                    BASS_FX_TempoCreate(chan, 0x10000 | 4) //BASS_FX_FREESOURCE|BASS_SAMPLE_LOOP
+                };
+                match get_error() {
+                    Ok(_) => println!("BASS_Init successful"),
+                    Err(e) => println!("BASS_FX_TempoCreate failed: {}", e),
+                }
+                println!("handle: {}", self.handle);
+                println!("5");
                 self.set_speed(self.speed)?;
+                println!("6");
                 self.set_volume(self.volume)?;
+                println!("7");
+                self.seek(0.0)?;
+                println!("8");
                 self.play()
             }
             Err(_) => Err("Could not open audio file"),
@@ -98,15 +130,19 @@ impl MusicPlayer {
         };
         get_error()
     }
-    pub fn pos(&self) -> Result<f64,&'static str> {
-        let pos = unsafe { BASS_ChannelBytes2Seconds(self.handle, BASS_ChannelGetPosition(self.handle, 0)) };
+    pub fn pos(&self) -> Result<f64, &'static str> {
+        let pos = unsafe {
+            BASS_ChannelBytes2Seconds(self.handle, BASS_ChannelGetPosition(self.handle, 0))
+        };
         match get_error() {
             Ok(_) => Ok(pos),
-            Err(e) => Err(e)
+            Err(e) => Err(e),
         }
     }
     pub fn play(&mut self) -> Result<(), &'static str> {
+        println!("{}", self.handle);
         unsafe { BASS_ChannelPlay(self.handle, 0) };
+        println!("8");
         get_error()
     }
     pub fn pause(&mut self) -> Result<(), &'static str> {
@@ -136,15 +172,7 @@ fn set_attribute(handle: u32, attrib: u32, val: f32) -> Result<(), &'static str>
     }
 }
 fn create_stream(buffer: &[u8], flags: u32) -> Result<u32, &'static str> {
-    let chan = unsafe {
-        BASS_StreamCreateFile(
-            1,
-            buffer.as_ptr(),
-            0,
-            buffer.len() as u64,
-            flags
-        )
-    };
+    let chan = unsafe { BASS_StreamCreateFile(1, buffer.as_ptr(), 0, buffer.len() as u64, flags) };
     if chan != 0 {
         match get_error() {
             Ok(_) => Ok(chan),
@@ -212,6 +240,6 @@ fn get_error() -> Result<(), &'static str> {
         46 => Err("BASS_ERROR_BUSY"),
         47 => Err("BASS_ERROR_UNSTREAMABLE"),
         -1 => Err("BASS_ERROR_UNKNOWN"),
-        _ => Err("Undefined Error!")
+        _ => Err("Undefined Error!"),
     }
 }

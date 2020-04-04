@@ -9,6 +9,13 @@ let
     }));
 in pkgs.mkShell {
   buildInputs = with pkgs; [
+    alsa-firmware
+    alsaLib
+    alsaOss
+    alsaPlugins
+    alsaTools
+    alsaUtils
+    libpulseaudio
     cargo
     rustup
     libbass
@@ -24,8 +31,24 @@ in pkgs.mkShell {
     alsaLib
     eudev
     stdenv.cc.cc.lib
+    # examples
+    gtk2
+    xfce.libglade
+    # dev
+    gdb
+    rr
   ];
-  LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib64:$LD_LIBRARY_PATH";
+  LD_LIBRARY_PATH=
+    "${pkgs.stdenv.cc.cc.lib}/lib:"
+    +"${pkgs.alsaLib}/lib:"
+    +"${pkgs.gcc-unwrapped.lib}/lib:"
+    +"${pkgs.xorg.libX11}/lib:"
+    +"${pkgs.xorg.libXcursor}/lib:"
+    +"${pkgs.xorg.libXrandr}/lib:"
+    +"${pkgs.xorg.libXi}/lib:"
+    +"${pkgs.glxinfo}/lib:"
+    +"${pkgs.libGL}/lib:"
+    +"$LD_LIBRARY_PATH";
   shellHook = ''
     echo Hello
   '';

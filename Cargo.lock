@@ -235,16 +235,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "oru"
-version = "0.1.0"
-dependencies = [
- "bindgen",
- "libc",
- "rusqlite",
- "sdl2",
-]
-
-[[package]]
 name = "peeking_take_while"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -358,6 +348,16 @@ name = "strsim"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
+
+[[package]]
+name = "taipo"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "libc",
+ "rusqlite",
+ "sdl2",
+]
 
 [[package]]
 name = "termcolor"
