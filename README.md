@@ -18,3 +18,14 @@ cd taipo
 nix-shell
 cargo run --release
 ```
+
+## Useful Links
+[kanban](https://github.com/NotGate/taipo/projects/1?fullscreen=true)  
+[osu file format](https://osu.ppy.sh/help/wiki/osu!_File_Formats/Osu_(file_format))  
+[sm file format](https://github.com/stepmania/stepmania/wiki/sm)  
+[ssc file format](https://github.com/stepmania/stepmania/wiki/ssc)  
+[bms file format](https://en.wikipedia.org/wiki/Be-Music_Source)  
+[osu db format](https://osu.ppy.sh/help/wiki/osu!_File_Formats/Db_(file_format))  
+[libbass docs](http://www.un4seen.com/doc/#bass/bass.html)  
+[sdl2 docs](https://rust-sdl2.github.io/rust-sdl2/sdl2/)  
+[rusqlite docs](https://docs.rs/rusqlite/0.21.0/rusqlite/)  
