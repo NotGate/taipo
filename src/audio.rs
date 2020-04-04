@@ -7,6 +7,10 @@ use std::{fs::File, io::Read, ptr};
 include!("bass/wrapper.rs");
 include!("bass/bindings.rs");
 
+// TODO: 
+// need getters to sync up speed, volume, etc.
+// what is the enum for volume? (2)
+
 pub struct MusicPlayer {
     handle: u32,
     buffer: Vec<u8>,

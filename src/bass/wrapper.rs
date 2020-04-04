@@ -1,5 +1,3 @@
-
-// Bindings
 macro_rules! call {
     ($name:expr,$func:expr) => {{
         unsafe { $func };
@@ -9,6 +7,7 @@ macro_rules! call {
         }
     }};
 }
+
 macro_rules! callv {
     ($name:expr,$func:expr) => {{
         let v = unsafe { $func };
