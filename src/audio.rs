@@ -102,17 +102,9 @@ impl MusicPlayer {
     }
 }
 
-// Wrapper
 fn set_attribute(handle: u32, attrib: u32, val: f32) -> Result<(), String> {
     unsafe { BASS_ChannelSetAttribute(handle, attrib, val) };
     return check!("BASS_ChannelSetAttribute", ())
-}
-fn fail(s: String) -> Result<(), String> {
-    if let Some(e) = get_error() {
-        Err(format!("{} failed: {}", s, e))
-    } else {
-        Ok(())
-    }
 }
 fn get_error() -> Option<String> {
     match unsafe { BASS_ErrorGetCode() } {
