@@ -44,8 +44,8 @@ offsetms        real,       -- audio offset (s)
 notes           blob       -- compressed form of [Note]
 ";
 
-// should I include more than just max combo (I like NF only though)
-// an array for error as well as more stats would be nice
+// should I include more than just max combo? (I like NF only though)
+// an array for error as well as more stats on hit offset would be nice
 const SCORE_SCHEMA: &'static str = "
 id              integer primary key,    -- score id
 map             integer,                -- map id
@@ -66,14 +66,19 @@ map             integer,                -- map id
 name            text                    -- name of collection
 ";
 
-// should this contain user settings? might as well
-// not really sure what to do about general settings like this
-// there isn't much of an issue with just using a database
+// do this or use a serialized struct instead?
+// font, resolution, window mode, skins, input bindings
 const TAIPO_SCHEMA: &'static str = "
 version     integer,    -- taipo version
-folderN     integer,    -- folder count (to know to parse again?)
-mapsN       integer,    -- map cound (to know to parse again?)
-lastParse   integer,    -- date the last map parser was performed (if any folders are newer than that, reparse)
+parse       integer,    -- date the last map parse was performed (if any folders are newer than that, reparse)
+seed        integer,    -- last selected seed
+query       text,       -- last sql query
+mode        text,       -- last selected mode (other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k)
+speed       real,       -- last selected speed
+volume      real,       -- last selected volume
+aset        real,       -- last selected audio offset (s)
+iset        real,       -- last selected input offset (s)
+window      real        -- last selected hit window (s)
 ";
 
 pub struct Database {
@@ -83,10 +88,11 @@ pub struct Database {
 impl Database {
     pub fn init() -> Result<Database, String> {
         let conn = Connection::open("taipo.db").map_err(|e| format!("Could not connect to taipo.db: {}", e))?;
-        Database::create_table(&conn, "maps", MAP_SCHEMA)?;
-        Database::create_table(&conn, "scores", SCORE_SCHEMA)?;
-        Database::create_table(&conn, "collection", COLLECTION_SCHEMA)?;
+        Database::create_tables(&conn,&[("maps", MAP_SCHEMA),("scores", SCORE_SCHEMA),("collection", COLLECTION_SCHEMA)])?;
         Ok(Database { conn })
+    }
+    pub fn create_tables(conn: &Connection, tables: &[(&'static str,&'static str)]) -> Result<usize, String>{
+        tables.iter().fold(Ok(0),|r,(t,s)| Database::create_table(&conn, t,s))
     }
     pub fn create_table(conn: &Connection, table: &'static str, schema: &'static str) -> Result<usize, String> {
         conn.execute(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema), params![])
