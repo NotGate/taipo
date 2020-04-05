@@ -88,14 +88,83 @@ pub struct Database {
 impl Database {
     pub fn init() -> Result<Database, String> {
         let conn = Connection::open("taipo.db").map_err(|e| format!("Could not connect to taipo.db: {}", e))?;
-        Database::create_tables(&conn,&[("maps", MAP_SCHEMA),("scores", SCORE_SCHEMA),("collection", COLLECTION_SCHEMA)])?;
+        Database::create_tables(
+            &conn,
+            &[
+                ("maps", MAP_SCHEMA),
+                ("scores", SCORE_SCHEMA),
+                ("collection", COLLECTION_SCHEMA),
+            ],
+        )?;
         Ok(Database { conn })
     }
-    pub fn create_tables(conn: &Connection, tables: &[(&'static str,&'static str)]) -> Result<usize, String>{
-        tables.iter().fold(Ok(0),|r,(t,s)| Database::create_table(&conn, t,s))
+    pub fn create_tables(conn: &Connection, tables: &[(&'static str, &'static str)]) -> Result<usize, String> {
+        tables
+            .iter()
+            .fold(Ok(0), |r, (t, s)| Database::create_table(&conn, t, s))
     }
     pub fn create_table(conn: &Connection, table: &'static str, schema: &'static str) -> Result<usize, String> {
         conn.execute(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema), params![])
             .map_err(|e| format!("Could not create table {}: {}", table, e))
     }
 }
+
+// #[test]
+// fn insert ..
+
+/*
+use transactions and caching
+
+conn.execute("INSERT INTO person (name, email) VALUES (?1, ?2)",
+&[&name, &email]).unwrap();
+
+conn.execute("INSERT INTO person (name, email) VALUES (:name, :email)",
+&[(":name", &name), (":email", &email),])?;
+
+let stmt = self.conn.prepare("INSERT INTO person (name, email) VALUES (:name, :email)")?;
+
+context.conn.execute_batch("BEGIN TRANSACTION;")?;
+for p in persons_to_insert {
+  context.create_person(&p.name, &p.email)?;
+}
+context.conn.execute_batch("COMMIT TRANSACTION;")?;
+
+
+
+fn insert_new_people(conn: &Connection) -> Result<()> {
+    {
+        let mut stmt = conn.prepare_cached("INSERT INTO People (name) VALUES (?)")?;
+        stmt.execute(&["Joe Smith"])?;
+    }
+    {
+        // This will return the same underlying SQLite statement handle without
+        // having to prepare it again.
+        let mut stmt = conn.prepare_cached("INSERT INTO People (name) VALUES (?)")?;
+        stmt.execute(&["Bob Jones"])?;
+    }
+    Ok(())
+}
+
+fn insert_new_people(conn: &Connection) -> Result<()> {
+    let mut stmt = conn.prepare("INSERT INTO People (name) VALUES (?)")?;
+    stmt.execute(&["Joe Smith"])?;
+    stmt.execute(&["Bob Jones"])?;
+    Ok(())
+}
+
+fn create_tables(conn: &Connection) -> Result<()> {
+    conn.execute_batch(
+        "BEGIN;
+                        CREATE TABLE foo(x INTEGER);
+                        CREATE TABLE bar(y TEXT);
+                        COMMIT;",
+    )
+}
+
+fn update_rows(conn: &Connection) {
+    match conn.execute("UPDATE foo SET bar = 'baz' WHERE qux = ?", &[1i32]) {
+        Ok(updated) => println!("{} rows were updated", updated),
+        Err(err) => println!("update failed: {}", err),
+    }
+}
+*/
