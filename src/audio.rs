@@ -15,7 +15,7 @@ pub struct MusicPlayer {
 impl MusicPlayer {
     pub fn init() -> Result<MusicPlayer, String> {
         // http://www.un4seen.com/doc/#bass/BASS_SetConfig.html
-        // Bass::set_config(BASS_CONFIG_BUFFER, 100)?;
+        Bass::set_config(BASS_CONFIG_BUFFER, 100)?; // 100 ms instead of 500 ms
         // Bass::set_config(BASS_CONFIG_NET_BUFFER, 500)?;
         // Bass::set_config(BASS_CONFIG_MP3_OLDGAPS, 1)?;
         // Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?;
@@ -52,8 +52,8 @@ impl MusicPlayer {
         )?;
         // TODO: research
         // Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_USE_QUICKALGO, 1.0)?;
-        // Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 4.0)?;
-        // Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 30.0)?;
+        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 30.0)?;
+        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 4.0)?;
         Ok(())
     }
     pub fn seek(&self, pos: f64) -> Result<(), String> {
