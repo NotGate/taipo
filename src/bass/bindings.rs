@@ -686,22 +686,12 @@ fn bindgen_test_layout_BASS_DEVICEINFO() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DEVICEINFO>())).driver as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DEVICEINFO),
-            "::",
-            stringify!(driver)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DEVICEINFO), "::", stringify!(driver))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DEVICEINFO>())).flags as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DEVICEINFO),
-            "::",
-            stringify!(flags)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DEVICEINFO), "::", stringify!(flags))
     );
 }
 #[repr(C)]
@@ -829,42 +819,22 @@ fn bindgen_test_layout_BASS_RECORDINFO() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_RECORDINFO>())).flags as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_RECORDINFO),
-            "::",
-            stringify!(flags)
-        )
+        concat!("Offset of field: ", stringify!(BASS_RECORDINFO), "::", stringify!(flags))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_RECORDINFO>())).formats as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_RECORDINFO),
-            "::",
-            stringify!(formats)
-        )
+        concat!("Offset of field: ", stringify!(BASS_RECORDINFO), "::", stringify!(formats))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_RECORDINFO>())).inputs as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_RECORDINFO),
-            "::",
-            stringify!(inputs)
-        )
+        concat!("Offset of field: ", stringify!(BASS_RECORDINFO), "::", stringify!(inputs))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_RECORDINFO>())).singlein as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_RECORDINFO),
-            "::",
-            stringify!(singlein)
-        )
+        concat!("Offset of field: ", stringify!(BASS_RECORDINFO), "::", stringify!(singlein))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_RECORDINFO>())).freq as *const _ as usize },
@@ -1018,82 +988,42 @@ fn bindgen_test_layout_BASS_CHANNELINFO() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).freq as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(freq)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(freq))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).chans as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(chans)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(chans))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).flags as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(flags)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(flags))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).ctype as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(ctype)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(ctype))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).origres as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(origres)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(origres))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).plugin as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(plugin)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(plugin))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).sample as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(sample)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(sample))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_CHANNELINFO>())).filename as *const _ as usize },
         32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_CHANNELINFO),
-            "::",
-            stringify!(filename)
-        )
+        concat!("Offset of field: ", stringify!(BASS_CHANNELINFO), "::", stringify!(filename))
     );
 }
 #[repr(C)]
@@ -1118,12 +1048,7 @@ fn bindgen_test_layout_BASS_PLUGINFORM() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_PLUGINFORM>())).ctype as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_PLUGINFORM),
-            "::",
-            stringify!(ctype)
-        )
+        concat!("Offset of field: ", stringify!(BASS_PLUGINFORM), "::", stringify!(ctype))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_PLUGINFORM>())).name as *const _ as usize },
@@ -1158,32 +1083,17 @@ fn bindgen_test_layout_BASS_PLUGININFO() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_PLUGININFO>())).version as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_PLUGININFO),
-            "::",
-            stringify!(version)
-        )
+        concat!("Offset of field: ", stringify!(BASS_PLUGININFO), "::", stringify!(version))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_PLUGININFO>())).formatc as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_PLUGININFO),
-            "::",
-            stringify!(formatc)
-        )
+        concat!("Offset of field: ", stringify!(BASS_PLUGININFO), "::", stringify!(formatc))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_PLUGININFO>())).formats as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_PLUGININFO),
-            "::",
-            stringify!(formats)
-        )
+        concat!("Offset of field: ", stringify!(BASS_PLUGININFO), "::", stringify!(formats))
     );
 }
 #[repr(C)]
@@ -1260,14 +1170,9 @@ pub type STREAMPROC = ::std::option::Option<
 pub type FILECLOSEPROC = ::std::option::Option<unsafe extern "C" fn(user: *mut ::std::os::raw::c_void)>;
 pub type FILELENPROC = ::std::option::Option<unsafe extern "C" fn(user: *mut ::std::os::raw::c_void) -> QWORD>;
 pub type FILEREADPROC = ::std::option::Option<
-    unsafe extern "C" fn(
-        buffer: *mut ::std::os::raw::c_void,
-        length: DWORD,
-        user: *mut ::std::os::raw::c_void,
-    ) -> DWORD,
+    unsafe extern "C" fn(buffer: *mut ::std::os::raw::c_void, length: DWORD, user: *mut ::std::os::raw::c_void) -> DWORD,
 >;
-pub type FILESEEKPROC =
-    ::std::option::Option<unsafe extern "C" fn(offset: QWORD, user: *mut ::std::os::raw::c_void) -> BOOL>;
+pub type FILESEEKPROC = ::std::option::Option<unsafe extern "C" fn(offset: QWORD, user: *mut ::std::os::raw::c_void) -> BOOL>;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct BASS_FILEPROCS {
@@ -1296,12 +1201,7 @@ fn bindgen_test_layout_BASS_FILEPROCS() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_FILEPROCS>())).length as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_FILEPROCS),
-            "::",
-            stringify!(length)
-        )
+        concat!("Offset of field: ", stringify!(BASS_FILEPROCS), "::", stringify!(length))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_FILEPROCS>())).read as *const _ as usize },
@@ -1317,9 +1217,8 @@ fn bindgen_test_layout_BASS_FILEPROCS() {
 pub type DOWNLOADPROC = ::std::option::Option<
     unsafe extern "C" fn(buffer: *const ::std::os::raw::c_void, length: DWORD, user: *mut ::std::os::raw::c_void),
 >;
-pub type SYNCPROC = ::std::option::Option<
-    unsafe extern "C" fn(handle: HSYNC, channel: DWORD, data: DWORD, user: *mut ::std::os::raw::c_void),
->;
+pub type SYNCPROC =
+    ::std::option::Option<unsafe extern "C" fn(handle: HSYNC, channel: DWORD, data: DWORD, user: *mut ::std::os::raw::c_void)>;
 pub type DSPPROC = ::std::option::Option<
     unsafe extern "C" fn(
         handle: HDSP,
@@ -1428,12 +1327,7 @@ fn bindgen_test_layout_TAG_APE_BINARY() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_APE_BINARY>())).length as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_APE_BINARY),
-            "::",
-            stringify!(length)
-        )
+        concat!("Offset of field: ", stringify!(TAG_APE_BINARY), "::", stringify!(length))
     );
 }
 #[repr(C, packed)]
@@ -1483,22 +1377,12 @@ fn bindgen_test_layout_TAG_CART_TIMER() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_CART_TIMER>())).dwUsage as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_CART_TIMER),
-            "::",
-            stringify!(dwUsage)
-        )
+        concat!("Offset of field: ", stringify!(TAG_CART_TIMER), "::", stringify!(dwUsage))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_CART_TIMER>())).dwValue as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_CART_TIMER),
-            "::",
-            stringify!(dwValue)
-        )
+        concat!("Offset of field: ", stringify!(TAG_CART_TIMER), "::", stringify!(dwValue))
     );
 }
 #[repr(C)]
@@ -1567,42 +1451,22 @@ fn bindgen_test_layout_TAG_CUE_POINT() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_CUE_POINT>())).dwPosition as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_CUE_POINT),
-            "::",
-            stringify!(dwPosition)
-        )
+        concat!("Offset of field: ", stringify!(TAG_CUE_POINT), "::", stringify!(dwPosition))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_CUE_POINT>())).fccChunk as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_CUE_POINT),
-            "::",
-            stringify!(fccChunk)
-        )
+        concat!("Offset of field: ", stringify!(TAG_CUE_POINT), "::", stringify!(fccChunk))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_CUE_POINT>())).dwChunkStart as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_CUE_POINT),
-            "::",
-            stringify!(dwChunkStart)
-        )
+        concat!("Offset of field: ", stringify!(TAG_CUE_POINT), "::", stringify!(dwChunkStart))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_CUE_POINT>())).dwBlockStart as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_CUE_POINT),
-            "::",
-            stringify!(dwBlockStart)
-        )
+        concat!("Offset of field: ", stringify!(TAG_CUE_POINT), "::", stringify!(dwBlockStart))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_CUE_POINT>())).dwSampleOffset as *const _ as usize },
@@ -1659,12 +1523,7 @@ fn bindgen_test_layout_TAG_SMPL_LOOP() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_SMPL_LOOP>())).dwIdentifier as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_SMPL_LOOP),
-            "::",
-            stringify!(dwIdentifier)
-        )
+        concat!("Offset of field: ", stringify!(TAG_SMPL_LOOP), "::", stringify!(dwIdentifier))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_SMPL_LOOP>())).dwType as *const _ as usize },
@@ -1674,12 +1533,7 @@ fn bindgen_test_layout_TAG_SMPL_LOOP() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_SMPL_LOOP>())).dwStart as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_SMPL_LOOP),
-            "::",
-            stringify!(dwStart)
-        )
+        concat!("Offset of field: ", stringify!(TAG_SMPL_LOOP), "::", stringify!(dwStart))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_SMPL_LOOP>())).dwEnd as *const _ as usize },
@@ -1689,22 +1543,12 @@ fn bindgen_test_layout_TAG_SMPL_LOOP() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_SMPL_LOOP>())).dwFraction as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_SMPL_LOOP),
-            "::",
-            stringify!(dwFraction)
-        )
+        concat!("Offset of field: ", stringify!(TAG_SMPL_LOOP), "::", stringify!(dwFraction))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<TAG_SMPL_LOOP>())).dwPlayCount as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(TAG_SMPL_LOOP),
-            "::",
-            stringify!(dwPlayCount)
-        )
+        concat!("Offset of field: ", stringify!(TAG_SMPL_LOOP), "::", stringify!(dwPlayCount))
     );
 }
 #[repr(C)]
@@ -1795,22 +1639,12 @@ fn bindgen_test_layout_tWAVEFORMATEX() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<tWAVEFORMATEX>())).wFormatTag as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(tWAVEFORMATEX),
-            "::",
-            stringify!(wFormatTag)
-        )
+        concat!("Offset of field: ", stringify!(tWAVEFORMATEX), "::", stringify!(wFormatTag))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<tWAVEFORMATEX>())).nChannels as *const _ as usize },
         2usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(tWAVEFORMATEX),
-            "::",
-            stringify!(nChannels)
-        )
+        concat!("Offset of field: ", stringify!(tWAVEFORMATEX), "::", stringify!(nChannels))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<tWAVEFORMATEX>())).nSamplesPerSec as *const _ as usize },
@@ -1835,12 +1669,7 @@ fn bindgen_test_layout_tWAVEFORMATEX() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<tWAVEFORMATEX>())).nBlockAlign as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(tWAVEFORMATEX),
-            "::",
-            stringify!(nBlockAlign)
-        )
+        concat!("Offset of field: ", stringify!(tWAVEFORMATEX), "::", stringify!(nBlockAlign))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<tWAVEFORMATEX>())).wBitsPerSample as *const _ as usize },
@@ -1888,72 +1717,37 @@ fn bindgen_test_layout_BASS_DX8_CHORUS() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_CHORUS>())).fWetDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_CHORUS),
-            "::",
-            stringify!(fWetDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_CHORUS), "::", stringify!(fWetDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_CHORUS>())).fDepth as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_CHORUS),
-            "::",
-            stringify!(fDepth)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_CHORUS), "::", stringify!(fDepth))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_CHORUS>())).fFeedback as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_CHORUS),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_CHORUS), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_CHORUS>())).fFrequency as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_CHORUS),
-            "::",
-            stringify!(fFrequency)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_CHORUS), "::", stringify!(fFrequency))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_CHORUS>())).lWaveform as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_CHORUS),
-            "::",
-            stringify!(lWaveform)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_CHORUS), "::", stringify!(lWaveform))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_CHORUS>())).fDelay as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_CHORUS),
-            "::",
-            stringify!(fDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_CHORUS), "::", stringify!(fDelay))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_CHORUS>())).lPhase as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_CHORUS),
-            "::",
-            stringify!(lPhase)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_CHORUS), "::", stringify!(lPhase))
     );
 }
 #[repr(C)]
@@ -1981,12 +1775,7 @@ fn bindgen_test_layout_BASS_DX8_COMPRESSOR() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_COMPRESSOR>())).fGain as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_COMPRESSOR),
-            "::",
-            stringify!(fGain)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_COMPRESSOR), "::", stringify!(fGain))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_COMPRESSOR>())).fAttack as *const _ as usize },
@@ -2021,12 +1810,7 @@ fn bindgen_test_layout_BASS_DX8_COMPRESSOR() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_COMPRESSOR>())).fRatio as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_COMPRESSOR),
-            "::",
-            stringify!(fRatio)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_COMPRESSOR), "::", stringify!(fRatio))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_COMPRESSOR>())).fPredelay as *const _ as usize },
@@ -2063,22 +1847,12 @@ fn bindgen_test_layout_BASS_DX8_DISTORTION() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_DISTORTION>())).fGain as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_DISTORTION),
-            "::",
-            stringify!(fGain)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_DISTORTION), "::", stringify!(fGain))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_DISTORTION>())).fEdge as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_DISTORTION),
-            "::",
-            stringify!(fEdge)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_DISTORTION), "::", stringify!(fEdge))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_DISTORTION>())).fPostEQCenterFrequency as *const _ as usize },
@@ -2135,52 +1909,27 @@ fn bindgen_test_layout_BASS_DX8_ECHO() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_ECHO>())).fWetDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_ECHO),
-            "::",
-            stringify!(fWetDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_ECHO), "::", stringify!(fWetDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_ECHO>())).fFeedback as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_ECHO),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_ECHO), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_ECHO>())).fLeftDelay as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_ECHO),
-            "::",
-            stringify!(fLeftDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_ECHO), "::", stringify!(fLeftDelay))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_ECHO>())).fRightDelay as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_ECHO),
-            "::",
-            stringify!(fRightDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_ECHO), "::", stringify!(fRightDelay))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_ECHO>())).lPanDelay as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_ECHO),
-            "::",
-            stringify!(lPanDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_ECHO), "::", stringify!(lPanDelay))
     );
 }
 #[repr(C)]
@@ -2219,22 +1968,12 @@ fn bindgen_test_layout_BASS_DX8_FLANGER() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_FLANGER>())).fDepth as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_FLANGER),
-            "::",
-            stringify!(fDepth)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_FLANGER), "::", stringify!(fDepth))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_FLANGER>())).fFeedback as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_FLANGER),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_FLANGER), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_FLANGER>())).fFrequency as *const _ as usize },
@@ -2249,32 +1988,17 @@ fn bindgen_test_layout_BASS_DX8_FLANGER() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_FLANGER>())).lWaveform as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_FLANGER),
-            "::",
-            stringify!(lWaveform)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_FLANGER), "::", stringify!(lWaveform))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_FLANGER>())).fDelay as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_FLANGER),
-            "::",
-            stringify!(fDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_FLANGER), "::", stringify!(fDelay))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_FLANGER>())).lPhase as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_FLANGER),
-            "::",
-            stringify!(lPhase)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_FLANGER), "::", stringify!(lPhase))
     );
 }
 #[repr(C)]
@@ -2298,12 +2022,7 @@ fn bindgen_test_layout_BASS_DX8_GARGLE() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_GARGLE>())).dwRateHz as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_GARGLE),
-            "::",
-            stringify!(dwRateHz)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_GARGLE), "::", stringify!(dwRateHz))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_GARGLE>())).dwWaveShape as *const _ as usize },
@@ -2347,12 +2066,7 @@ fn bindgen_test_layout_BASS_DX8_I3DL2REVERB() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_I3DL2REVERB>())).lRoom as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_I3DL2REVERB),
-            "::",
-            stringify!(lRoom)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_I3DL2REVERB), "::", stringify!(lRoom))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_I3DL2REVERB>())).lRoomHF as *const _ as usize },
@@ -2487,12 +2201,7 @@ fn bindgen_test_layout_BASS_DX8_PARAMEQ() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_PARAMEQ>())).fCenter as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_PARAMEQ),
-            "::",
-            stringify!(fCenter)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_PARAMEQ), "::", stringify!(fCenter))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_PARAMEQ>())).fBandwidth as *const _ as usize },
@@ -2507,12 +2216,7 @@ fn bindgen_test_layout_BASS_DX8_PARAMEQ() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_PARAMEQ>())).fGain as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_PARAMEQ),
-            "::",
-            stringify!(fGain)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_PARAMEQ), "::", stringify!(fGain))
     );
 }
 #[repr(C)]
@@ -2538,22 +2242,12 @@ fn bindgen_test_layout_BASS_DX8_REVERB() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_REVERB>())).fInGain as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_REVERB),
-            "::",
-            stringify!(fInGain)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_REVERB), "::", stringify!(fInGain))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_REVERB>())).fReverbMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_DX8_REVERB),
-            "::",
-            stringify!(fReverbMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_DX8_REVERB), "::", stringify!(fReverbMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_DX8_REVERB>())).fReverbTime as *const _ as usize },
@@ -2619,12 +2313,7 @@ fn bindgen_test_layout_BASS_FX_VOLUME_PARAM() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_FX_VOLUME_PARAM>())).fTime as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_FX_VOLUME_PARAM),
-            "::",
-            stringify!(fTime)
-        )
+        concat!("Offset of field: ", stringify!(BASS_FX_VOLUME_PARAM), "::", stringify!(fTime))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_FX_VOLUME_PARAM>())).lCurve as *const _ as usize },
@@ -2923,20 +2612,10 @@ extern "C" {
     pub fn BASS_ChannelIsSliding(handle: DWORD, attrib: DWORD) -> BOOL;
 }
 extern "C" {
-    pub fn BASS_ChannelSetAttributeEx(
-        handle: DWORD,
-        attrib: DWORD,
-        value: *mut ::std::os::raw::c_void,
-        size: DWORD,
-    ) -> BOOL;
+    pub fn BASS_ChannelSetAttributeEx(handle: DWORD, attrib: DWORD, value: *mut ::std::os::raw::c_void, size: DWORD) -> BOOL;
 }
 extern "C" {
-    pub fn BASS_ChannelGetAttributeEx(
-        handle: DWORD,
-        attrib: DWORD,
-        value: *mut ::std::os::raw::c_void,
-        size: DWORD,
-    ) -> DWORD;
+    pub fn BASS_ChannelGetAttributeEx(handle: DWORD, attrib: DWORD, value: *mut ::std::os::raw::c_void, size: DWORD) -> DWORD;
 }
 extern "C" {
     pub fn BASS_ChannelSet3DAttributes(
@@ -3089,22 +2768,12 @@ fn bindgen_test_layout_BASS_BFX_ROTATE() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ROTATE>())).fRate as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ROTATE),
-            "::",
-            stringify!(fRate)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ROTATE), "::", stringify!(fRate))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ROTATE>())).lChannel as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ROTATE),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ROTATE), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3158,32 +2827,17 @@ fn bindgen_test_layout_BASS_BFX_FLANGER() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FLANGER>())).fWetDry as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FLANGER),
-            "::",
-            stringify!(fWetDry)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FLANGER), "::", stringify!(fWetDry))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FLANGER>())).fSpeed as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FLANGER),
-            "::",
-            stringify!(fSpeed)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FLANGER), "::", stringify!(fSpeed))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FLANGER>())).lChannel as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FLANGER),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FLANGER), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3207,22 +2861,12 @@ fn bindgen_test_layout_BASS_BFX_VOLUME() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_VOLUME>())).lChannel as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_VOLUME),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_VOLUME), "::", stringify!(lChannel))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_VOLUME>())).fVolume as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_VOLUME),
-            "::",
-            stringify!(fVolume)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_VOLUME), "::", stringify!(fVolume))
     );
 }
 #[repr(C)]
@@ -3250,22 +2894,12 @@ fn bindgen_test_layout_BASS_BFX_PEAKEQ() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PEAKEQ>())).lBand as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PEAKEQ),
-            "::",
-            stringify!(lBand)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PEAKEQ), "::", stringify!(lBand))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PEAKEQ>())).fBandwidth as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PEAKEQ),
-            "::",
-            stringify!(fBandwidth)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PEAKEQ), "::", stringify!(fBandwidth))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PEAKEQ>())).fQ as *const _ as usize },
@@ -3275,32 +2909,17 @@ fn bindgen_test_layout_BASS_BFX_PEAKEQ() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PEAKEQ>())).fCenter as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PEAKEQ),
-            "::",
-            stringify!(fCenter)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PEAKEQ), "::", stringify!(fCenter))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PEAKEQ>())).fGain as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PEAKEQ),
-            "::",
-            stringify!(fGain)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PEAKEQ), "::", stringify!(fGain))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PEAKEQ>())).lChannel as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PEAKEQ),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PEAKEQ), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3324,22 +2943,12 @@ fn bindgen_test_layout_BASS_BFX_REVERB() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_REVERB>())).fLevel as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_REVERB),
-            "::",
-            stringify!(fLevel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_REVERB), "::", stringify!(fLevel))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_REVERB>())).lDelay as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_REVERB),
-            "::",
-            stringify!(lDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_REVERB), "::", stringify!(lDelay))
     );
 }
 #[repr(C)]
@@ -3364,32 +2973,17 @@ fn bindgen_test_layout_BASS_BFX_LPF() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_LPF>())).fResonance as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_LPF),
-            "::",
-            stringify!(fResonance)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_LPF), "::", stringify!(fResonance))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_LPF>())).fCutOffFreq as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_LPF),
-            "::",
-            stringify!(fCutOffFreq)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_LPF), "::", stringify!(fCutOffFreq))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_LPF>())).lChannel as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_LPF),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_LPF), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3412,12 +3006,7 @@ fn bindgen_test_layout_BASS_BFX_MIX() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_MIX>())).lChannel as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_MIX),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_MIX), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3445,12 +3034,7 @@ fn bindgen_test_layout_BASS_BFX_DAMP() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_DAMP>())).fTarget as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_DAMP),
-            "::",
-            stringify!(fTarget)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_DAMP), "::", stringify!(fTarget))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_DAMP>())).fQuiet as *const _ as usize },
@@ -3475,12 +3059,7 @@ fn bindgen_test_layout_BASS_BFX_DAMP() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_DAMP>())).lChannel as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_DAMP),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_DAMP), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3509,72 +3088,37 @@ fn bindgen_test_layout_BASS_BFX_AUTOWAH() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_AUTOWAH>())).fDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_AUTOWAH),
-            "::",
-            stringify!(fDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_AUTOWAH), "::", stringify!(fDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_AUTOWAH>())).fWetMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_AUTOWAH),
-            "::",
-            stringify!(fWetMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_AUTOWAH), "::", stringify!(fWetMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_AUTOWAH>())).fFeedback as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_AUTOWAH),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_AUTOWAH), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_AUTOWAH>())).fRate as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_AUTOWAH),
-            "::",
-            stringify!(fRate)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_AUTOWAH), "::", stringify!(fRate))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_AUTOWAH>())).fRange as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_AUTOWAH),
-            "::",
-            stringify!(fRange)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_AUTOWAH), "::", stringify!(fRange))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_AUTOWAH>())).fFreq as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_AUTOWAH),
-            "::",
-            stringify!(fFreq)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_AUTOWAH), "::", stringify!(fFreq))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_AUTOWAH>())).lChannel as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_AUTOWAH),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_AUTOWAH), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3601,52 +3145,27 @@ fn bindgen_test_layout_BASS_BFX_ECHO2() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO2>())).fDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO2),
-            "::",
-            stringify!(fDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO2), "::", stringify!(fDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO2>())).fWetMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO2),
-            "::",
-            stringify!(fWetMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO2), "::", stringify!(fWetMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO2>())).fFeedback as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO2),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO2), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO2>())).fDelay as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO2),
-            "::",
-            stringify!(fDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO2), "::", stringify!(fDelay))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO2>())).lChannel as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO2),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO2), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3675,72 +3194,37 @@ fn bindgen_test_layout_BASS_BFX_PHASER() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PHASER>())).fDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PHASER),
-            "::",
-            stringify!(fDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PHASER), "::", stringify!(fDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PHASER>())).fWetMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PHASER),
-            "::",
-            stringify!(fWetMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PHASER), "::", stringify!(fWetMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PHASER>())).fFeedback as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PHASER),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PHASER), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PHASER>())).fRate as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PHASER),
-            "::",
-            stringify!(fRate)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PHASER), "::", stringify!(fRate))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PHASER>())).fRange as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PHASER),
-            "::",
-            stringify!(fRange)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PHASER), "::", stringify!(fRange))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PHASER>())).fFreq as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PHASER),
-            "::",
-            stringify!(fFreq)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PHASER), "::", stringify!(fFreq))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PHASER>())).lChannel as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PHASER),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PHASER), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3766,42 +3250,22 @@ fn bindgen_test_layout_BASS_BFX_ECHO3() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO3>())).fDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO3),
-            "::",
-            stringify!(fDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO3), "::", stringify!(fDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO3>())).fWetMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO3),
-            "::",
-            stringify!(fWetMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO3), "::", stringify!(fWetMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO3>())).fDelay as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO3),
-            "::",
-            stringify!(fDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO3), "::", stringify!(fDelay))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO3>())).lChannel as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO3),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO3), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3830,72 +3294,37 @@ fn bindgen_test_layout_BASS_BFX_CHORUS() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_CHORUS>())).fDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_CHORUS),
-            "::",
-            stringify!(fDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_CHORUS), "::", stringify!(fDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_CHORUS>())).fWetMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_CHORUS),
-            "::",
-            stringify!(fWetMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_CHORUS), "::", stringify!(fWetMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_CHORUS>())).fFeedback as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_CHORUS),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_CHORUS), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_CHORUS>())).fMinSweep as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_CHORUS),
-            "::",
-            stringify!(fMinSweep)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_CHORUS), "::", stringify!(fMinSweep))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_CHORUS>())).fMaxSweep as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_CHORUS),
-            "::",
-            stringify!(fMaxSweep)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_CHORUS), "::", stringify!(fMaxSweep))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_CHORUS>())).fRate as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_CHORUS),
-            "::",
-            stringify!(fRate)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_CHORUS), "::", stringify!(fRate))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_CHORUS>())).lChannel as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_CHORUS),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_CHORUS), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -3930,12 +3359,7 @@ fn bindgen_test_layout_BASS_BFX_APF() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_APF>())).lChannel as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_APF),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_APF), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -4024,12 +3448,7 @@ fn bindgen_test_layout_BASS_BFX_DISTORTION() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_DISTORTION>())).fDrive as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_DISTORTION),
-            "::",
-            stringify!(fDrive)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_DISTORTION), "::", stringify!(fDrive))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_DISTORTION>())).fDryMix as *const _ as usize },
@@ -4107,12 +3526,7 @@ fn bindgen_test_layout_BASS_BFX_COMPRESSOR2() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_COMPRESSOR2>())).fGain as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_COMPRESSOR2),
-            "::",
-            stringify!(fGain)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_COMPRESSOR2), "::", stringify!(fGain))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_COMPRESSOR2>())).fThreshold as *const _ as usize },
@@ -4208,12 +3622,7 @@ fn bindgen_test_layout_BASS_BFX_VOLUME_ENV() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_VOLUME_ENV>())).pNodes as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_VOLUME_ENV),
-            "::",
-            stringify!(pNodes)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_VOLUME_ENV), "::", stringify!(pNodes))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_VOLUME_ENV>())).bFollow as *const _ as usize },
@@ -4247,22 +3656,12 @@ fn bindgen_test_layout_BASS_BFX_ENV_NODE() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ENV_NODE>())).pos as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ENV_NODE),
-            "::",
-            stringify!(pos)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ENV_NODE), "::", stringify!(pos))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ENV_NODE>())).val as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ENV_NODE),
-            "::",
-            stringify!(val)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ENV_NODE), "::", stringify!(val))
     );
 }
 pub const BASS_BFX_BQF_LOWPASS: _bindgen_ty_3 = 0;
@@ -4316,12 +3715,7 @@ fn bindgen_test_layout_BASS_BFX_BQF() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_BQF>())).fBandwidth as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_BQF),
-            "::",
-            stringify!(fBandwidth)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_BQF), "::", stringify!(fBandwidth))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_BQF>())).fQ as *const _ as usize },
@@ -4336,12 +3730,7 @@ fn bindgen_test_layout_BASS_BFX_BQF() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_BQF>())).lChannel as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_BQF),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_BQF), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -4369,62 +3758,32 @@ fn bindgen_test_layout_BASS_BFX_ECHO4() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO4>())).fDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO4),
-            "::",
-            stringify!(fDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO4), "::", stringify!(fDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO4>())).fWetMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO4),
-            "::",
-            stringify!(fWetMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO4), "::", stringify!(fWetMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO4>())).fFeedback as *const _ as usize },
         8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO4),
-            "::",
-            stringify!(fFeedback)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO4), "::", stringify!(fFeedback))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO4>())).fDelay as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO4),
-            "::",
-            stringify!(fDelay)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO4), "::", stringify!(fDelay))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO4>())).bStereo as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO4),
-            "::",
-            stringify!(bStereo)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO4), "::", stringify!(bStereo))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_ECHO4>())).lChannel as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_ECHO4),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_ECHO4), "::", stringify!(lChannel))
     );
 }
 #[repr(C)]
@@ -4481,12 +3840,7 @@ fn bindgen_test_layout_BASS_BFX_PITCHSHIFT() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PITCHSHIFT>())).lOsamp as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_PITCHSHIFT),
-            "::",
-            stringify!(lOsamp)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_PITCHSHIFT), "::", stringify!(lOsamp))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_PITCHSHIFT>())).lChannel as *const _ as usize },
@@ -4525,22 +3879,12 @@ fn bindgen_test_layout_BASS_BFX_FREEVERB() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FREEVERB>())).fDryMix as *const _ as usize },
         0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FREEVERB),
-            "::",
-            stringify!(fDryMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FREEVERB), "::", stringify!(fDryMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FREEVERB>())).fWetMix as *const _ as usize },
         4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FREEVERB),
-            "::",
-            stringify!(fWetMix)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FREEVERB), "::", stringify!(fWetMix))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FREEVERB>())).fRoomSize as *const _ as usize },
@@ -4555,42 +3899,22 @@ fn bindgen_test_layout_BASS_BFX_FREEVERB() {
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FREEVERB>())).fDamp as *const _ as usize },
         12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FREEVERB),
-            "::",
-            stringify!(fDamp)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FREEVERB), "::", stringify!(fDamp))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FREEVERB>())).fWidth as *const _ as usize },
         16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FREEVERB),
-            "::",
-            stringify!(fWidth)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FREEVERB), "::", stringify!(fWidth))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FREEVERB>())).lMode as *const _ as usize },
         20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FREEVERB),
-            "::",
-            stringify!(lMode)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FREEVERB), "::", stringify!(lMode))
     );
     assert_eq!(
         unsafe { &(*(::std::ptr::null::<BASS_BFX_FREEVERB>())).lChannel as *const _ as usize },
         24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(BASS_BFX_FREEVERB),
-            "::",
-            stringify!(lChannel)
-        )
+        concat!("Offset of field: ", stringify!(BASS_BFX_FREEVERB), "::", stringify!(lChannel))
     );
 }
 pub const BASS_ATTRIB_TEMPO: _bindgen_ty_4 = 65536;
@@ -4626,8 +3950,7 @@ pub const BASS_FX_BPM_TRAN_FREQ2: _bindgen_ty_6 = 2;
 pub const BASS_FX_BPM_TRAN_2PERCENT: _bindgen_ty_6 = 3;
 pub const BASS_FX_BPM_TRAN_PERCENT2: _bindgen_ty_6 = 4;
 pub type _bindgen_ty_6 = u32;
-pub type BPMPROC =
-    ::std::option::Option<unsafe extern "C" fn(chan: DWORD, bpm: f32, user: *mut ::std::os::raw::c_void)>;
+pub type BPMPROC = ::std::option::Option<unsafe extern "C" fn(chan: DWORD, bpm: f32, user: *mut ::std::os::raw::c_void)>;
 pub type BPMPROGRESSPROC =
     ::std::option::Option<unsafe extern "C" fn(chan: DWORD, percent: f32, user: *mut ::std::os::raw::c_void)>;
 pub type BPMPROCESSPROC = BPMPROGRESSPROC;
@@ -4661,8 +3984,7 @@ extern "C" {
 extern "C" {
     pub fn BASS_FX_BPM_Free(handle: DWORD) -> BOOL;
 }
-pub type BPMBEATPROC =
-    ::std::option::Option<unsafe extern "C" fn(chan: DWORD, beatpos: f64, user: *mut ::std::os::raw::c_void)>;
+pub type BPMBEATPROC = ::std::option::Option<unsafe extern "C" fn(chan: DWORD, beatpos: f64, user: *mut ::std::os::raw::c_void)>;
 extern "C" {
     pub fn BASS_FX_BPM_BeatCallbackSet(handle: DWORD, proc_: BPMBEATPROC, user: *mut ::std::os::raw::c_void) -> BOOL;
 }
@@ -4683,12 +4005,7 @@ extern "C" {
     pub fn BASS_FX_BPM_BeatSetParameters(handle: DWORD, bandwidth: f32, centerfreq: f32, beat_rtime: f32) -> BOOL;
 }
 extern "C" {
-    pub fn BASS_FX_BPM_BeatGetParameters(
-        handle: DWORD,
-        bandwidth: *mut f32,
-        centerfreq: *mut f32,
-        beat_rtime: *mut f32,
-    ) -> BOOL;
+    pub fn BASS_FX_BPM_BeatGetParameters(handle: DWORD, bandwidth: *mut f32, centerfreq: *mut f32, beat_rtime: *mut f32) -> BOOL;
 }
 extern "C" {
     pub fn BASS_FX_BPM_BeatFree(handle: DWORD) -> BOOL;
