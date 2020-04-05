@@ -1,0 +1,74 @@
+// db.exec("select * from maps where nps>2")?;
+// db.query("m.bpm between 180 and 220 and m.nps>5 and s.acc<97 and c.name=\"practice\"")?;
+const TAIPO_SCHEMA: &'static str = r#"
+version     text    default "0.0.1",        
+mode        text    default "4k",           
+query       text    default "m.nps between 2 and 10 and dmin>100",
+                                            
+parseDate   integer default 0,              
+seed        integer default 0,              
+speed       real    default 1.0,            
+volume      real    default 1.0,            
+aset        real    default 0.0,            
+iset        real    default 0.0,            
+window      real    default 0.5             
+"#;
+
+
+// [test]
+// fn insert ..
+
+use transactions and caching
+
+conn.execute("INSERT INTO person (name, email) VALUES (?1, ?2)",
+&[&name, &email]).unwrap();
+
+conn.execute("INSERT INTO person (name, email) VALUES (:name, :email)",
+&[(":name", &name), (":email", &email),])?;
+
+let stmt = self.conn.prepare("INSERT INTO person (name, email) VALUES (:name, :email)")?;
+
+context.conn.execute_batch("BEGIN TRANSACTION;")?;
+for p in persons_to_insert {
+  context.create_person(&p.name, &p.email)?;
+}
+context.conn.execute_batch("COMMIT TRANSACTION;")?;
+
+
+
+fn insert_new_people(conn: &Connection) -> Result<()> {
+    {
+        let mut stmt = conn.prepare_cached("INSERT INTO People (name) VALUES (?)")?;
+        stmt.execute(&["Joe Smith"])?;
+    }
+    {
+        // This will return the same underlying SQLite statement handle without
+        // having to prepare it again.
+        let mut stmt = conn.prepare_cached("INSERT INTO People (name) VALUES (?)")?;
+        stmt.execute(&["Bob Jones"])?;
+    }
+    Ok(())
+}
+
+fn insert_new_people(conn: &Connection) -> Result<()> {
+    let mut stmt = conn.prepare("INSERT INTO People (name) VALUES (?)")?;
+    stmt.execute(&["Joe Smith"])?;
+    stmt.execute(&["Bob Jones"])?;
+    Ok(())
+}
+
+fn create_tables(conn: &Connection) -> Result<()> {
+    conn.execute_batch(
+        "BEGIN;
+                        CREATE TABLE foo(x INTEGER);
+                        CREATE TABLE bar(y TEXT);
+                        COMMIT;",
+    )
+}
+
+fn update_rows(conn: &Connection) {
+    match conn.execute("UPDATE foo SET bar = 'baz' WHERE qux = ?", &[1i32]) {
+        Ok(updated) => println!("{} rows were updated", updated),
+        Err(err) => println!("update failed: {}", err),
+    }
+}

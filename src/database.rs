@@ -2,17 +2,65 @@
 
 use rusqlite::{params, Connection};
 use std::{
-    collections::hash_map::DefaultHasher,
+    collections::hash_map::{HashMap,DefaultHasher},
     hash::{Hash, Hasher},
 };
+
+pub struct Database {
+    conn: Connection,
+}
 
 #[derive(Hash)]
 struct Map {}
 
+impl Database {
+    pub fn init() -> Result<Database, String> {
+        let conn = Connection::open("taipo.db").map_err(|e| format!("Could not connect to taipo.db: {}", e))?;
+        // nuke tables?
+        Database::create_tables(
+            &conn,
+            &[
+                ("maps", MAP_SCHEMA),
+                ("scores", SCORE_SCHEMA),
+                ("collection", COLLECTION_SCHEMA),
+            ],
+        )?;
+        // verify schema?
+        // -- parse/reparse based on taipo.parseDate
+        // -- add row to taipo table (remember to preset aset somewhere with mp.get_delay)
+
+        Ok(Database { conn })
+    }
+    pub fn create_tables(conn: &Connection, tables: &[(&str, &str)]) -> Result<usize, String> {
+        tables.iter().fold(Ok(0), |r, (t, s)| Database::create_table(&conn, t, s))
+    }
+    pub fn create_table(conn: &Connection, table: &str, schema: &str) -> Result<usize, String> {
+        conn.execute(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema), params![])
+            .map_err(|e| format!("Could not create table {}: {}", table, e))
+    }
+
+    //// bind these to keys or user input
+    // exec
+    // query
+
+    // insert map(s)
+    // insert collection(s)
+    // insert score
+
+    // delete map(s)
+    // delete collection
+    // delete score
+
+    // rename collection (rename to "" = delete?)
+
+    // change taipo settings
+}
+
+// add defaults for everything ...
 // fromto? is that practice specific?
 // mode and median would also be nice to know (mostly mode)
 // query unplayed = where map not in scores
-const MAP_SCHEMA: &'static str = "
+const MAP_SCHEMA: &'static str = r#"
 id              integer primary key,    -- map id
 source          text,                   -- osu|sm|ssc|bms|ojn
 mode            text,                   -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
@@ -41,128 +89,52 @@ smax            integer,    -- maximum note streak
 
 offsetms        real,       -- audio offset (s)
 
-notes           blob       -- compressed form of [Note]
-";
+notes           blob       -- compressed form of [Note]?
+"#;
 
 // should I include more than just max combo? (I like NF only though)
 // an array for error as well as more stats on hit offset would be nice
-const SCORE_SCHEMA: &'static str = "
+const SCORE_SCHEMA: &'static str = r#"
 id              integer primary key,    -- score id
 map             integer,                -- map id
 
 score           real,       -- f(map.difficulty,acc,combo,speed,mode)
 acc             real,       -- percent accuracy out of 100
-combo           integer,    -- max combo
-error           integer,    -- average error (s)
+error           real,       -- average error (s)
 speed           real,       -- speed the map was played at (0.5-3.0)
+combo           integer,    -- max combo
 mode            integer,    -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
 seed            integer,    -- the random seed
 date            integer     -- date the score was achieved
-";
+"#;
 
-const COLLECTION_SCHEMA: &'static str = "
+const COLLECTION_SCHEMA: &'static str = r#"
 id              integer primary key,    -- collection id
 map             integer,                -- map id
 name            text                    -- name of collection
-";
+"#;
 
-// do this or use a serialized struct instead?
-// font, resolution, window mode, skins, input bindings
-const TAIPO_SCHEMA: &'static str = "
-version     integer,    -- taipo version
-parse       integer,    -- date the last map parse was performed (if any folders are newer than that, reparse)
-seed        integer,    -- last selected seed
-query       text,       -- last sql query
-mode        text,       -- last selected mode (other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k)
-speed       real,       -- last selected speed
-volume      real,       -- last selected volume
-aset        real,       -- last selected audio offset (s) - should only ever be negative (play audio sooner) (= -mp.latency() by default)
-iset        real,       -- last selected input offset (s) - should only ever be negative (substract from timestamp)
-window      real        -- last selected hit window (s)
-";
+// font, resolution, window mode, skins, input bindings, etc. (all in db??)
+struct Settings {
+    // internal settings
+    version: String, // taipo version
+    query: String,   // last sql query
+    parse_date: u64, // date the last map parse was performed (if any folders are newer than that default "", reparse)
+    
+    // gameplay settings
+    mode: String,    // last selected mode (other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k)
+    seed: u64,       // last selected seed
+    speed: f32,      // last selected speed
+    volume: f32,     // last selected volume
+    aset: f32, // last selected audio offset (s) - should only ever be negative (play audio sooner) (= -mp.latency() by default)
+    iset: f32, // last selected input offset (s) - should only ever be negative (substract from timestamp)
+    window: f32, // last selected hit window (s)
+    
+    // game settings
+    skin: String,
+    font: String, // Font
+    resolution: (f32, f32),
+    window_mode: String, // String -> SDL
+    bindings: HashMap<String,Vec<u64>>, // u64 -> SDL_Input
 
-pub struct Database {
-    conn: Connection,
 }
-
-impl Database {
-    pub fn init() -> Result<Database, String> {
-        let conn = Connection::open("taipo.db").map_err(|e| format!("Could not connect to taipo.db: {}", e))?;
-        Database::create_tables(
-            &conn,
-            &[
-                ("maps", MAP_SCHEMA),
-                ("scores", SCORE_SCHEMA),
-                ("collection", COLLECTION_SCHEMA),
-            ],
-        )?;
-        Ok(Database { conn })
-    }
-    pub fn create_tables(conn: &Connection, tables: &[(&str, &str)]) -> Result<usize, String> {
-        tables.iter().fold(Ok(0), |r, (t, s)| Database::create_table(&conn, t, s))
-    }
-    pub fn create_table(conn: &Connection, table: &str, schema: &str) -> Result<usize, String> {
-        conn.execute(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema), params![])
-            .map_err(|e| format!("Could not create table {}: {}", table, e))
-    }
-}
-
-// [test]
-// fn insert ..
-
-/*
-use transactions and caching
-
-conn.execute("INSERT INTO person (name, email) VALUES (?1, ?2)",
-&[&name, &email]).unwrap();
-
-conn.execute("INSERT INTO person (name, email) VALUES (:name, :email)",
-&[(":name", &name), (":email", &email),])?;
-
-let stmt = self.conn.prepare("INSERT INTO person (name, email) VALUES (:name, :email)")?;
-
-context.conn.execute_batch("BEGIN TRANSACTION;")?;
-for p in persons_to_insert {
-  context.create_person(&p.name, &p.email)?;
-}
-context.conn.execute_batch("COMMIT TRANSACTION;")?;
-
-
-
-fn insert_new_people(conn: &Connection) -> Result<()> {
-    {
-        let mut stmt = conn.prepare_cached("INSERT INTO People (name) VALUES (?)")?;
-        stmt.execute(&["Joe Smith"])?;
-    }
-    {
-        // This will return the same underlying SQLite statement handle without
-        // having to prepare it again.
-        let mut stmt = conn.prepare_cached("INSERT INTO People (name) VALUES (?)")?;
-        stmt.execute(&["Bob Jones"])?;
-    }
-    Ok(())
-}
-
-fn insert_new_people(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare("INSERT INTO People (name) VALUES (?)")?;
-    stmt.execute(&["Joe Smith"])?;
-    stmt.execute(&["Bob Jones"])?;
-    Ok(())
-}
-
-fn create_tables(conn: &Connection) -> Result<()> {
-    conn.execute_batch(
-        "BEGIN;
-                        CREATE TABLE foo(x INTEGER);
-                        CREATE TABLE bar(y TEXT);
-                        COMMIT;",
-    )
-}
-
-fn update_rows(conn: &Connection) {
-    match conn.execute("UPDATE foo SET bar = 'baz' WHERE qux = ?", &[1i32]) {
-        Ok(updated) => println!("{} rows were updated", updated),
-        Err(err) => println!("update failed: {}", err),
-    }
-}
-*/
