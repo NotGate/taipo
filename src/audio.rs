@@ -14,7 +14,7 @@ pub struct MusicPlayer {
 
 impl MusicPlayer {
     pub fn init() -> Result<MusicPlayer, String> {
-        Bass::set_config(BASS_CONFIG_BUFFER, 5000)?;   // 5000 ms instead of 500 ms (lower is choppier)
+        Bass::set_config(BASS_CONFIG_BUFFER, 5000)?; // 5000 ms instead of 500 ms (lower is choppier)
         Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?; // more consistent playback latency
 
         Bass::init(44100, 0)?;
@@ -71,7 +71,7 @@ impl MusicPlayer {
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_VOL, val)
     }
     pub fn get_speed(&self) -> Result<f32, String> {
-        Ok(1.0 + (Bass::channel_get_attribute(self.handle, BASS_ATTRIB_TEMPO)?/ 100.0))
+        Ok(1.0 + (Bass::channel_get_attribute(self.handle, BASS_ATTRIB_TEMPO)? / 100.0))
     }
     pub fn get_volume(&self) -> Result<f32, String> {
         Bass::channel_get_attribute(self.handle, BASS_ATTRIB_VOL)
@@ -79,8 +79,8 @@ impl MusicPlayer {
     pub fn is_playing(&self) -> Result<bool, String> {
         Bass::channel_is_active(self.handle).map(|d: DWORD| if d == 1 { true } else { false })
     }
-    pub fn get_latency(&self) -> Result<u32,String> {
-        Bass::get_info().map(|s:BASS_INFO| s.latency)
+    pub fn get_latency(&self) -> Result<u32, String> {
+        Bass::get_info().map(|s: BASS_INFO| s.latency)
     }
 }
 
