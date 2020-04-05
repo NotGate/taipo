@@ -15,13 +15,8 @@ pub struct MusicPlayer {
 impl MusicPlayer {
     pub fn init() -> Result<MusicPlayer, String> {
         // http://www.un4seen.com/doc/#bass/BASS_SetConfig.html
-        Bass::set_config(BASS_CONFIG_BUFFER, 100)?; // 100 ms instead of 500 ms
-        // Bass::set_config(BASS_CONFIG_NET_BUFFER, 500)?;
-        // Bass::set_config(BASS_CONFIG_MP3_OLDGAPS, 1)?;
-        // Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?;
-        // Bass::set_config(BBASS_CONFIG_UPDATEPERIOD, 0)?;
-        // Bass::set_config(BASS_CONFIG_UPDATETHREADS, 0)?;
-        // Bass::set_config(BASS_CONFIG_VISTA_TRUEPOS, 0)?
+        Bass::set_config(BASS_CONFIG_BUFFER, 5000)?; // 100 ms instead of 500 ms (lower is choppier)
+        Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?; // more consistent playback latency
 
         Bass::init(44100, 0)?;
         Ok(MusicPlayer {
