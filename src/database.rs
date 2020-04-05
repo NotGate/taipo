@@ -8,15 +8,11 @@ struct Map {
     
 }
 
-// global:
-// audio offset (notes get there early because audio gets to me late)
-// -- should only ever be negative (play audio sooner) (= -mp.latency() by default)
-// input offset (notes are hit late because my input gets to the computer late)
-// -- should only ever be negative (substract from timestamp)
-
-// fromto?
-const map_schema: &'static str = "
-id              integer primary key,    -- hash of Map
+// fromto? is that practice specific?
+// should the id be a hash?
+// mode and median would also be nice to know (mostly mode)
+const MAP_SCHEMA: &'static str = "
+id              integer primary key,    -- map id
 source          text,                   -- osu|sm|ssc|bms|ojn
 mode            text,                   -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
 tags            text,                   -- space separated list of strings
@@ -33,7 +29,7 @@ count           integer,    -- number of notes
 length          real,       -- length of song (s)
 bpm             real,       -- mode beats per minute
 nps             real,       -- avg notes per second
-difficulty      real,       -- 
+difficulty      real,       -- f(count,length,nps,deltas,streaks)
 dmin            real,       -- minimum difference between notes (s)
 davg            real,       -- average difference between notes (s)
 dmax            real,       -- maximum difference between notes (s)
@@ -45,6 +41,28 @@ offsetms        real,       -- audio offset (s)
 notes           blob       -- compressed form of [Note]
 ";
 
+// should I include more than just max combo (I like NF only though)
+// an array for error as well as more stats would be nice
+const SCORE_SCHEMA: &'static str = "
+id              integer primary key,    -- score id
+map             integer,                -- map id
+
+score           real,       -- f(map.difficulty,acc,combo,speed,mode)
+acc             real,       -- percent accuracy out of 100
+combo           integer,    -- max combo
+error           integer,    -- average error (s)
+speed           real,       -- speed the map was played at (0.5-3.0)
+mode            integer,    -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
+seed            integer,    -- the random seed
+date            integer     -- date the score was achieved
+";
+
+const COLLECTION_SCHEMA: &'static str = "
+id              integer primary key,    -- collection id
+map             integer,                -- map id
+name            text                    -- name of collection
+";
+
 pub struct Database {
     conn: Connection,
 }
@@ -52,9 +70,9 @@ pub struct Database {
 impl Database {
     pub fn init() -> Result<Database, String> {
         let conn = Connection::open("taipo.db").map_err(|e| format!("Could not connect to taipo.db: {}",e))?;
-        Database::create_table(&conn,"maps",map_schema)?;
-        // Database::create_table(conn,"scores",scores_schema)?;
-        // Database::create_table(conn,"collection",collection_schema)?;
+        Database::create_table(&conn,"maps",MAP_SCHEMA)?;
+        Database::create_table(&conn,"scores",SCORE_SCHEMA)?;
+        Database::create_table(&conn,"collection",COLLECTION_SCHEMA)?;
         Ok(Database {
             conn
         })

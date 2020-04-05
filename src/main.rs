@@ -2,8 +2,10 @@
 
 mod audio;
 mod database;
+
 use audio::MusicPlayer;
 use database::Database;
+
 fn main() -> Result<(), String> {
     let db = Database::init()?;
     Ok(())
@@ -22,3 +24,11 @@ loop {
 */
 
 // find ./src | entr -cs 'cargo run'
+
+/* 
+global:
+audio offset (notes get there early because audio gets to me late)
+-- should only ever be negative (play audio sooner) (= -mp.latency() by default)
+input offset (notes are hit late because my input gets to the computer late)
+-- should only ever be negative (substract from timestamp)
+*/
