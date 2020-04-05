@@ -98,18 +98,16 @@ impl Database {
         )?;
         Ok(Database { conn })
     }
-    pub fn create_tables(conn: &Connection, tables: &[(&'static str, &'static str)]) -> Result<usize, String> {
-        tables
-            .iter()
-            .fold(Ok(0), |r, (t, s)| Database::create_table(&conn, t, s))
+    pub fn create_tables(conn: &Connection, tables: &[(&str, &str)]) -> Result<usize, String> {
+        tables.iter().fold(Ok(0), |r, (t, s)| Database::create_table(&conn, t, s))
     }
-    pub fn create_table(conn: &Connection, table: &'static str, schema: &'static str) -> Result<usize, String> {
+    pub fn create_table(conn: &Connection, table: &str, schema: &str) -> Result<usize, String> {
         conn.execute(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema), params![])
             .map_err(|e| format!("Could not create table {}: {}", table, e))
     }
 }
 
-// #[test]
+// [test]
 // fn insert ..
 
 /*
