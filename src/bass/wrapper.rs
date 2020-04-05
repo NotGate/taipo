@@ -33,10 +33,13 @@ impl Bass {
         callv!("channel_bytes2seconds", BASS_ChannelBytes2Seconds(handle, pos))
     }
     pub fn channel_set_position(handle: DWORD, pos: QWORD) -> Result<(), String> {
-        call!("channel_set_position", BASS_ChannelSetPosition(handle, pos, 0))
+        call!("channel_set_position", BASS_ChannelSetPosition(handle, pos, BASS_POS_BYTE))
     }
     pub fn channel_get_position(handle: DWORD) -> Result<QWORD, String> {
-        callv!("channel_get_position", BASS_ChannelGetPosition(handle, 0))
+        callv!("channel_get_position", BASS_ChannelGetPosition(handle, BASS_POS_BYTE))
+    }
+    pub fn channel_get_length(handle: DWORD) -> Result<QWORD, String> {
+        callv!("channel_get_length", BASS_ChannelGetLength(handle, BASS_POS_BYTE))
     }
     pub fn fx_tempo_create(chan: DWORD, flags: DWORD) -> Result<HSTREAM, String> {
         callv!("fx_tempo_create", BASS_FX_TempoCreate(chan, flags))
@@ -50,8 +53,25 @@ impl Bass {
     pub fn channel_set_attribute(handle: DWORD, attrib: DWORD, val: f32) -> Result<(), String> {
         call!("channel_set_attribute", BASS_ChannelSetAttribute(handle, attrib, val))
     }
-    pub fn channel_get_attribute(handle: DWORD, attrib: DWORD, val: *mut f32) -> Result<(), String> {
-        call!("channel_get_attribute", BASS_ChannelGetAttribute(handle, attrib, val))
+    pub fn channel_get_attribute(handle: DWORD, attrib: DWORD) -> Result<f32, String> {
+        let mut v = 0.0;
+        call!("channel_get_attribute", BASS_ChannelGetAttribute(handle, attrib, &mut v))?;
+        Ok(v)
+    }
+    pub fn channel_is_active(handle: DWORD) -> Result<DWORD,String> {
+        callv!("channel_is_active",BASS_ChannelIsActive(handle))
+    }
+    pub fn get_config(option: DWORD) -> Result<DWORD,String> {
+        callv!("get_config", BASS_GetConfig(option))
+    }
+    pub fn set_config(option: DWORD, value: DWORD) -> Result<(), String> {
+        call!("set_config", BASS_SetConfig(option, value))
+    }
+    // http://www.un4seen.com/doc/#bass/BASS_INFO.html
+    pub fn get_info() -> Result<BASS_INFO, String> {
+        let mut info: BASS_INFO = unsafe { core::mem::zeroed() };
+        call!("get_info",BASS_GetInfo(&mut info))?;
+        Ok(info)
     }
     pub fn stream_create_file(buffer: &[u8], flags: DWORD) -> Result<HSTREAM, String> {
         callv!(

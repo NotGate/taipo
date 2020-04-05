@@ -1,21 +1,14 @@
 mod audio;
 use audio::MusicPlayer;
 fn main() -> Result<(), String> {
-    println!("{:#x}", unsafe { audio::BASS_GetVersion() });
-    println!("{:#x}", unsafe { audio::BASS_FX_GetVersion() });
-
     let mut mp = MusicPlayer::init()?;
     mp.load("assets/sounds/test.mp3")?;
-    println!("{}",mp.get_speed()?);
-    println!("{}",mp.get_volume()?);
     mp.set_speed(1.2)?;
     mp.set_volume(0.6)?;
-    println!("{}",mp.get_speed()?);
-    println!("{}",mp.get_volume()?);
     mp.seek(0.0)?;
     mp.play()?;
     loop {
-        // println!("{}", mp.pos()?);
+        println!("{}", mp.pos()?);
     }
 }
 
