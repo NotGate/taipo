@@ -76,8 +76,8 @@ query       text,       -- last sql query
 mode        text,       -- last selected mode (other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k)
 speed       real,       -- last selected speed
 volume      real,       -- last selected volume
-aset        real,       -- last selected audio offset (s)
-iset        real,       -- last selected input offset (s)
+aset        real,       -- last selected audio offset (s) - should only ever be negative (play audio sooner) (= -mp.latency() by default)
+iset        real,       -- last selected input offset (s) - should only ever be negative (substract from timestamp)
 window      real        -- last selected hit window (s)
 ";
 
