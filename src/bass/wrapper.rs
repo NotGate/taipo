@@ -50,6 +50,7 @@ impl Bass {
     pub fn channel_pause(handle: DWORD) -> Result<(), String> {
         call!("channel_pause", BASS_ChannelPause(handle))
     }
+    // http://www.un4seen.com/doc/#bass/BASS_ChannelSetAttribute.html
     pub fn channel_set_attribute(handle: DWORD, attrib: DWORD, val: f32) -> Result<(), String> {
         call!("channel_set_attribute", BASS_ChannelSetAttribute(handle, attrib, val))
     }
@@ -64,6 +65,7 @@ impl Bass {
     pub fn get_config(option: DWORD) -> Result<DWORD,String> {
         callv!("get_config", BASS_GetConfig(option))
     }
+    // http://www.un4seen.com/doc/#bass/BASS_SetConfig.html
     pub fn set_config(option: DWORD, value: DWORD) -> Result<(), String> {
         call!("set_config", BASS_SetConfig(option, value))
     }

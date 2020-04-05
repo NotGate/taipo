@@ -14,8 +14,7 @@ pub struct MusicPlayer {
 
 impl MusicPlayer {
     pub fn init() -> Result<MusicPlayer, String> {
-        // http://www.un4seen.com/doc/#bass/BASS_SetConfig.html
-        Bass::set_config(BASS_CONFIG_BUFFER, 5000)?; // 100 ms instead of 500 ms (lower is choppier)
+        Bass::set_config(BASS_CONFIG_BUFFER, 5000)?;   // 5000 ms instead of 500 ms (lower is choppier)
         Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?; // more consistent playback latency
 
         Bass::init(44100, 0)?;
@@ -45,8 +44,7 @@ impl MusicPlayer {
             )?,
             BASS_FX_FREESOURCE | BASS_MUSIC_LOOP,
         )?;
-        // TODO: research
-        // Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_USE_QUICKALGO, 1.0)?;
+        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_USE_QUICKALGO, 1.0)?;
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 30.0)?;
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 4.0)?;
         Ok(())
@@ -84,7 +82,6 @@ impl MusicPlayer {
     pub fn get_latency(&self) -> Result<u32,String> {
         Bass::get_info().map(|s:BASS_INFO| s.latency)
     }
-    // http://www.un4seen.com/doc/#bass/BASS_ChannelSetAttribute.html
 }
 
 impl Drop for MusicPlayer {
