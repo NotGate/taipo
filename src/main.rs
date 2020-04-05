@@ -1,4 +1,6 @@
 #![allow(dead_code)]
+#![allow(unused_imports)]
+#![allow(unused_variables)]
 
 mod audio;
 mod database;
@@ -25,7 +27,7 @@ loop {
 
 // find ./src | entr -cs 'cargo run'
 
-/* 
+/*
 global:
 audio offset (notes get there early because audio gets to me late)
 -- should only ever be negative (play audio sooner) (= -mp.latency() by default)
