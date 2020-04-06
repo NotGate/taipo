@@ -8,60 +8,72 @@ use std::{
     path::{Path, PathBuf},
 };
 
-#[derive(Debug, Default)]
-pub struct Map {}
+#[derive(Debug, Default, Clone, Copy)]
+pub struct Map {
+    nps: f32
+}
 
 const CONN: i32 = 0;
 fn insert(c: &i32, chunk: &[Map]) {
     println!("{:?}", chunk);
 }
 
-
-struct Parser<T:FSM+Default> {
-    fsm: T, // don't need this as a field (remember things are multithreaded)
-    // parse_directory
-    // parse_file
-    // -- let mut m = Map::default()
-    // -- let mut fsm = T::default()
-    // -- fsm.load(&mut m);
-    // -- fsm.parse_line("fldkj");
+use std::marker::PhantomData;
+pub struct Parser<T> {
+    directory: String,
+    t: PhantomData<T>,
 }
 
-// should this auto-exectract archives into folders so those can be parsed too?
-pub fn parse_directory(directory: &str, fileglob: &str, limit: usize, batch_size: usize, f: fn(&PathBuf) -> Option<Map>) {
-    glob(Path::new(directory).join(fileglob).to_str().expect("Path is invalid unicode"))
+impl<T: FSM + Sync> Parser<T> {
+    pub fn init(directory: String) -> Self {
+        Parser {
+            directory,
+            t: PhantomData,
+        }
+    }
+    // should this auto-exectract archives into folders so those can be parsed too?
+    pub fn parse_directory(&self, limit: usize, batch_size: usize) {
+        glob(
+            Path::new(&self.directory)
+                .join(T::glob())
+                .to_str()
+                .expect("Path is invalid unicode"),
+        )
         .expect("Invalid glob")
         .filter_map(Result::ok)
         .take(limit)
         .collect::<Vec<PathBuf>>()
         .par_iter()
-        .filter_map(f)
+        .filter_map(|path| self.parse_file(path))
         .collect::<Vec<Map>>()
         .chunks(batch_size)
         .for_each(|chunk| insert(&CONN, &chunk[..]));
+    }
+    pub fn parse_file(&self, path: &PathBuf) -> Option<Map> {
+        let mut fsm = T::init();
+        BufReader::new(File::open(path).expect(&format!("Could not open {}", path.display())))
+            .lines()
+            .filter_map(Result::ok)
+            .for_each(|line| fsm.parse_line(&line));
+        Some(fsm.get())
+    }
 }
-
-pub fn parse_file<T:FSM>(path: &PathBuf, fsm:&mut T) -> Result<Map, String> {
-    let m = Map::default();
-    // fsm.load_map(&mut m);
-    BufReader::new(File::open(path).map_err(|e| format!("Couldn't open file {}: {}", path.display(), e))?)
-        .lines()
-        .filter_map(Result::ok)
-        //.map(|l| l.trim())
-        .for_each(|line| fsm.parse_line(&line));
-    Ok(m)
-}
-
-// FSM { osu { start, general, ..., end }, bms, sm, ojn }
-// parse -> change &state, change &map
 
 pub trait FSM {
-    fn parse_line(&mut self,line:&str);
-
+    fn init() -> Self;
+    fn glob() -> String;
+    fn parse_line(&mut self, line: &str);
+    fn get(&self) -> Map;
 }
 
 #[derive(Debug)]
-pub enum OSU {
+pub struct OsuFsm {
+    map: Map,
+    state: OsuState,
+}
+
+#[derive(Debug,std::cmp::PartialEq)]
+pub enum OsuState {
     Start,
     General,      //kv
     Metadata,     //kv
@@ -71,24 +83,42 @@ pub enum OSU {
     TimingPoints, //Comma-separated lists
     Colours,      //kv
     HitObjects,   //Comma-separated lists
-    End
+    End,
 }
 
-impl FSM for OSU {
-    fn parse_line(&mut self,line:&str) {
-        *self = match std::mem::replace(self, OSU::Start) {
-            OSU::Start => OSU::General,
-            OSU::General => OSU::Metadata,
-            OSU::Metadata => OSU::Editor,
-            OSU::Editor => OSU::Difficulty,
-            OSU::Difficulty => OSU::Events,
-            OSU::Events => OSU::TimingPoints,
-            OSU::TimingPoints => OSU::Colours,
-            OSU::Colours => OSU::HitObjects,
-            OSU::HitObjects => OSU::End,
-            OSU::End => OSU::End,
+impl FSM for OsuFsm {
+    fn init() -> Self {
+        OsuFsm {
+            map: Map::default(),
+            state: OsuState::Start,
+        }
+    }
+    fn glob() -> String {
+        "**/*.osu".into()
+    }
+    fn parse_line(&mut self, line: &str) {
+        use OsuState::*;
+        if self.state == Start {
+            self.map.nps = 3.0;
+        }
+        self.state = match self.state {
+            Start => General,
+            General => Metadata,
+            Metadata => Editor,
+            Editor => Difficulty,
+            Difficulty => Events,
+            Events => TimingPoints,
+            TimingPoints => Colours,
+            Colours => HitObjects,
+            HitObjects => End,
+            End => End,
         };
-        println!("{:?}",self);
+        if self.state != End {
+            println!("{:?},{}", self.state,line);
+        }
+    }
+    fn get(&self) -> Map {
+        self.map.clone()
     }
 }
 
@@ -96,3 +126,5 @@ pub enum SM {}
 pub enum SSC {}
 pub enum BMS {}
 pub enum OJN {}
+
+// type Thunk = Box<dyn Fn() + Send + 'static>;
