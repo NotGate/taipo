@@ -1,11 +1,11 @@
-use std::{
-    collections::hash_map::{DefaultHasher, HashMap},
-    hash::{Hash, Hasher},
-};
+use std::collections::{hash_map::DefaultHasher, HashMap};
+use std::hash::{Hash, Hasher};
 
 // str without chaining lifetimes through everything??
-#[derive(Debug, Default, Clone)]
+#[derive(Default, Clone, Debug, Insertable, Queryable, QueryableByName)]
+#[table_name = "maps"]
 pub struct Map {
+    pub id: String,
     pub source: String,
     pub mode: String,
     pub format: String,
@@ -21,7 +21,7 @@ pub struct Map {
     pub creator: String,
     pub version: String,
 
-    pub count: usize,
+    pub count: i32,
     pub length: f32,
     pub bpm: f32,
     pub nps: f32,
@@ -35,14 +35,50 @@ pub struct Map {
 
     pub offsetms: i32,
 
-    pub notes: Vec<i32>,
+    pub notes: String,
+}
+
+table! {
+    maps {
+        id -> Text,
+        source -> Text,
+        mode -> Text,
+        format -> Text,
+        tags -> Text,
+        preview -> Float,
+
+        map -> Integer,
+        audio -> Text,
+        background -> Text,
+
+        title -> Text,
+        artist -> Text,
+        creator -> Text,
+        version -> Text,
+
+        count -> Integer,
+        length -> Float,
+        bpm -> Float,
+        nps -> Float,
+        difficulty -> Float,
+        dmin -> Integer,
+        davg -> Integer,
+        dmax -> Integer,
+        smin -> Integer,
+        savg -> Integer,
+        smax -> Integer,
+
+        offsetms -> Integer,
+
+        notes -> Text,
+    }
 }
 
 // fromto? is that practice specific?
 // mode and median would also be nice to know (mostly mode)
 // query unplayed = where map not in scores
 pub const MAP_SCHEMA: &'static str = r#"
-id              integer primary key,    -- map id
+id              text,                   -- map id
 source          text,                   -- osu|sm|ssc|bms|ojn
 mode            text,                   -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
 format          text,                   -- file format (v6|v7|v8|..)
@@ -72,8 +108,33 @@ smax            integer,    -- maximum note streak
 
 offsetms        integer,    -- audio offset (s)
 
-notes           blob        -- compressed form of [Note]?
+notes           text        -- compressed form of [Note]?
 "#;
+
+// add defaults for everything
+// remember to preset aset somewhere with mp.get_delay
+pub struct Settings {
+    // internal settings
+    version: String, // taipo version
+    query: String,   // last sql query
+    parse_date: u64, // date the last map parse was performed (if any folders are newer than that default "", reparse)
+
+    // gameplay settings
+    mode: String, // last selected mode (other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k)
+    seed: u64,    // last selected seed
+    speed: f32,   // last selected speed
+    volume: f32,  // last selected volume
+    aset: f32, // last selected audio offset (s) - should only ever be negative (play audio sooner) (= -mp.latency() by default)
+    iset: f32, // last selected input offset (s) - should only ever be negative (substract from timestamp)
+    window: f32, // last selected hit window (s)
+
+    // game settings
+    skin: String,
+    font: String, // Font
+    resolution: (f32, f32),
+    window_mode: String,                 // String -> SDL
+    bindings: HashMap<String, Vec<u64>>, // u64 -> SDL_Input
+}
 
 // should I include more than just max combo? (I like NF only though)
 // an array for error as well as more stats on hit offset would be nice
@@ -97,26 +158,25 @@ map             integer,                -- map id
 name            text                    -- name of collection
 "#;
 
-// add defaults for everything
-pub struct Settings {
-    // internal settings
-    version: String, // taipo version
-    query: String,   // last sql query
-    parse_date: u64, // date the last map parse was performed (if any folders are newer than that default "", reparse)
+// PLEASE REDUCE REPTITION SOMEHOW
+// #![feature(concat_idents)]
+// macro_rules! t {
+//     ($name:ident $($i:ident:$t:ty)*) => {
+//         #[derive(Default, Clone, Debug, Queryable, Insertable)]
+//         #[table_name="apples"]
+//         pub struct $name {
+//             pub $i: $t,
+//         }
+//         table! {
+//             $name {
 
-    // gameplay settings
-    mode: String, // last selected mode (other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k)
-    seed: u64,    // last selected seed
-    speed: f32,   // last selected speed
-    volume: f32,  // last selected volume
-    aset: f32, // last selected audio offset (s) - should only ever be negative (play audio sooner) (= -mp.latency() by default)
-    iset: f32, // last selected input offset (s) - should only ever be negative (substract from timestamp)
-    window: f32, // last selected hit window (s)
+//             }
+//         }
+//     };
+// }
 
-    // game settings
-    skin: String,
-    font: String, // Font
-    resolution: (f32, f32),
-    window_mode: String,                 // String -> SDL
-    bindings: HashMap<String, Vec<u64>>, // u64 -> SDL_Input
-}
+// t!{Apple
+//     id:i32
+//     source:String
+//     preview:f32
+// }

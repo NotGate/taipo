@@ -1,91 +1,85 @@
-use crate::schema::{Map, COLLECTION_SCHEMA, MAP_SCHEMA, SCORE_SCHEMA};
-use rusqlite::{params, Connection};
+use crate::schema::{maps, Map, COLLECTION_SCHEMA, MAP_SCHEMA, SCORE_SCHEMA};
+use diesel::{insert_into, prelude::*, sql_query, dsl::sql, SqliteConnection, *};
 use std::{
     collections::hash_map::{DefaultHasher, HashMap},
     hash::{Hash, Hasher},
 };
 
 pub struct Database {
-    conn: Connection,
+    conn: SqliteConnection,
 }
 
 impl Database {
-    pub fn init() -> Result<Database, String> {
-        let conn = Connection::open("taipo.db").map_err(|e| format!("Could not connect to taipo.db: {}", e))?;
-        // nuke tables?
-        Database::create_tables(
-            &conn,
-            &[
-                ("maps", MAP_SCHEMA),
-                ("scores", SCORE_SCHEMA),
-                ("collection", COLLECTION_SCHEMA),
-            ],
-        )?;
-        // verify schema?
-        // -- parse/reparse based on taipo.parseDate
-        // -- add row to taipo table (remember to preset aset somewhere with mp.get_delay)
-
+    // General
+    pub fn connect() -> Result<Database, String> {
+        let conn = SqliteConnection::establish("taipo.db").map_err(|e| format!("Could not connect to taipo.db: {}", e))?;
         Ok(Database { conn })
     }
-    pub fn create_tables(conn: &Connection, tables: &[(&str, &str)]) -> Result<usize, String> {
-        tables.iter().fold(Ok(0), |r, (t, s)| Database::create_table(&conn, t, s))
+    pub fn exec(&self, query: &str) -> Result<(), String> {
+        sql_query(query)
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not exec statement: {}", e))?;
+        Ok(())
     }
-    pub fn create_table(conn: &Connection, table: &str, schema: &str) -> Result<usize, String> {
-        conn.execute(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema), params![])
-            .map_err(|e| format!("Could not create table {}: {}", table, e))
+
+    // Tables (cd)
+    pub fn create_table(&self, table: &str, schema: &str) -> Result<(), String> {
+        self.exec(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema))?;
+        Ok(())
     }
-    // how do I bulk insert??
+    pub fn create_tables(&self) -> Result<(), String> {
+        self.create_table("maps", MAP_SCHEMA)?;
+        self.create_table("scores", SCORE_SCHEMA)?;
+        self.create_table("collections", COLLECTION_SCHEMA)?;
+        Ok(())
+    }
+    pub fn drop_table(&self, table: &str) -> Result<(), String> {
+        self.exec(&format!("DROP TABLE IF EXISTS {}", table))?;
+        Ok(())
+    }
+    pub fn drop_tables(&self) -> Result<(), String> {
+        self.drop_table("maps")?;
+        self.drop_table("scores")?;
+        self.drop_table("collections")?;
+        Ok(())
+    }
+
+    // Map (iqd)
     pub fn insert_maps(&self, maps: &[Map]) -> Result<(), String> {
-        // println!("{:?}", maps);
-        let mut stmt = self
-            .conn
-            .prepare_cached("insert into maps (bpm,nps,difficulty) values (?1,?2,?3)")
-            .map_err(|e| format!("Could prepare statement: {}", e))?;
-        stmt.execute(&[180.0, 10.5, 30.6])
-            .map_err(|e| format!("Could not execute statement: {}", e))?;
+        insert_into(maps::table)
+            .values(maps)
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not insert maps: {}", e))?;
         Ok(())
     }
-    pub fn exec(&self, stmt: &str) -> Result<(), String> {
-        self.conn
-            .execute(stmt, params![])
-            .map_err(|e| format!("Could not exec statement"))?;
+    pub fn query_maps(&self, query: &str) -> Result<Vec<Map>, String> {
+        // join maps, scores, and collections on map id
+        let maps = maps::table
+            .filter(sql(query))
+            .load(&self.conn)
+            .map_err(|e| format!("Could not query maps: {}",e))?;
+        Ok(maps)
+    }
+    pub fn delete_maps(&self, maps: &[Map]) -> Result<(), String> {
         Ok(())
     }
-    pub fn query(&self, stmt: &str) -> Result<Vec<Map>, String> {
-        let mut stmt = self
-            .conn
-            .prepare("SELECT bpm,nps,difficulty FROM maps")
-            .map_err(|e| format!("Could not exec statement"))?;
-        let result = stmt
-            .query_map(params![], |row| {
-                Ok(Map {
-                    bpm: row.get::<usize, f64>(0)? as f32,
-                    nps: row.get::<usize, f64>(1)? as f32,
-                    difficulty: row.get::<usize, f64>(2)? as f32,
-                    ..Default::default()
-                })
-            })
-            .map_err(|e| format!("Could not execute statement: {}", e))?
-            .filter_map(Result::ok)
-            .collect::<Vec<Map>>();
-        Ok(result)
+
+    // Collection (ird)
+    pub fn insert_collections(&self) -> Result<(), String> {
+        Ok(())
+    }
+    pub fn rename_collection(&self) -> Result<(), String> {
+        Ok(())
+    }
+    pub fn delete_collection(&self) -> Result<(), String> {
+        Ok(())
     }
 
-    // FromSql ToSql
-
-    //// bind these to keys or user input
-    // exec
-    // query
-
-    // insert map(s)
-    // insert collection(s)
-    // insert score
-
-    // delete map(s)
-    // delete collection
-    // delete score
-
-    // rename collection (rename to "" = delete?)
-
-    // change taipo settings
+    // Score (id)
+    pub fn insert_score(&self) -> Result<(), String> {
+        Ok(())
+    }
+    pub fn delete_score(&self) -> Result<(), String> {
+        Ok(())
+    }
 }

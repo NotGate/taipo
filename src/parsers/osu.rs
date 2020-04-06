@@ -1,9 +1,14 @@
 use crate::{parsers::parser::FSM, schema::Map};
-use std::path::{Path, PathBuf};
+use std::{
+    collections::hash_map::DefaultHasher,
+    hash::{Hash, Hasher},
+    path::{Path, PathBuf},
+};
 
 #[derive(Debug)]
 pub struct OsuFsm {
     path: PathBuf,
+    notes: Vec<i32>,
     map: Map,
     state: OsuState,
 }
@@ -26,6 +31,7 @@ impl FSM for OsuFsm {
     fn init(path: &PathBuf) -> Self {
         OsuFsm {
             path: path.to_path_buf(),
+            notes: vec![],
             map: Map::default(),
             state: OsuState::Start,
         }
@@ -112,25 +118,26 @@ impl FSM for OsuFsm {
                 // println!("{:08b},{},{},{}",typ,x,y,time);
 
                 // should I filter this hear instead of during get()?
-                self.map.notes.push(time);
+                if self.notes.len() == 0 || (self.notes.len() > 0 && (time - self.notes[self.notes.len() - 1]) > 10) {
+                    self.notes.push(time);
+                }
             }
             _ => (),
         };
     }
     fn get(&mut self) -> Option<Map> {
-        if self.map.notes.len() < 10 {
+        if self.notes.len() < 10 {
             return None;
         }
 
-        self.map.length = (self.map.notes[self.map.notes.len() - 1] - self.map.notes[0]) as f32 / 1000.0;
+        self.map.length = (self.notes[self.notes.len() - 1] - self.notes[0]) as f32 / 1000.0;
         self.map.dmin = 10000;
         let diffs = self
-            .map
             .notes
             .windows(2)
             .map(|pair| pair[1] - pair[0])
             // figure out why there are negative deltas
-            .filter(|v| *v > 10)
+            // .filter(|v| *v > 10)
             .collect::<Vec<i32>>();
 
         // This shouldn't happen if you filter ahead of time
@@ -138,7 +145,7 @@ impl FSM for OsuFsm {
             return None;
         }
 
-        self.map.count = diffs.len() + 1;
+        self.map.count = diffs.len() as i32 + 1;
         self.map.nps = self.map.count as f32 / self.map.length;
 
         // deltas
@@ -148,6 +155,9 @@ impl FSM for OsuFsm {
             self.map.davg += d;
         });
         self.map.davg /= diffs.len() as i32 + 1;
+
+        // I can do it like this if I don't filter diffs? idk
+        // self.map.davg = (self.map.notes[self.map.notes.len() - 1] - self.map.notes[0]) / (diffs.len() as i32 + 1);
 
         // streaks
         let m = self.map.dmin as f32;
@@ -180,8 +190,20 @@ impl FSM for OsuFsm {
 
         // difficulty
         self.map.difficulty = (1000.0 * self.map.nps * (1.0 / self.map.dmin as f32) * self.map.savg as f32).log2();
-        self.map.notes = diffs;
+
+        // set map notes to a compressed string version
+        // self.map.notes = diffs;
+
         // println!("{}\t{}\t{}\t{}",self.map.difficulty,self.map.nps,self.map.dmin,self.map.savg);
+
+        let mut s = DefaultHasher::new();
+        format!(
+            "{}{}{}{}{}{}",
+            self.map.title, self.map.artist, self.map.creator, self.map.version, self.map.difficulty, self.map.nps
+        )
+        .hash(&mut s);
+        self.map.id = s.finish().to_string();
+        // println!("{}\t{}", self.map.id,self.map.nps);
 
         Some(self.map.clone())
     }

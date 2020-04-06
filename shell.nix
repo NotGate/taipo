@@ -16,6 +16,8 @@ in pkgs.mkShell {
     alsaLib
     libbass
     libbass_fx
+    # sqlite3
+    sqlite
     # gcc, rust
     gcc-unwrapped.lib
     pkgconfig

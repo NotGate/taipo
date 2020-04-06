@@ -2,6 +2,9 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 
+#[macro_use]
+extern crate diesel;
+
 mod audio;
 mod database;
 mod graphics;
@@ -14,12 +17,14 @@ use database::Database;
 use parsers::{osu::OsuFsm, parser::Parser};
 
 fn main() -> Result<(), String> {
-    let db = Database::init()?;
+    let db = Database::connect()?;
+    db.drop_tables()?;
+    db.create_tables()?;
 
     let osu_parser: Parser<OsuFsm> = Parser::init("maps/osu".into());
-    db.exec("delete from maps")?;
-    osu_parser.parse_directory(&db, 20, 1000);
-    println!("{:?}", db.query("")?);
+    osu_parser.parse_directory(&db, 1000000, 10000);
+
+    // println!("{:?}", db.query_maps("nps between 5 and 10")?);
 
     Ok(())
 
@@ -38,11 +43,8 @@ fn main() -> Result<(), String> {
 
 /*
 chunk len | time
-10        | 5.707s
-50        | 4.299s
-100       | 4.321s
-500       | 4.215s
-1000      | 4.153s
-5000      | 4.315s
-10000     | 4.197s
+500       | 6.781s
+1000      | 6.161s
+5000      | 5.680s
+10000     | 5.536s
 */
