@@ -4,17 +4,20 @@
 
 mod audio;
 mod database;
-mod parser;
+mod graphics;
+mod input;
+mod parsers;
+mod schema;
 
 use audio::MusicPlayer;
 use database::Database;
-use parser::*;
+use parsers::{osu::OsuFsm, parser::Parser};
 
 fn main() -> Result<(), String> {
     let db = Database::init()?;
 
     let osu_parser: Parser<OsuFsm> = Parser::init("maps/osu".into());
-    osu_parser.parse_directory(100,10);
+    osu_parser.parse_directory(&db, 100, 10);
     Ok(())
 
     // let mut mp = MusicPlayer::init()?;
@@ -24,7 +27,7 @@ fn main() -> Result<(), String> {
     // mp.seek(0.0)?;
     // mp.play()?;
     // loop {
-        //     println!("{}", mp.pos()?);
+    //     println!("{}", mp.pos()?);
     // }
 }
 
