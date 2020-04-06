@@ -35,7 +35,7 @@ impl Database {
             .map_err(|e| format!("Could not create table {}: {}", table, e))
     }
     pub fn insert_maps(&self, maps: &[Map]) {
-        println!("{:?}", maps);
+        // println!("{:?}", maps);
     }
 
     //// bind these to keys or user input

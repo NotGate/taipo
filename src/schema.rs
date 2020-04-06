@@ -21,19 +21,19 @@ pub struct Map {
     pub creator: String,
     pub version: String,
 
-    pub count: i32,
+    pub count: usize,
     pub length: f32,
     pub bpm: f32,
     pub nps: f32,
     pub difficulty: f32,
-    pub dmin: f32,
-    pub davg: f32,
-    pub dmax: f32,
+    pub dmin: i32,
+    pub davg: i32,
+    pub dmax: i32,
     pub smin: i32,
     pub savg: i32,
     pub smax: i32,
 
-    pub offsetms: f32,
+    pub offsetms: i32,
 
     pub notes: Vec<i32>,
 }
@@ -63,16 +63,16 @@ length          real,       -- length of song (s)
 bpm             real,       -- mode beats per minute
 nps             real,       -- avg notes per second
 difficulty      real,       -- f(count,length,nps,deltas,streaks)
-dmin            real,       -- minimum difference between notes (s)
-davg            real,       -- average difference between notes (s)
-dmax            real,       -- maximum difference between notes (s)
+dmin            integer,    -- minimum difference between notes (ms)
+davg            integer,    -- average difference between notes (ms)
+dmax            integer,    -- maximum difference between notes (ms)
 smin            integer,    -- minimum note streak
 savg            integer,    -- average note streak
 smax            integer,    -- maximum note streak
 
-offsetms        real,       -- audio offset (s)
+offsetms        integer,    -- audio offset (s)
 
-notes           blob       -- compressed form of [Note]?
+notes           blob        -- compressed form of [Note]?
 "#;
 
 // should I include more than just max combo? (I like NF only though)
