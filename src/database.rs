@@ -34,9 +34,44 @@ impl Database {
         conn.execute(&format!("CREATE TABLE IF NOT EXISTS {} ({})", table, schema), params![])
             .map_err(|e| format!("Could not create table {}: {}", table, e))
     }
-    pub fn insert_maps(&self, maps: &[Map]) {
+    // how do I bulk insert??
+    pub fn insert_maps(&self, maps: &[Map]) -> Result<(), String> {
         // println!("{:?}", maps);
+        let mut stmt = self
+            .conn
+            .prepare_cached("insert into maps (bpm,nps,difficulty) values (?1,?2,?3)")
+            .map_err(|e| format!("Could prepare statement: {}", e))?;
+        stmt.execute(&[180.0, 10.5, 30.6])
+            .map_err(|e| format!("Could not execute statement: {}", e))?;
+        Ok(())
     }
+    pub fn exec(&self, stmt: &str) -> Result<(), String> {
+        self.conn
+            .execute(stmt, params![])
+            .map_err(|e| format!("Could not exec statement"))?;
+        Ok(())
+    }
+    pub fn query(&self, stmt: &str) -> Result<Vec<Map>, String> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT bpm,nps,difficulty FROM maps")
+            .map_err(|e| format!("Could not exec statement"))?;
+        let result = stmt
+            .query_map(params![], |row| {
+                Ok(Map {
+                    bpm: row.get::<usize, f64>(0)? as f32,
+                    nps: row.get::<usize, f64>(1)? as f32,
+                    difficulty: row.get::<usize, f64>(2)? as f32,
+                    ..Default::default()
+                })
+            })
+            .map_err(|e| format!("Could not execute statement: {}", e))?
+            .filter_map(Result::ok)
+            .collect::<Vec<Map>>();
+        Ok(result)
+    }
+
+    // FromSql ToSql
 
     //// bind these to keys or user input
     // exec

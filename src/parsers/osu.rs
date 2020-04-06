@@ -110,6 +110,8 @@ impl FSM for OsuFsm {
                 let time = ho[2].parse::<i32>().expect("Invalid note time");
                 let typ = ho[3].parse::<u8>().expect("Invalid note type");
                 // println!("{:08b},{},{},{}",typ,x,y,time);
+
+                // should I filter this hear instead of during get()?
                 self.map.notes.push(time);
             }
             _ => (),
@@ -127,14 +129,16 @@ impl FSM for OsuFsm {
             .notes
             .windows(2)
             .map(|pair| pair[1] - pair[0])
+            // figure out why there are negative deltas
             .filter(|v| *v > 10)
             .collect::<Vec<i32>>();
+
         // This shouldn't happen if you filter ahead of time
         if diffs.len() == 0 {
             return None;
         }
-        
-        self.map.count = diffs.len()+1;
+
+        self.map.count = diffs.len() + 1;
         self.map.nps = self.map.count as f32 / self.map.length;
 
         // deltas
@@ -143,7 +147,7 @@ impl FSM for OsuFsm {
             self.map.dmax = std::cmp::max(self.map.dmax, *d);
             self.map.davg += d;
         });
-        self.map.davg /= diffs.len() as i32 +1;
+        self.map.davg /= diffs.len() as i32 + 1;
 
         // streaks
         let m = self.map.dmin as f32;
@@ -175,7 +179,7 @@ impl FSM for OsuFsm {
         self.map.savg /= streaks.len() as i32;
 
         // difficulty
-        self.map.difficulty = (1000.0 * self.map.nps * (1.0/self.map.dmin as f32) * self.map.savg as f32).log2();
+        self.map.difficulty = (1000.0 * self.map.nps * (1.0 / self.map.dmin as f32) * self.map.savg as f32).log2();
         self.map.notes = diffs;
         // println!("{}\t{}\t{}\t{}",self.map.difficulty,self.map.nps,self.map.dmin,self.map.savg);
 

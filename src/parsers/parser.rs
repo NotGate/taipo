@@ -36,7 +36,7 @@ impl<T: FSM + Sync> Parser<T> {
         .filter_map(|path| self.parse_file(path))
         .collect::<Vec<Map>>()
         .chunks(batch_size)
-        .for_each(|chunk| db.insert_maps(&chunk[..]));
+        .for_each(|chunk| db.insert_maps(&chunk[..]).expect("Could not insert maps"));
     }
     pub fn parse_file(&self, path: &PathBuf) -> Option<Map> {
         let mut fsm = T::init(path);

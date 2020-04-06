@@ -17,7 +17,10 @@ fn main() -> Result<(), String> {
     let db = Database::init()?;
 
     let osu_parser: Parser<OsuFsm> = Parser::init("maps/osu".into());
-    osu_parser.parse_directory(&db, 100000000, 1000);
+    db.exec("delete from maps")?;
+    osu_parser.parse_directory(&db, 20, 1000);
+    println!("{:?}", db.query("")?);
+
     Ok(())
 
     // let mut mp = MusicPlayer::init()?;
