@@ -1,5 +1,5 @@
-use crate::schema::{maps, Map, COLLECTION_SCHEMA, MAP_SCHEMA, SCORE_SCHEMA};
-use diesel::{insert_into, prelude::*, sql_query, dsl::sql, SqliteConnection, *};
+use crate::schema::*;
+use diesel::{dsl::sql, insert_into, prelude::*, sql_query, SqliteConnection, *};
 use std::{
     collections::hash_map::{DefaultHasher, HashMap},
     hash::{Hash, Hasher},
@@ -57,29 +57,84 @@ impl Database {
         let maps = maps::table
             .filter(sql(query))
             .load(&self.conn)
-            .map_err(|e| format!("Could not query maps: {}",e))?;
+            .map_err(|e| format!("Could not query maps: {}", e))?;
         Ok(maps)
     }
     pub fn delete_maps(&self, maps: &[Map]) -> Result<(), String> {
         Ok(())
     }
 
-    // Collection (ird)
-    pub fn insert_collections(&self) -> Result<(), String> {
+    // Collection (irqd)
+    pub fn insert_collections(&self, name: &str, maps: &[Map]) -> Result<(), String> {
+        let mut s = DefaultHasher::new();
+        let collections = maps
+            .iter()
+            .map(|m| {
+                format!("{}{}", name, m.id).hash(&mut s);
+                Collection {
+                    id: s.finish().to_string(),
+                    name: name.to_string(),
+                    map: m.id.clone(),
+                }
+            })
+            .collect::<Vec<Collection>>();
+        insert_into(collections::table)
+            .values(collections)
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not insert maps: {}", e))?;
         Ok(())
     }
-    pub fn rename_collection(&self) -> Result<(), String> {
+    pub fn query_collections(&self, query: &str) -> Result<Vec<Collection>, String> {
+        let collections = collections::table
+            .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
+            .load(&self.conn)
+            .map_err(|e| format!("Could not query collections: {}", e))?;
+        Ok(collections)
+    }
+    pub fn rename_collection(&self, old: &str, new: &str) -> Result<(), String> {
+        if new.len() == 0 {
+            self.delete_collection(old)?;
+        } else {
+            update(collections::table)
+                .filter(collections::name.eq(old))
+                .set(collections::name.eq(new))
+                .execute(&self.conn)
+                .map_err(|e| format!("Could not rename collection: {}", e))?;
+        }
         Ok(())
     }
-    pub fn delete_collection(&self) -> Result<(), String> {
+    pub fn delete_collection(&self, name: &str) -> Result<(), String> {
+        delete(collections::table.filter(collections::name.eq(name)))
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not delete collection: {}", e))?;
+        Ok(())
+    }
+    pub fn remove_map(&self, map: Map) -> Result<(), String> {
+        delete(collections::table.filter(collections::map.eq(map.id)))
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not delete collection: {}", e))?;
         Ok(())
     }
 
-    // Score (id)
-    pub fn insert_score(&self) -> Result<(), String> {
+    // Score (iqd)
+    pub fn insert_score(&self, score: Score) -> Result<(), String> {
+        insert_into(scores::table)
+            .values(score)
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not insert scores: {}", e))?;
         Ok(())
     }
-    pub fn delete_score(&self) -> Result<(), String> {
+    pub fn query_scores(&self, query: &str) -> Result<Vec<Score>, String> {
+        let scores = scores::table
+            .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
+            .load(&self.conn)
+            .map_err(|e| format!("Could not query scores: {}", e))?;
+        Ok(scores)
+    }
+    pub fn delete_score(&self, score: Score) -> Result<(), String> {
+        delete(collections::table.filter(collections::id.eq(score.id)))
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not delete collection: {}", e))?;
         Ok(())
     }
 }

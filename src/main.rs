@@ -15,6 +15,7 @@ mod schema;
 use audio::MusicPlayer;
 use database::Database;
 use parsers::{osu::OsuFsm, parser::Parser};
+use schema::Map;
 
 fn main() -> Result<(), String> {
     let db = Database::connect()?;
@@ -22,9 +23,24 @@ fn main() -> Result<(), String> {
     db.create_tables()?;
 
     let osu_parser: Parser<OsuFsm> = Parser::init("maps/osu".into());
-    osu_parser.parse_directory(&db, 1000000, 10000);
+    osu_parser.parse_directory(&db, 100, 10000);
 
-    // println!("{:?}", db.query_maps("nps between 5 and 10")?);
+    println!("{:?}", db.query_maps("nps between 5 and 10")?);
+
+    db.insert_collections(
+        "practice",
+        &[Map {
+            id: "2959750944428650906".into(),
+            ..Default::default()
+        }],
+    )?;
+    println!("{:?}", db.query_collections("")?);
+
+    db.rename_collection("practice", "fc")?;
+    println!("{:?}", db.query_collections("")?);
+
+    db.delete_collection("fc")?;
+    println!("{:?}", db.query_collections("")?);
 
     Ok(())
 
