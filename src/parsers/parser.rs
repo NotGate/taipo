@@ -43,6 +43,8 @@ impl<T: FSM + Sync> Parser<T> {
         BufReader::new(File::open(path).expect(&format!("Could not open {}", path.display())))
             .lines()
             .filter_map(Result::ok)
+            .map(|l| String::from(l.trim()))
+            .filter(|l| l.len() > 0)
             .for_each(|line| fsm.parse_line(&line));
         Some(fsm.get())
     }

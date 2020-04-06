@@ -3,12 +3,41 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-#[derive(Debug, Default, Clone, Copy)]
+// str without chaining lifetimes through everything??
+#[derive(Debug, Default, Clone)]
 pub struct Map {
+    pub source: String,
+    pub mode: String,
+    pub format: String,
+    pub tags: String,
+    pub preview: f32,
+
+    pub map: i32,
+    pub audio: String,
+    pub background: String,
+
+    pub title: String,
+    pub artist: String,
+    pub creator: String,
+    pub version: String,
+
+    pub count: i32,
+    pub length: f32,
+    pub bpm: f32,
     pub nps: f32,
+    pub difficulty: f32,
+    pub dmin: f32,
+    pub davg: f32,
+    pub dmax: f32,
+    pub smin: i32,
+    pub savg: i32,
+    pub smax: i32,
+
+    pub offsetms: f32,
+
+    pub notes: Vec<i32>,
 }
 
-// add defaults for everything ...
 // fromto? is that practice specific?
 // mode and median would also be nice to know (mostly mode)
 // query unplayed = where map not in scores
@@ -16,11 +45,13 @@ pub const MAP_SCHEMA: &'static str = r#"
 id              integer primary key,    -- map id
 source          text,                   -- osu|sm|ssc|bms|ojn
 mode            text,                   -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
+format          text,                   -- file format (v6|v7|v8|..)
 tags            text,                   -- space separated list of strings
-map             integer,                -- hash of map
-audio           integer,                -- hash of audio file
-background      integer,                -- hash of image file (background offset for osu?)
 preview         real,                   -- audio preview (s)
+
+map             integer,                -- hash of map
+audio           text,                   -- path (later: hash of audio file)
+background      text,                   -- path (later: hash of image file (background offset for osu?))
 
 title           text,
 artist          text,
@@ -66,7 +97,7 @@ map             integer,                -- map id
 name            text                    -- name of collection
 "#;
 
-// font, resolution, window mode, skins, input bindings, etc. (all in db??)
+// add defaults for everything
 pub struct Settings {
     // internal settings
     version: String, // taipo version
