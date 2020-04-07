@@ -25,8 +25,6 @@ fn main() -> Result<(), String> {
     let osu_parser: Parser<OsuFsm> = Parser::init("maps/osu".into());
     osu_parser.parse_directory(&db, 100, 10000);
 
-    println!("{:?}", db.query_maps("nps between 5 and 10")?);
-
     db.insert_collections(
         "practice",
         &[Map {
@@ -35,6 +33,8 @@ fn main() -> Result<(), String> {
         }],
     )?;
     println!("{:?}", db.query_collections("")?);
+
+    println!("{:?}", db.query_maps("collections.name=\"practice\"")?);
 
     db.rename_collection("practice", "fc")?;
     println!("{:?}", db.query_collections("")?);

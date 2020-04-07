@@ -53,23 +53,30 @@ impl Database {
         Ok(())
     }
     pub fn query_maps(&self, query: &str) -> Result<Vec<Map>, String> {
-        // join maps, scores, and collections on map id
-        let maps = maps::table
-            .filter(sql(query))
-            .load(&self.conn)
-            .map_err(|e| format!("Could not query maps: {}", e))?;
-        Ok(maps)
+        allow_tables_to_appear_in_same_query!(maps, scores);
+        allow_tables_to_appear_in_same_query!(scores, collections);
+        allow_tables_to_appear_in_same_query!(maps, collections);
+        let m = maps::table
+            .left_join(scores::table.on(maps::id.eq(scores::map)))
+            .left_join(collections::table.on(maps::id.eq(collections::map)))
+            .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
+            .load::<(Map, Option<Score>, Option<Collection>)>(&self.conn)
+            .map_err(|e| format!("Could not query maps: {}", e))?
+            .iter()
+            .map(|j| j.0.clone())
+            .collect::<Vec<Map>>();
+        Ok(m)
     }
     pub fn delete_maps(&self, maps: &[Map]) -> Result<(), String> {
         Ok(())
     }
 
-    // Collection (irqd)
+    // Collection (irqdu)
     pub fn insert_collections(&self, name: &str, maps: &[Map]) -> Result<(), String> {
-        let mut s = DefaultHasher::new();
         let collections = maps
             .iter()
             .map(|m| {
+                let mut s = DefaultHasher::new();
                 format!("{}{}", name, m.id).hash(&mut s);
                 Collection {
                     id: s.finish().to_string(),
