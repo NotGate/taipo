@@ -5,9 +5,9 @@
 #[macro_use]
 extern crate diesel;
 
-mod game;
 mod audio;
 mod database;
+mod game;
 mod parsers;
 mod schema;
 

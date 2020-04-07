@@ -25,6 +25,7 @@ in pkgs.mkShell {
     stdenv.cc.cc.lib
     # graphics
     SDL2
+    SDL2_ttf
     xorg.libX11
     xorg.libXcursor
     xorg.libXrandr
