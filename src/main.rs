@@ -14,7 +14,7 @@ mod schema;
 // TODO: this will need to be an FSM
 fn main() -> Result<(), String> {
     let mut g = game::Game::init()?;
-    while g.running {
+    while g.playing {
         g.tick()?;
         g.poll()?;
         g.update()?;
