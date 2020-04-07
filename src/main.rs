@@ -11,10 +11,8 @@ mod database;
 mod parsers;
 mod schema;
 
-use game::Game;
-
 fn main() -> Result<(), String> {
-    let mut g = Game::init()?;
+    let mut g = game::Game::init()?;
     while g.running {
         g.tick()?;
         g.poll()?;
