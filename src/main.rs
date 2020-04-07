@@ -34,7 +34,7 @@ fn main() -> Result<(), String> {
     )?;
     println!("{:?}", db.query_collections("")?);
 
-    println!("{:?}", db.query_maps("collections.name=\"practice\"")?);
+    println!("{:?}", db.query_maps("")?);
 
     db.rename_collection("practice", "fc")?;
     println!("{:?}", db.query_collections("")?);

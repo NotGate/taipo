@@ -136,14 +136,7 @@ impl FSM for OsuFsm {
             .notes
             .windows(2)
             .map(|pair| pair[1] - pair[0])
-            // figure out why there are negative deltas
-            // .filter(|v| *v > 10)
             .collect::<Vec<i32>>();
-
-        // This shouldn't happen if you filter ahead of time
-        if diffs.len() == 0 {
-            return None;
-        }
 
         self.map.count = diffs.len() as i32 + 1;
         self.map.nps = self.map.count as f32 / self.map.length;
@@ -152,12 +145,8 @@ impl FSM for OsuFsm {
         diffs.iter().for_each(|d| {
             self.map.dmin = std::cmp::min(self.map.dmin, *d);
             self.map.dmax = std::cmp::max(self.map.dmax, *d);
-            self.map.davg += d;
         });
-        self.map.davg /= diffs.len() as i32 + 1;
-
-        // I can do it like this if I don't filter diffs? idk
-        // self.map.davg = (self.map.notes[self.map.notes.len() - 1] - self.map.notes[0]) / (diffs.len() as i32 + 1);
+        self.map.davg = (self.notes[self.notes.len() - 1] - self.notes[0]) / (diffs.len() as i32 + 1);
 
         // streaks
         let m = self.map.dmin as f32;
@@ -191,9 +180,6 @@ impl FSM for OsuFsm {
         // difficulty
         self.map.difficulty = (1000.0 * self.map.nps * (1.0 / self.map.dmin as f32) * self.map.savg as f32).log2();
 
-        // set map notes to a compressed string version
-        // self.map.notes = diffs;
-
         // println!("{}\t{}\t{}\t{}",self.map.difficulty,self.map.nps,self.map.dmin,self.map.savg);
 
         let mut s = DefaultHasher::new();
@@ -204,6 +190,9 @@ impl FSM for OsuFsm {
         .hash(&mut s);
         self.map.id = s.finish().to_string();
         // println!("{}\t{}", self.map.id,self.map.nps);
+
+        // set map notes to a compressed string version
+        // self.map.notes = ...;
 
         Some(self.map.clone())
     }
