@@ -6,10 +6,11 @@ use crate::{
 use ggez::{
     event::{
         self,
-        winit_event::{Event, KeyboardInput, WindowEvent},
+        winit_event::{DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, WindowEvent},
         EventsLoop,
     },
     graphics::{self, DrawMode},
+    input::keyboard::KeyCode,
     Context, ContextBuilder,
 };
 use std::cell::RefCell;
@@ -22,8 +23,8 @@ pub struct Game {
     pub running: bool,
     db: Database,
     mp: MusicPlayer,
-    ctx: Rc<RefCell<Context>>,
-    el: EventsLoop,
+    ctx: Context, //Rc<RefCell<Context>>,
+    el: Rc<RefCell<EventsLoop>>,
     // Parsers
     osu_p: Parser<OsuFsm>,
 }
@@ -51,8 +52,8 @@ impl Game {
 
         Ok(Game {
             running: true,
-            ctx: Rc::new(RefCell::new(ctx)),
-            el,
+            ctx, //: Rc::new(RefCell::new(ctx)),
+            el: Rc::new(RefCell::new(el)),
             db,
             mp,
             osu_p,
@@ -62,29 +63,12 @@ impl Game {
         Ok(())
     }
     pub fn poll(&mut self) -> Result<(), String> {
-        // let thing: std::rc::Rc<EventsLoop> = Rc::new(self.el);
-        if let Ok(ctx) = self.ctx.try_borrow_mut().as_mut() {
-            self.el.poll_events(|event| {
-                ctx.process_event(&event);
-                match event {
-                    Event::WindowEvent { event, .. } => match event {
-                        WindowEvent::CloseRequested => event::quit(ctx),
-                        WindowEvent::KeyboardInput {
-                            input:
-                                KeyboardInput {
-                                    virtual_keycode: Some(keycode),
-                                    ..
-                                },
-                            ..
-                        } => match keycode {
-                            event::KeyCode::Escape => event::quit(ctx),
-                            _ => (),
-                        },
-                        x => println!("Other window event fired: {:?}", x),
-                    },
-                    x => println!("Device event fired: {:?}", x),
-                }
-            });
+        for (e, s, k, m) in process(self.el.try_borrow_mut().as_mut().unwrap()) {
+            println!("{:?} {:?} {:?} {:?}", e, s, k, m);
+            self.ctx.process_event(&e);
+            if s == ElementState::Pressed && m.shift {
+                println!("{:?}", k);
+            }
         }
         Ok(())
     }
@@ -94,21 +78,39 @@ impl Game {
         Ok(())
     }
     pub fn render(&mut self) -> Result<(), String> {
-        if let Ok(ctx) = self.ctx.try_borrow_mut().as_mut() {
-            graphics::clear(ctx, [0.1, 0.2, 0.3, 1.0].into());
-            let circle = graphics::Mesh::new_circle(
-                ctx,
-                DrawMode::fill(),
-                nalgebra::Point2::new(0.0, 0.0),
-                100.0,
-                2.0,
-                graphics::WHITE,
-            )
-            .unwrap();
-            graphics::draw(ctx, &circle, (nalgebra::Point2::new(0.0, 380.0),)).unwrap();
-            graphics::present(ctx).unwrap();
-            ggez::timer::yield_now();
-        }
+        // if let Ok(ctx) = self.ctx.try_borrow_mut().as_mut() {
+        graphics::clear(&mut self.ctx, [0.1, 0.2, 0.3, 1.0].into());
+        let circle = graphics::Mesh::new_circle(
+            &mut self.ctx,
+            DrawMode::fill(),
+            nalgebra::Point2::new(self.mp.pos()? as f32 * 100.0 % 800.0, 0.0),
+            100.0,
+            2.0,
+            graphics::WHITE,
+        )
+        .unwrap();
+        graphics::draw(&mut self.ctx, &circle, (nalgebra::Point2::new(0.0, 380.0),)).unwrap();
+        graphics::present(&mut self.ctx).unwrap();
+        ggez::timer::yield_now();
+        // }
         Ok(())
     }
+}
+
+pub fn process(el: &mut EventsLoop) -> Vec<(Event, ElementState, KeyCode, ModifiersState)> {
+    let mut events = vec![];
+    el.poll_events(|event| match event {
+        Event::DeviceEvent {
+            event:
+                DeviceEvent::Key(KeyboardInput {
+                    state,
+                    virtual_keycode: Some(key),
+                    modifiers,
+                    ..
+                }),
+            ..
+        } => events.push((event, state, key, modifiers)),
+        _ => (),
+    });
+    events
 }
