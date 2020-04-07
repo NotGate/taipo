@@ -23,8 +23,8 @@ pub struct Game {
     pub running: bool,
     db: Database,
     mp: MusicPlayer,
-    ctx: Context, //Rc<RefCell<Context>>,
-    el: Rc<RefCell<EventsLoop>>,
+    ctx: Context,
+    el: EventsLoop,
     // Parsers
     osu_p: Parser<OsuFsm>,
 }
@@ -52,8 +52,8 @@ impl Game {
 
         Ok(Game {
             running: true,
-            ctx, //: Rc::new(RefCell::new(ctx)),
-            el: Rc::new(RefCell::new(el)),
+            ctx,
+            el,
             db,
             mp,
             osu_p,
@@ -63,10 +63,13 @@ impl Game {
         Ok(())
     }
     pub fn poll(&mut self) -> Result<(), String> {
-        for (e, s, k, m) in process(self.el.try_borrow_mut().as_mut().unwrap()) {
-            println!("{:?} {:?} {:?} {:?}", e, s, k, m);
+        for (e, s, k, m) in process(&mut self.el) {
             self.ctx.process_event(&e);
-            if s == ElementState::Pressed && m.shift {
+            if s == ElementState::Pressed {
+                match k {
+                    KeyCode::Escape => self.running = false,
+                    _ => (),
+                }
                 println!("{:?}", k);
             }
         }
@@ -78,7 +81,6 @@ impl Game {
         Ok(())
     }
     pub fn render(&mut self) -> Result<(), String> {
-        // if let Ok(ctx) = self.ctx.try_borrow_mut().as_mut() {
         graphics::clear(&mut self.ctx, [0.1, 0.2, 0.3, 1.0].into());
         let circle = graphics::Mesh::new_circle(
             &mut self.ctx,
@@ -92,7 +94,6 @@ impl Game {
         graphics::draw(&mut self.ctx, &circle, (nalgebra::Point2::new(0.0, 380.0),)).unwrap();
         graphics::present(&mut self.ctx).unwrap();
         ggez::timer::yield_now();
-        // }
         Ok(())
     }
 }
