@@ -2,7 +2,8 @@ use crate::{audio::MusicPlayer, database::Database, parsers::{parser::Parser,osu
 use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
 use std::time::Duration;
 
-// TODO: add an FSM
+// TODO: add an FSM (for renderer in renderers: renderer.render())
+// TODO: add FPS getting and setting
 pub struct Game {
     pub running: bool,
     db: Database,
@@ -17,6 +18,7 @@ pub struct Game {
 
 impl Game {
     pub fn init() -> Result<Game, String> {
+        // TODO: look at additional options for all 4 of these
         let ctx = sdl2::init().map_err(|e| format!("Could not initialize SDL2 context: {}", e))?;
         let win = ctx
             .video()
@@ -37,8 +39,8 @@ impl Game {
         let db = Database::connect()?;
         
         // Parser (TODO: scan/add to db)
-        let osu_p = Parser::init("maps/osu".into());
-        osu_p.parse_directory(&db, 20, 10000);
+        let osu_p = Parser::init("maps/osu".into()); // this should come from settings
+        osu_p.parse_directory(&db, 20, 10000); // define these as global constants
 
         // Music (TODO: play from db)
         let mut mp = MusicPlayer::init()?;
@@ -76,6 +78,7 @@ impl Game {
         Ok(())
     }
     pub fn update(&mut self) -> Result<(),String> {
+        // TODO: mp.pos should check if playing
         println!("{}", self.mp.pos()?);
         Ok(())
     }
