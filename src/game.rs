@@ -2,6 +2,7 @@ use crate::{audio::MusicPlayer, database::Database, parsers::{parser::Parser,osu
 use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
 use std::time::Duration;
 
+// TODO: add an FSM
 pub struct Game {
     pub running: bool,
     db: Database,

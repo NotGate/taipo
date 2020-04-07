@@ -20,7 +20,7 @@ impl<T: FSM + Sync> Parser<T> {
             t: PhantomData,
         }
     }
-    // should this auto-exectract archives into folders so those can be parsed too?
+    // TODO: should this auto-exectract archives into folders so those can be parsed too?
     pub fn parse_directory(&self, db: &Database, limit: usize, batch_size: usize) {
         glob(
             Path::new(&self.directory)

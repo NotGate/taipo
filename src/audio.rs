@@ -14,6 +14,7 @@ pub struct MusicPlayer {
 
 impl MusicPlayer {
     pub fn init() -> Result<MusicPlayer, String> {
+        // TODO: fine-tune configs
         Bass::set_config(BASS_CONFIG_BUFFER, 5000)?; // 5000 ms instead of 500 ms (lower is choppier)
         Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?; // more consistent playback latency
 
@@ -33,6 +34,7 @@ impl MusicPlayer {
         self.handle = Bass::fx_tempo_create(
             Bass::stream_create_file(
                 &self.buffer,
+                // TODO: fine-tune flags
                 BASS_STREAM_DECODE
                     | if Bass::get_config(BASS_CONFIG_FLOAT)? != 0 {
                         BASS_SAMPLE_FLOAT // better quality
@@ -44,6 +46,7 @@ impl MusicPlayer {
             )?,
             BASS_FX_FREESOURCE | BASS_MUSIC_LOOP,
         )?;
+        // TODO: fine-tune attributes
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_USE_QUICKALGO, 1.0)?;
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 30.0)?;
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 4.0)?;

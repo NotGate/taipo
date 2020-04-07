@@ -110,14 +110,14 @@ impl FSM for OsuFsm {
                 }
             }
             HitObjects => {
+                // TODO: add support for mania key count
+                // TODO: add support for sliders (optionally togglable in-game)
                 let ho = line.split(',').collect::<Vec<_>>();
                 let x = ho[0].parse::<i32>().expect("Invalid note x coordinate");
                 let y = ho[1].parse::<i32>().expect("Invalid note y coordinate");
                 let time = ho[2].parse::<i32>().expect("Invalid note time");
                 let typ = ho[3].parse::<u8>().expect("Invalid note type");
                 // println!("{:08b},{},{},{}",typ,x,y,time);
-
-                // should I filter this hear instead of during get()?
                 if self.notes.len() == 0 || (self.notes.len() > 0 && (time - self.notes[self.notes.len() - 1]) > 10) {
                     self.notes.push(time);
                 }
@@ -161,7 +161,7 @@ impl FSM for OsuFsm {
         if streak != 0 {
             streaks.push(streak as i32 + 1);
         }
-        // How is this possible?
+        // TODO: check these if-statements
         if streaks.len() == 0 {
             return None;
         }
@@ -185,9 +185,8 @@ impl FSM for OsuFsm {
         )
         .hash(&mut s);
         self.map.id = s.finish().to_string();
-        // println!("{}\t{}", self.map.id,self.map.nps);
 
-        // set map notes to a compressed string version
+        // TODO: set map notes to a compressed string version
         // self.map.notes = ...;
 
         Some(self.map.clone())

@@ -11,6 +11,7 @@ mod database;
 mod parsers;
 mod schema;
 
+// TODO: this will need to be an FSM
 fn main() -> Result<(), String> {
     let mut g = game::Game::init()?;
     while g.running {
