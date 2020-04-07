@@ -24,6 +24,7 @@ in pkgs.mkShell {
     eudev
     stdenv.cc.cc.lib
     # graphics
+    SDL2
     xorg.libX11
     xorg.libXcursor
     xorg.libXrandr

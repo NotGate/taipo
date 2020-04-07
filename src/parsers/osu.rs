@@ -132,11 +132,7 @@ impl FSM for OsuFsm {
 
         self.map.length = (self.notes[self.notes.len() - 1] - self.notes[0]) as f32 / 1000.0;
         self.map.dmin = 10000;
-        let diffs = self
-            .notes
-            .windows(2)
-            .map(|pair| pair[1] - pair[0])
-            .collect::<Vec<i32>>();
+        let diffs = self.notes.windows(2).map(|pair| pair[1] - pair[0]).collect::<Vec<i32>>();
 
         self.map.count = diffs.len() as i32 + 1;
         self.map.nps = self.map.count as f32 / self.map.length;
