@@ -56,6 +56,7 @@ in pkgs.mkShell {
   installPhase = ''
     rustup install stable
     rustup default stable
+    rustup component add rust-src
   '';
 }
 

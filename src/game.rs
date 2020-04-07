@@ -2,15 +2,16 @@ use crate::{audio::MusicPlayer, database::Database, parsers::{parser::Parser,osu
 use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
 use std::time::Duration;
 
-// TODO: add an FSM (for renderer in renderers: renderer.render())
+// TODO: add an FSM (for renderer in renderers: renderer.render(&mut self))
 // TODO: add FPS getting and setting
 pub struct Game {
     pub running: bool,
     db: Database,
     mp: MusicPlayer,
-    // Graphics
+    // TODO: Graphics?
     ctx: sdl2::Sdl,
     canvas: sdl2::render::Canvas<sdl2::video::Window>,
+    // TODO: Input?
     pump: sdl2::EventPump,
     // Parsers
     osu_p: Parser<OsuFsm>
