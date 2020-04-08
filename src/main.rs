@@ -10,6 +10,7 @@ mod database;
 mod game;
 mod parsers;
 mod schema;
+mod scenes;
 
 // TODO: this will need to be an FSM
 fn main() -> Result<(), String> {

@@ -2,6 +2,7 @@ use crate::{
     audio::MusicPlayer,
     database::Database,
     parsers::{osu::Osu, parser::Parser},
+    scenes::{Scene,main::MainScene},
 };
 use ggez::{
     event::{
@@ -24,12 +25,13 @@ pub struct Game {
     //
     db: Database,
     mp: MusicPlayer,
-    ss: Rc<RefCell<SceneStack>>,
     // Parsers
     osu_p: Parser<Osu>,
-    // ?
+    // TODO: this should belong in an overlay?
     font: graphics::Font,
     fps_text: graphics::Text,
+    // Scene Stack
+    ss: Vec<Box<dyn Scene>>
 }
 
 impl Game {
@@ -55,8 +57,7 @@ impl Game {
         mp.play()?;
 
         // SceneStack
-        let ss = Rc::new(RefCell::new(SceneStack::init()));
-        ss.borrow_mut().push(MainScene { ss: ss.as_ptr() });
+        let ss=vec![]
 
         // Resources (TODO:where do I store all these?)
         let font = graphics::Font::new(&mut ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?;
@@ -68,10 +69,10 @@ impl Game {
             el,
             db,
             mp,
-            ss,
             osu_p,
             font,
             fps_text,
+            ss,
         })
     }
     pub fn tick(&mut self) -> Result<(), String> {
@@ -82,7 +83,7 @@ impl Game {
     pub fn poll(&mut self) -> Result<(), String> {
         for (e, s, k, m) in process(&mut self.el) {
             self.ctx.process_event(&e);
-            self.ss.poll(e, s, k, m);
+            self.ss[0].poll(e, s, k, m);
         }
         Ok(())
     }
@@ -117,63 +118,3 @@ pub fn process(el: &mut EventsLoop) -> Vec<(Event, ElementState, KeyCode, Modifi
     });
     events
 }
-
-pub trait Scene {
-    fn poll(&mut self, e: Event, s: ElementState, k: KeyCode, m: ModifiersState);
-    fn update(&mut self);
-    fn render(&mut self);
-}
-
-pub struct SceneStack {
-    stack: Vec<Box<dyn Scene>>,
-}
-
-impl SceneStack {
-    fn init() -> SceneStack {
-        SceneStack { stack: vec![] }
-    }
-    fn push<T: Scene>(&mut self, scene: T) {}
-    fn pop(&mut self) {}
-    fn poll(&mut self, e: Event, s: ElementState, k: KeyCode, m: ModifiersState) {
-        self.stack.last().poll(e,s,k,m);
-    }
-}
-
-// TODO: this shouldn't need to be a raw pointer (probably)
-pub struct MainScene {
-    ss: *mut SceneStack,
-}
-pub struct ConfigScene {}
-pub struct MapScene {}
-pub struct PlayingScene {
-    ss: *mut SceneStack,
-}
-pub struct ScoreScene {}
-
-impl Scene for MainScene {
-    fn poll(&mut self, e: Event, s: ElementState, k: KeyCode, m: ModifiersState) {
-        if s == ElementState::Pressed && k == KeyCode::P {
-            println!("goto play");
-            self.ss.push(PlayingScene { ss:self.ss });
-        }
-    }
-    fn update(&mut self) {
-        println!("Main update");
-    }
-    fn render(&mut self) {}
-}
-// impl Scene for ConfigScene {}
-// impl Scene for MapScene {}
-impl Scene for PlayingScene {
-    fn poll(&mut self, e: Event, s: ElementState, k: KeyCode, m: ModifiersState) {
-        if s == ElementState::Pressed && k == KeyCode::P {
-            println!("goto menu");
-            self.ss.pop();
-        }
-    }
-    fn update(&mut self) {
-        println!("Main update");
-    }
-    fn render(&mut self) {}
-}
-// impl Scene for ScoreScene {}

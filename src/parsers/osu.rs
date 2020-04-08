@@ -61,6 +61,7 @@ impl MapType for Osu {
                 self.map.source = "osu".into();
                 let s = line.split(' ').collect::<Vec<_>>();
                 self.map.format = s[s.len() - 1].into();
+                //self.map.format = s.last().unwrap().to_owned().into();
             }
             General => {
                 let kv = line.split(':').collect::<Vec<_>>();
