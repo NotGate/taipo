@@ -9,14 +9,30 @@ use ggez::{
     Context, ContextBuilder,
 };
 
+use crate::{game::Game, scenes::*};
+
 pub struct MainScene {
-    g: *mut crate::game::Game,
+    g: *mut Game,
 }
-impl crate::scenes::Scene for MainScene {
+impl MainScene {
+    pub fn init(g: *mut Game) -> MainScene {
+        MainScene { g }
+    }
+}
+impl Scene for MainScene {
     fn poll(&mut self, e: Event, s: ElementState, k: KeyCode, m: ModifiersState) {
-        if s == ElementState::Pressed && k == KeyCode::P {
-            println!("goto play");
-            self.g.ss.push(crate::scenes::playing::PlayingScene { self.g });
+        if s == ElementState::Pressed {
+            match k {
+                KeyCode::P => {
+                    println!("goto play");
+                    // self.g.push(playing::PlayingScene::init(self.g));
+                    // unsafe {self.g.as_mut().unwrap().ss.push(Box::new(playing::PlayingScene::init(self.g))) };
+                }
+                KeyCode::Escape => {
+                    // self.g.playing = false;
+                }
+                _ => ()
+            }
         }
     }
     fn update(&mut self) {

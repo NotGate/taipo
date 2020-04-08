@@ -2,7 +2,7 @@ use crate::{
     audio::MusicPlayer,
     database::Database,
     parsers::{osu::Osu, parser::Parser},
-    scenes::{Scene,main::MainScene},
+    scenes::{main::MainScene, Scene},
 };
 use ggez::{
     event::{
@@ -31,7 +31,7 @@ pub struct Game {
     font: graphics::Font,
     fps_text: graphics::Text,
     // Scene Stack
-    ss: Vec<Box<dyn Scene>>
+    pub ss: Vec<Box<dyn Scene>>,
 }
 
 impl Game {
@@ -57,7 +57,7 @@ impl Game {
         mp.play()?;
 
         // SceneStack
-        let ss=vec![]
+        let ss = vec![];
 
         // Resources (TODO:where do I store all these?)
         let font = graphics::Font::new(&mut ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?;
@@ -83,7 +83,7 @@ impl Game {
     pub fn poll(&mut self) -> Result<(), String> {
         for (e, s, k, m) in process(&mut self.el) {
             self.ctx.process_event(&e);
-            self.ss[0].poll(e, s, k, m);
+            // self.ss[0].poll(e, s, k, m);
         }
         Ok(())
     }

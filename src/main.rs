@@ -9,12 +9,12 @@ mod audio;
 mod database;
 mod game;
 mod parsers;
-mod schema;
 mod scenes;
+mod schema;
 
-// TODO: this will need to be an FSM
 fn main() -> Result<(), String> {
     let mut g = game::Game::init()?;
+    // g.ss.push(Box::new(scenes::main::MainScene::init(g)));
     while g.playing {
         g.tick()?;
         g.poll()?;
