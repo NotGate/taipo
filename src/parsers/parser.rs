@@ -13,7 +13,10 @@ pub struct Parser<T> {
     t: PhantomData<T>,
 }
 
-impl<T: FSM + Sync> Parser<T> {
+const LIMIT: usize = 20;
+const BATCH_SIZE: usize = 10000;
+
+impl<T: MapType + Sync> Parser<T> {
     pub fn init(directory: String) -> Self {
         Parser {
             directory,
@@ -21,7 +24,7 @@ impl<T: FSM + Sync> Parser<T> {
         }
     }
     // TODO: should this auto-exectract archives into folders so those can be parsed too?
-    pub fn parse_directory(&self, db: &Database, limit: usize, batch_size: usize) {
+    pub fn parse_directory(&self, db: &Database) {
         glob(
             Path::new(&self.directory)
                 .join(T::glob())
@@ -30,12 +33,12 @@ impl<T: FSM + Sync> Parser<T> {
         )
         .expect("Invalid glob")
         .filter_map(Result::ok)
-        .take(limit)
+        .take(LIMIT)
         .collect::<Vec<PathBuf>>()
         .par_iter()
         .filter_map(|path| self.parse_file(path))
         .collect::<Vec<Map>>()
-        .chunks(batch_size)
+        .chunks(BATCH_SIZE)
         .for_each(|chunk| db.insert_maps(&chunk[..]).expect("Could not insert maps"));
     }
     pub fn parse_file(&self, path: &PathBuf) -> Option<Map> {
@@ -50,7 +53,7 @@ impl<T: FSM + Sync> Parser<T> {
     }
 }
 
-pub trait FSM {
+pub trait MapType {
     fn init(path: &PathBuf) -> Self;
     fn glob() -> String;
     fn parse_line(&mut self, line: &str);

@@ -1,4 +1,4 @@
-use crate::{parsers::parser::FSM, schema::Map};
+use crate::{parsers::parser::MapType, schema::Map};
 use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
@@ -6,15 +6,15 @@ use std::{
 };
 
 #[derive(Debug)]
-pub struct OsuFsm {
+pub struct Osu {
     path: PathBuf,
     notes: Vec<i32>,
     map: Map,
-    state: OsuState,
+    state: State,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub enum OsuState {
+enum State {
     Start,
     General,
     Metadata,
@@ -27,20 +27,20 @@ pub enum OsuState {
     End,
 }
 
-impl FSM for OsuFsm {
+impl MapType for Osu {
     fn init(path: &PathBuf) -> Self {
-        OsuFsm {
+        Osu {
             path: path.to_path_buf(),
             notes: vec![],
             map: Map::default(),
-            state: OsuState::Start,
+            state: State::Start,
         }
     }
     fn glob() -> String {
         "**/*.osu".into()
     }
     fn parse_line(&mut self, line: &str) {
-        use OsuState::*;
+        use State::*;
         let state = match line {
             "[General]" => General,
             "[Metadata]" => Metadata,
