@@ -10,14 +10,16 @@ use ggez::{
 };
 
 use crate::{game::Game, scenes::*};
-use std::{cell::RefCell, rc::{Rc,Weak}, time::Duration};
+use std::{
+    cell::RefCell,
+    rc::{Rc, Weak},
+    time::Duration,
+};
 
-pub struct MainScene {
-
-}
+pub struct MainScene {}
 impl MainScene {
     pub fn init() -> MainScene {
-        MainScene { }
+        MainScene {}
     }
 }
 impl Scene for MainScene {
@@ -31,7 +33,7 @@ impl Scene for MainScene {
                 KeyCode::Escape => {
                     // self.g.playing = false;
                 }
-                _ => ()
+                _ => (),
             }
         }
     }

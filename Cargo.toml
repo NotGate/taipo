@@ -11,7 +11,8 @@ libc = "0.2"
 diesel = { version = "1.4.4", features = ["sqlite"] }
 ggez = { version="0.5.1", default-features = false }
 nalgebra = {version = "0.21.0", default-features = false, features = ["mint"] }
-
+bytevec = "0.2.0"
+num = "0.2.1"
 
 [build-dependencies]
 bindgen = "0.53.2"

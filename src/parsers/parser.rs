@@ -13,7 +13,7 @@ pub struct Parser<T> {
     t: PhantomData<T>,
 }
 
-const LIMIT: usize = 20;
+const LIMIT: usize = 5;
 const BATCH_SIZE: usize = 10000;
 
 impl<T: MapType + Sync> Parser<T> {
@@ -39,7 +39,7 @@ impl<T: MapType + Sync> Parser<T> {
         .filter_map(|path| self.parse_file(path))
         .collect::<Vec<Map>>()
         .chunks(BATCH_SIZE)
-        .for_each(|chunk| db.insert_maps(&chunk[..]).expect("Could not insert maps"));
+        .for_each(|chunk| db.insert_maps(&chunk[..]).expect("Could not insert maps chunks"));
     }
     pub fn parse_file(&self, path: &PathBuf) -> Option<Map> {
         let mut fsm = T::init(path);

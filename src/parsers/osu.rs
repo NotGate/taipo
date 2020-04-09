@@ -8,8 +8,8 @@ use std::{
 #[derive(Debug)]
 pub struct Osu {
     path: PathBuf,
-    notes: Vec<i32>,
     map: Map,
+    notes: Vec<u32>,
     state: State,
 }
 
@@ -31,8 +31,8 @@ impl MapType for Osu {
     fn init(path: &PathBuf) -> Self {
         Osu {
             path: path.to_path_buf(),
-            notes: vec![],
             map: Map::default(),
+            notes: vec![],
             state: State::Start,
         }
     }
@@ -67,7 +67,7 @@ impl MapType for Osu {
                 let kv = line.split(':').collect::<Vec<_>>();
                 let v = kv[1].trim();
                 match kv[0] {
-                    "AudioFilename" => self.map.audio = v.into(),
+                    "AudioFilename" => self.map.audio = self.path.parent().unwrap().join(v).display().to_string(),
                     "PreviewTime" => self.map.preview = v.parse::<f32>().expect("Invalid PreviewTime") / 1000.0,
                     "Mode" => {
                         self.map.mode = match v.parse::<i32>().expect("Invalid Mode") {
@@ -119,31 +119,40 @@ impl MapType for Osu {
                 let time = ho[2].parse::<i32>().expect("Invalid note time");
                 let typ = ho[3].parse::<u8>().expect("Invalid note type");
                 // println!("{:08b},{},{},{}",typ,x,y,time);
-                if self.notes.len() == 0 || (self.notes.len() > 0 && (time - self.notes[self.notes.len() - 1]) > 10) {
-                    self.notes.push(time);
+                if self.map.notes.0.len() == 0
+                    || (self.map.notes.0.len() > 0 && (time - self.map.notes.0[self.map.notes.0.len() - 1] as i32) > 10)
+                {
+                    self.map.notes.0.push(time as u32);
                 }
             }
             _ => (),
         };
     }
     fn get(&mut self) -> Option<Map> {
-        if self.notes.len() < 10 {
+        if self.map.notes.0.len() < 10 {
             return None;
         }
 
-        self.map.length = (self.notes[self.notes.len() - 1] - self.notes[0]) as f32 / 1000.0;
+        self.map.length = (self.map.notes.0[self.map.notes.0.len() - 1] - self.map.notes.0[0]) as f32 / 1000.0;
         self.map.dmin = 10000;
-        let diffs = self.notes.windows(2).map(|pair| pair[1] - pair[0]).collect::<Vec<i32>>();
+        let diffs = self
+            .map
+            .notes
+            .0
+            .windows(2)
+            .map(|pair| pair[1] - pair[0])
+            .collect::<Vec<u32>>();
 
         self.map.count = diffs.len() as i32 + 1;
         self.map.nps = self.map.count as f32 / self.map.length;
 
         // deltas
         diffs.iter().for_each(|d| {
-            self.map.dmin = std::cmp::min(self.map.dmin, *d);
-            self.map.dmax = std::cmp::max(self.map.dmax, *d);
+            self.map.dmin = std::cmp::min(self.map.dmin, *d as i32);
+            self.map.dmax = std::cmp::max(self.map.dmax, *d as i32);
         });
-        self.map.davg = (self.notes[self.notes.len() - 1] - self.notes[0]) / (diffs.len() as i32 + 1);
+        self.map.davg =
+            (self.map.notes.0[self.map.notes.0.len() - 1] - self.map.notes.0[0]) as i32 / (diffs.len() as i32 + 1) as i32;
 
         // streaks
         let m = self.map.dmin as f32;
@@ -188,7 +197,8 @@ impl MapType for Osu {
         self.map.id = s.finish().to_string();
 
         // TODO: set map notes to a compressed string version
-        // self.map.notes = ...;
+        // println!("{:?}",self.map.notes.0);
+        println!("{}", self.map.audio);
 
         Some(self.map.clone())
     }

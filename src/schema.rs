@@ -1,10 +1,42 @@
 // This file is disgusting
 // Please find a way to avoid writing each schema 3 different ways
 
+use diesel::backend::Backend;
+use diesel::deserialize::{self, *};
+use diesel::serialize::{self, *};
+use diesel::sql_types::*;
+use diesel::sqlite::Sqlite;
 use std::collections::{hash_map::DefaultHasher, HashMap};
 use std::hash::{Hash, Hasher};
+use std::io::Write;
 
-// str without chaining lifetimes through everything??
+#[derive(Debug, AsExpression, FromSqlRow, Clone, PartialEq, Eq, Hash)]
+#[sql_type = "Binary"]
+pub struct MapType(pub Vec<u32>);
+use bytevec::{ByteDecodable, ByteEncodable};
+impl<DB: Backend + HasSqlType<Binary>> ToSql<Binary, DB> for MapType {
+    fn to_sql<W: Write>(&self, out: &mut Output<W, DB>) -> serialize::Result {
+        let bytes: &[u8] = &self
+            .0
+            .encode::<u32>()
+            .map_err(|e| format!("Could not convert to sql: {}", e))?;
+        <[u8] as ToSql<Binary, DB>>::to_sql(&bytes, out)
+    }
+}
+impl FromSql<Binary, Sqlite> for MapType {
+    fn from_sql(bytes: Option<&<Sqlite as Backend>::RawValue>) -> deserialize::Result<Self> {
+        let bytes_vec: Vec<u8> = <Vec<u8> as FromSql<Binary, Sqlite>>::from_sql(bytes)?;
+        Ok(MapType(
+            <Vec<u32>>::decode::<u32>(&bytes_vec).map_err(|e| format!("Could not convert from sql: {}", e))?,
+        ))
+    }
+}
+impl Default for MapType {
+    fn default() -> Self {
+        MapType(vec![])
+    }
+}
+
 #[derive(Default, Clone, Debug, Insertable, Queryable, QueryableByName)]
 #[table_name = "maps"]
 pub struct Map {
@@ -38,7 +70,7 @@ pub struct Map {
 
     pub offsetms: i32,
 
-    pub notes: String,
+    pub notes: MapType,
 }
 
 table! {
@@ -73,7 +105,7 @@ table! {
 
         offsetms -> Integer,
 
-        notes -> Text,
+        notes -> Blob,
     }
 }
 
@@ -111,7 +143,7 @@ smax            integer,    -- maximum note streak
 
 offsetms        integer,    -- audio offset (s)
 
-notes           text        -- compressed form of [Note]?
+notes           blob        -- compressed form of [Note]?
 "#;
 
 // str without chaining lifetimes through everything??

@@ -9,15 +9,17 @@ use ggez::{
     Context, ContextBuilder,
 };
 
-use crate::{game::Game, database::Database, scenes::*};
-use std::{cell::RefCell, rc::{Rc,Weak}, time::Duration};
+use crate::{database::Database, game::Game, scenes::*};
+use std::{
+    cell::RefCell,
+    rc::{Rc, Weak},
+    time::Duration,
+};
 
-pub struct PlayingScene {
-
-}
+pub struct PlayingScene {}
 impl PlayingScene {
     pub fn init() -> PlayingScene {
-        PlayingScene { }
+        PlayingScene {}
     }
 }
 impl Scene for PlayingScene {

@@ -5,6 +5,7 @@ pub mod playing;
 pub mod score;
 pub mod select;
 
+use crate::game::Game;
 use ggez::{
     event::{
         self,
@@ -15,7 +16,6 @@ use ggez::{
     input::keyboard::KeyCode,
     Context, ContextBuilder,
 };
-use crate::{game::Game};
 
 pub trait Scene {
     fn poll(&mut self, g: &mut Game, e: &Event, s: &ElementState, k: &KeyCode, m: &ModifiersState);
