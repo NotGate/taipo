@@ -15,9 +15,10 @@ use ggez::{
     input::keyboard::KeyCode,
     Context, ContextBuilder,
 };
+use crate::{game::Game};
 
 pub trait Scene {
-    fn poll(&mut self, e: Event, s: ElementState, k: KeyCode, m: ModifiersState);
+    fn poll(&mut self, g: &mut Game, e: &Event, s: &ElementState, k: &KeyCode, m: &ModifiersState);
     fn update(&mut self);
     fn render(&mut self);
 }
