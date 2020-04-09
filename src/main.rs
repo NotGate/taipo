@@ -14,9 +14,7 @@ mod game;
 mod parsers;
 mod scenes;
 mod schema;
-
-use scenes::{main::MainScene, playing::PlayingScene, Scene};
-use std::{cell::RefCell, rc::Rc, time::Duration};
+mod settings;
 
 fn main() -> Result<(), String> {
     let mut g = game::Game::init()?;

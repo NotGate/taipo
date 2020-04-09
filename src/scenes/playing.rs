@@ -16,21 +16,36 @@ use std::{
     time::Duration,
 };
 
-pub struct PlayingScene {}
+pub struct PlayingScene {
+    //
+}
 impl PlayingScene {
     pub fn init() -> PlayingScene {
         PlayingScene {}
     }
-}
-impl Scene for PlayingScene {
-    fn poll(&mut self, g: &mut Game, e: &Event, s: &ElementState, k: &KeyCode, m: &ModifiersState) {
-        if *s == ElementState::Pressed && *k == KeyCode::P {
-            println!("goto menu");
-            // g.ss.pop();
+    pub fn poll(g: &mut Game) -> Result<(), String> {
+        for (e, s, k, m) in process(&mut g.el) {
+            g.ctx.process_event(&e);
+            if s == ElementState::Pressed {
+                match k {
+                    KeyCode::Escape => {
+                        g.index = 0;
+                        g.scene = "Main"
+                    }
+                    _ => (),
+                }
+            }
         }
+        Ok(())
     }
-    fn update(&mut self) {
-        println!("Main update");
+    pub fn update(g: &mut Game) -> Result<(), String> {
+        if g.mp.pos()? > g.maps[0].notes.0[g.index] as f64 / 1000.0 {
+            g.index = (g.index + 1) % g.maps[0].notes.0.len();
+        }
+        println!("update {}", g.index);
+        Ok(())
     }
-    fn render(&mut self) {}
+    pub fn render(g: &mut Game) -> Result<(), String> {
+        Ok(())
+    }
 }

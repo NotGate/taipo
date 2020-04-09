@@ -17,8 +17,20 @@ use ggez::{
     Context, ContextBuilder,
 };
 
-pub trait Scene {
-    fn poll(&mut self, g: &mut Game, e: &Event, s: &ElementState, k: &KeyCode, m: &ModifiersState);
-    fn update(&mut self);
-    fn render(&mut self);
+pub fn process(el: &mut EventsLoop) -> Vec<(Event, ElementState, KeyCode, ModifiersState)> {
+    let mut events = vec![];
+    el.poll_events(|event| match event {
+        Event::DeviceEvent {
+            event:
+                DeviceEvent::Key(KeyboardInput {
+                    state,
+                    virtual_keycode: Some(key),
+                    modifiers,
+                    ..
+                }),
+            ..
+        } => events.push((event, state, key, modifiers)),
+        _ => (),
+    });
+    events
 }

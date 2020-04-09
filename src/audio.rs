@@ -68,10 +68,10 @@ impl MusicPlayer {
         Bass::channel_pause(self.handle)
     }
     pub fn set_speed(&self, val: f32) -> Result<(), String> {
-        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO, (num::clamp(val,0.5,2.0) - 1.0) * 100.0)
+        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO, (num::clamp(val, 0.5, 2.0) - 1.0) * 100.0)
     }
     pub fn set_volume(&self, val: f32) -> Result<(), String> {
-        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_VOL, num::clamp(val,0.0,1.0))
+        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_VOL, num::clamp(val, 0.0, 1.0))
     }
     pub fn get_speed(&self) -> Result<f32, String> {
         Ok(1.0 + (Bass::channel_get_attribute(self.handle, BASS_ATTRIB_TEMPO)? / 100.0))

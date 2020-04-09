@@ -16,29 +16,38 @@ use std::{
     time::Duration,
 };
 
-pub struct MainScene {}
+pub struct MainScene {
+    //
+}
 impl MainScene {
     pub fn init() -> MainScene {
         MainScene {}
     }
-}
-impl Scene for MainScene {
-    fn poll(&mut self, g: &mut Game, e: &Event, s: &ElementState, k: &KeyCode, m: &ModifiersState) {
-        if *s == ElementState::Pressed {
-            match k {
-                KeyCode::P => {
-                    println!("goto play");
-                    // g.ss.push(Box::new(playing::PlayingScene::init()));
+    pub fn poll(g: &mut Game) -> Result<(), String> {
+        for (e, s, k, m) in process(&mut g.el) {
+            g.ctx.process_event(&e);
+            if s == ElementState::Pressed {
+                match k {
+                    KeyCode::Escape => g.playing = false,
+                    KeyCode::Return => {
+                        g.mp.seek(g.maps[0].notes.0[0] as f64 / 1000.0)?;
+                        g.scene = "Playing"
+                    }
+                    KeyCode::A => g.mp.set_speed(g.mp.get_speed()? - 0.1)?,
+                    KeyCode::D => g.mp.set_speed(g.mp.get_speed()? + 0.1)?,
+                    KeyCode::W => g.mp.set_volume(g.mp.get_volume()? - 0.1)?,
+                    KeyCode::S => g.mp.set_volume(g.mp.get_volume()? + 0.1)?,
+                    _ => (),
                 }
-                KeyCode::Escape => {
-                    // self.g.playing = false;
-                }
-                _ => (),
             }
         }
+        Ok(())
     }
-    fn update(&mut self) {
-        println!("Main update");
+    pub fn update(g: &mut Game) -> Result<(), String> {
+        println!("main");
+        Ok(())
     }
-    fn render(&mut self) {}
+    pub fn render(g: &mut Game) -> Result<(), String> {
+        Ok(())
+    }
 }

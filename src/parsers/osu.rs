@@ -61,7 +61,6 @@ impl MapType for Osu {
                 self.map.source = "osu".into();
                 let s = line.split(' ').collect::<Vec<_>>();
                 self.map.format = s[s.len() - 1].into();
-                //self.map.format = s.last().unwrap().to_owned().into();
             }
             General => {
                 let kv = line.split(':').collect::<Vec<_>>();
@@ -182,10 +181,7 @@ impl MapType for Osu {
             self.map.savg += d;
         });
         self.map.savg /= streaks.len() as i32;
-
-        // difficulty
         self.map.difficulty = (1000.0 * self.map.nps * (1.0 / self.map.dmin as f32) * self.map.savg as f32).log2();
-
         // println!("{}\t{}\t{}\t{}",self.map.difficulty,self.map.nps,self.map.dmin,self.map.savg);
 
         let mut s = DefaultHasher::new();
@@ -195,10 +191,6 @@ impl MapType for Osu {
         )
         .hash(&mut s);
         self.map.id = s.finish().to_string();
-
-        // TODO: set map notes to a compressed string version
-        // println!("{:?}",self.map.notes.0);
-        println!("{}", self.map.audio);
 
         Some(self.map.clone())
     }
