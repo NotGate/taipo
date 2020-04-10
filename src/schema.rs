@@ -10,7 +10,7 @@ use std::io::Write;
 
 #[derive(Debug, AsExpression, FromSqlRow, Clone, PartialEq, Eq, Hash)]
 #[sql_type = "Binary"]
-pub struct MapType(pub Vec<u32>);
+pub struct MapType(pub Vec<(u32,u32)>);
 use bytevec::{ByteDecodable, ByteEncodable};
 impl<DB: Backend + HasSqlType<Binary>> ToSql<Binary, DB> for MapType {
     fn to_sql<W: Write>(&self, out: &mut Output<W, DB>) -> serialize::Result {
@@ -25,7 +25,7 @@ impl FromSql<Binary, Sqlite> for MapType {
     fn from_sql(bytes: Option<&<Sqlite as Backend>::RawValue>) -> deserialize::Result<Self> {
         let bytes_vec: Vec<u8> = <Vec<u8> as FromSql<Binary, Sqlite>>::from_sql(bytes)?;
         Ok(MapType(
-            <Vec<u32>>::decode::<u32>(&bytes_vec).map_err(|e| format!("Could not convert from sql: {}", e))?,
+            <Vec<(u32,u32)>>::decode::<u32>(&bytes_vec).map_err(|e| format!("Could not convert from sql: {}", e))?,
         ))
     }
 }
@@ -44,16 +44,17 @@ pub struct Map {
     pub format: String,
     pub tags: String,
     pub preview: f32,
-
+    
     pub map: i32,
     pub audio: String,
     pub background: String,
-
+    
     pub title: String,
     pub artist: String,
     pub creator: String,
     pub version: String,
-
+    
+    pub keys: i32,
     pub count: i32,
     pub length: f32,
     pub bpm: f32,
@@ -89,6 +90,7 @@ table! {
         creator -> Text,
         version -> Text,
 
+        keys -> Integer,
         count -> Integer,
         length -> Float,
         bpm -> Float,
@@ -127,6 +129,7 @@ artist          text,
 creator         text,
 version         text,
 
+keys            integer,    -- key count in mania
 count           integer,    -- number of notes
 length          real,       -- length of song (s)
 bpm             real,       -- mode beats per minute

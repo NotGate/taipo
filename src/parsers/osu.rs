@@ -91,12 +91,25 @@ impl MapType for Osu {
                     _ => (),
                 }
             }
+            Difficulty => {
+                let kv = line.split(':').collect::<Vec<_>>();
+                let v = kv[1].trim();
+                match kv[0] {
+                    "CircleSize" => self.map.keys = v.parse::<f32>().map_err(|e| format!("Invalid CircleSize: {}",self.path.display())).unwrap() as i32,
+                    _ => (),
+                }
+            }
             Events => {
                 if self.map.background.is_empty() {
                     let e = line.split(',').collect::<Vec<_>>();
                     if e.len() > 2 && e[0] == "0" {
-                        // bg offset are e[3] and e[4]
-                        self.map.background = e[2][1..e[2].len() - 2].into();
+                        self.map.background = self
+                            .path
+                            .parent()
+                            .unwrap()
+                            .join(e[2][1..e[2].len() - 1].to_string())
+                            .display()
+                            .to_string();
                     }
                 }
             }
@@ -118,11 +131,19 @@ impl MapType for Osu {
                 let time = ho[2].parse::<i32>().expect("Invalid note time");
                 let typ = ho[3].parse::<u8>().expect("Invalid note type");
                 // println!("{:08b},{},{},{}",typ,x,y,time);
-                if self.map.notes.0.len() == 0
-                    || (self.map.notes.0.len() > 0 && (time - self.map.notes.0[self.map.notes.0.len() - 1] as i32) > 10)
-                {
-                    self.map.notes.0.push(time as u32);
-                }
+                // if self.map.mode != "mania" {
+                    if self.map.notes.0.len() == 0
+                        || (self.map.notes.0.len() > 0 && (time - self.map.notes.0[self.map.notes.0.len() - 1].0 as i32) > 10)
+                    {
+                        // TODO: you'll need to actually add duplicates for manias so you cover chords
+                        self.map.notes.0.push((time as u32,x as u32));
+                    }
+                // } else {
+                //     self.map.notes.0.push((time as u32,x as u32));
+                // }
+                // if self.map.mode == "mania" && self.map.keys != 4 {
+                //     println!("{}",x * self.map.keys/512);
+                // }
             }
             _ => (),
         };
@@ -131,15 +152,16 @@ impl MapType for Osu {
         if self.map.notes.0.len() < 10 {
             return None;
         }
+        // println!("{}",self.map.keys);
 
-        self.map.length = (self.map.notes.0[self.map.notes.0.len() - 1] - self.map.notes.0[0]) as f32 / 1000.0;
+        self.map.length = (self.map.notes.0[self.map.notes.0.len() - 1].0 - self.map.notes.0[0].0) as f32 / 1000.0;
         self.map.dmin = 10000;
         let diffs = self
             .map
             .notes
             .0
             .windows(2)
-            .map(|pair| pair[1] - pair[0])
+            .map(|pair| pair[1].0 - pair[0].0)
             .collect::<Vec<u32>>();
 
         self.map.count = diffs.len() as i32 + 1;
@@ -151,7 +173,7 @@ impl MapType for Osu {
             self.map.dmax = std::cmp::max(self.map.dmax, *d as i32);
         });
         self.map.davg =
-            (self.map.notes.0[self.map.notes.0.len() - 1] - self.map.notes.0[0]) as i32 / (diffs.len() as i32 + 1) as i32;
+            (self.map.notes.0[self.map.notes.0.len() - 1].0 - self.map.notes.0[0].0) as i32 / (diffs.len() as i32 + 1) as i32;
 
         // streaks
         let m = self.map.dmin as f32;

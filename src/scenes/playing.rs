@@ -63,7 +63,7 @@ impl PlayingScene {
                 if c.unwrap() == g.chars[g.playing_scene.index].contents().pop().unwrap() {
                     println!(
                         "good :) {}",
-                        g.map.notes.0[g.playing_scene.index] as f64 / 1000.0 - g.mp.pos().unwrap() + 0.06
+                        g.map.notes.0[g.playing_scene.index].0 as f64 / 1000.0 - g.mp.pos().unwrap() + 0.06
                     );
                 }
             }
@@ -71,22 +71,27 @@ impl PlayingScene {
         Ok(())
     }
     pub fn update(g: &mut Game) -> Result<(), String> {
+
+        // Typing
         let dx = g.lw as f64 / (g.map.dmin as f64 / 1000.0);
         let travel = (g.w / 2.0 + g.lw) as f64 / dx;
         let mut i = g.playing_scene.index;
-        while i < g.map.notes.0.len() && (g.map.notes.0[i] as f64 / 1000.0 - g.mp.pos()?) < travel as f64 {
-            let x = (g.map.notes.0[i] as f64 / 1000.0 - g.mp.pos()?) * dx + (g.w / 2.0) as f64;
+        while i < g.map.notes.0.len() && (g.map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) < travel as f64 {
+            let x = (g.map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) * dx + (g.w / 2.0) as f64;
             graphics::queue_text(
                 &mut g.ctx,
                 &g.chars[i as usize],
                 nalgebra::Point2::new(x as f32, (g.h - g.fs) as f32 / 2.0),
                 None,
             );
-            if (g.mp.pos()? - (g.map.notes.0[i] as f64 / 1000.0)) > 0.075 {
+            if (g.mp.pos()? - (g.map.notes.0[i].0 as f64 / 1000.0)) > 0.075 {
                 g.playing_scene.index += 1;
             }
             i += 1;
         }
+
+        // Mania
+        
 
         Ok(())
     }

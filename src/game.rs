@@ -45,6 +45,8 @@ pub struct Game<'a> {
     pub fps_text: graphics::Text,
     pub bg: graphics::Mesh,
     pub fg: graphics::Mesh,
+    pub img: graphics::Image,
+    pub param: graphics::DrawParam,
 }
 
 impl<'a> Game<'a> {
@@ -66,6 +68,7 @@ impl<'a> Game<'a> {
                 // .resizable(false),
             )
             .add_resource_path("assets")
+            .add_resource_path(".")
             .build()
             .map_err(|e| format!("Could not build ggez context: {}", e))?;
 
@@ -109,6 +112,15 @@ impl<'a> Game<'a> {
         )
         .unwrap();
 
+        let mut img = graphics::Image::new(&mut ctx, format!("/{}",map.background.clone()))
+            .map_err(|e| format!("Could not find img: {}", e))
+            .unwrap();
+        img.set_filter(graphics::FilterMode::Nearest);
+        let param = graphics::DrawParam::new()
+            .dest(nalgebra::Point2::new(0.0, 0.0))
+            .offset(nalgebra::Point2::new(0.0, 0.0))
+            .scale(nalgebra::Vector2::new(1.0, 1.0));
+
         Ok(Game {
             playing: true,
             ctx,
@@ -132,6 +144,8 @@ impl<'a> Game<'a> {
             fg,
             bg,
             chars: vec![],
+            img,
+            param,
         })
     }
     pub fn tick(&mut self) -> Result<(), String> {

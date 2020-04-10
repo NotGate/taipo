@@ -53,7 +53,7 @@ impl MusicPlayer {
         Ok(())
     }
     pub fn seek(&self, pos: f64) -> Result<(), String> {
-        Bass::channel_set_position(self.handle, Bass::channel_seconds2bytes(self.handle, pos)?)
+        Bass::channel_set_position(self.handle, Bass::channel_seconds2bytes(self.handle, pos.max(0.01))?)
     }
     pub fn pos(&self) -> Result<f64, String> {
         Bass::channel_bytes2seconds(self.handle, Bass::channel_get_position(self.handle)?)
