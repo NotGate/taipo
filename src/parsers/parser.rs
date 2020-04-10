@@ -13,7 +13,7 @@ pub struct Parser<T> {
     t: PhantomData<T>,
 }
 
-const LIMIT: usize = 5;
+const LIMIT: usize = 1000;
 const BATCH_SIZE: usize = 10000;
 
 impl<T: MapType + Sync> Parser<T> {

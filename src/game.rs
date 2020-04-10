@@ -6,6 +6,7 @@ use crate::{
     schema::Map,
 };
 use ggez::{
+    conf::WindowMode,
     event::{
         self,
         winit_event::{DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, WindowEvent},
@@ -21,20 +22,24 @@ pub struct Game<'a> {
     pub playing: bool,
     pub ctx: Context,
     pub el: EventsLoop,
-    //
     pub db: Database,
     pub mp: MusicPlayer,
-    // Parsers
     pub osu_p: Parser<Osu>,
-
-    // TODO: Scene Stack? MainScene::update()
+    // TODO: Scene Stack?
+    // SceneManager?
     pub scene: &'a str,
-
-    // Maps?
+    pub main_scene: MainScene,
+    pub playing_scene: PlayingScene,
+    // TODO: these shouldn't be in Game
+    // Some also shouldn't be in Scenes because they should be in Settings
     pub maps: Vec<Map>,
-    pub index: usize,
-
-    // TODO: this should belong in an overlay?
+    pub map: Map,
+    pub w: f32,
+    pub h: f32,
+    pub fs: f32,
+    pub lw: f32,
+    pub mi: usize,
+    pub text: graphics::Text,
     pub font: graphics::Font,
     pub fps_text: graphics::Text,
 }
@@ -44,7 +49,19 @@ impl<'a> Game<'a> {
         // TODO:
         // let settings = Settings::init(); // this will load settings.[filetype]
 
+        let w = 800.0;
+        let h = 600.0;
+        let fs = 100.0;
+
         let (mut ctx, el) = ContextBuilder::new("taipo", "notgate")
+            .window_mode(
+                WindowMode::default()
+                    .dimensions(w, h)
+                    .borderless(true)
+                    .maximized(false)
+                    .fullscreen_type(ggez::conf::FullscreenType::Windowed),
+                // .resizable(false),
+            )
             .add_resource_path("assets")
             .build()
             .map_err(|e| format!("Could not build ggez context: {}", e))?;
@@ -55,25 +72,24 @@ impl<'a> Game<'a> {
         db.create_tables()?;
 
         // Parser (TODO: looks for `new` maps on start and add them)
+        // TODO: parse async so it doesn't block the game
         let osu_p = Parser::init("maps/osu".into()); // this should come from settings
-                                                     // TODO: parse async so it doesn't block the game
         osu_p.parse_directory(&db);
 
         // TODO: this is too expensive from a general sense -> request certain chunks at a time (limit+offset)
-        let maps = db.query_maps("")?;
+        let maps = db.query_maps("smin>30")?;
+        let map = maps[0].clone();
 
         // Music (TODO: play from db)
         let mut mp = MusicPlayer::init()?;
-        mp.load(&maps[0].audio)?;
+        mp.load(&map.audio)?;
+        mp.seek(map.preview as f64 / 1000.0)?;
         mp.set_speed(1.2)?;
-        mp.set_volume(0.2)?;
+        mp.set_volume(0.1)?;
         mp.play()?;
 
-        // Resources (TODO:where do I store all these?)
-        // they should be in their respective Scene/Overlay
-        // TODO: fonts should be selectable from the system?
-        // TODO: font size should be changable and come from Settings
         let font = graphics::Font::new(&mut ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?;
+        let text = graphics::Text::new(("_", font, fs));
         let fps_text = graphics::Text::new((ggez::timer::fps(&mut ctx).to_string(), font, 48.0));
 
         Ok(Game {
@@ -83,11 +99,19 @@ impl<'a> Game<'a> {
             db,
             mp,
             osu_p,
-            font,
-            fps_text,
             scene: "Main",
+            main_scene: MainScene::init()?,
+            playing_scene: PlayingScene::init()?,
             maps,
-            index: 0,
+            map,
+            mi: 0,
+            font,
+            text,
+            fps_text,
+            w,
+            h,
+            fs,
+            lw: 0.0,
         })
     }
     pub fn tick(&mut self) -> Result<(), String> {
@@ -96,6 +120,7 @@ impl<'a> Game<'a> {
         Ok(())
     }
     pub fn poll(&mut self) -> Result<(), String> {
+        // self.scene.poll();
         match self.scene {
             "Main" => MainScene::poll(self)?,
             "Playing" => PlayingScene::poll(self)?,
@@ -103,6 +128,7 @@ impl<'a> Game<'a> {
         }
         Ok(())
     }
+    // self.scene.update();
     pub fn update(&mut self) -> Result<(), String> {
         match self.scene {
             "Main" => MainScene::update(self)?,
@@ -115,14 +141,14 @@ impl<'a> Game<'a> {
         graphics::clear(&mut self.ctx, [0.1, 0.2, 0.3, 1.0].into());
 
         // TODO: each scene should have a list of overlays to render but so should main?
+        // self.scene.render();
         match self.scene {
             "Main" => MainScene::render(self)?,
             "Playing" => PlayingScene::render(self)?,
             _ => (),
         }
 
-        // fps (temporary)
-        self.fps_text = graphics::Text::new((format!("FPS: {}", ggez::timer::fps(&mut self.ctx)), self.font, 48.0));
+        self.fps_text = graphics::Text::new((format!("FPS: {}", ggez::timer::fps(&mut self.ctx)), self.font, 10.0));
         graphics::draw(&mut self.ctx, &self.fps_text, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
 
         graphics::present(&mut self.ctx).unwrap();
