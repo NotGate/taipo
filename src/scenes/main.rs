@@ -24,15 +24,16 @@ impl MainScene {
         Ok(MainScene {})
     }
     pub fn poll(g: &mut Game) -> Result<(), String> {
-        for (e, s, k, m) in process(&mut g.el) {
+        for (e, s, k, m, c) in process(&mut g.el) {
             g.ctx.process_event(&e);
-            if s == ElementState::Pressed {
-                match k {
+            if s == Some(ElementState::Pressed) && k != None {
+                match k.unwrap() {
                     KeyCode::Escape => g.playing = false,
                     KeyCode::Return => {
                         g.playing_scene.index = 0;
                         g.mp.seek(g.map.notes.0[0] as f64 / 1000.0 - 1.00)?;
-                        g.scene = "Playing"
+                        g.scene = "Playing";
+                        playing::PlayingScene::enter(g);
                     }
                     KeyCode::A => g.mp.set_speed(g.mp.get_speed()? - 0.1)?,
                     KeyCode::D => g.mp.set_speed(g.mp.get_speed()? + 0.1)?,

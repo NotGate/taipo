@@ -17,7 +17,15 @@ use ggez::{
     Context, ContextBuilder,
 };
 
-pub fn process(el: &mut EventsLoop) -> Vec<(Event, ElementState, KeyCode, ModifiersState)> {
+pub fn process(
+    el: &mut EventsLoop,
+) -> Vec<(
+    Event,
+    Option<ElementState>,
+    Option<KeyCode>,
+    Option<ModifiersState>,
+    Option<char>,
+)> {
     let mut events = vec![];
     el.poll_events(|event| match event {
         Event::WindowEvent {
@@ -33,7 +41,11 @@ pub fn process(el: &mut EventsLoop) -> Vec<(Event, ElementState, KeyCode, Modifi
                     ..
                 },
             ..
-        } => events.push((event, state, key, modifiers)),
+        } => events.push((event, Some(state), Some(key), Some(modifiers), None)),
+        Event::WindowEvent {
+            event: WindowEvent::ReceivedCharacter(c),
+            ..
+        } => events.push((event, None, None, None, Some(c))),
         _ => (),
     });
     events

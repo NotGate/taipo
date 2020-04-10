@@ -33,6 +33,7 @@ pub struct Game<'a> {
     // TODO: these shouldn't be in Game
     // Some also shouldn't be in Scenes because they should be in Settings
     pub maps: Vec<Map>,
+    pub chars: Vec<graphics::Text>, // just store glyphs?
     pub map: Map,
     pub w: f32,
     pub h: f32,
@@ -42,6 +43,8 @@ pub struct Game<'a> {
     pub text: graphics::Text,
     pub font: graphics::Font,
     pub fps_text: graphics::Text,
+    pub bg: graphics::Mesh,
+    pub fg: graphics::Mesh,
 }
 
 impl<'a> Game<'a> {
@@ -77,7 +80,7 @@ impl<'a> Game<'a> {
         osu_p.parse_directory(&db);
 
         // TODO: this is too expensive from a general sense -> request certain chunks at a time (limit+offset)
-        let maps = db.query_maps("smin>30")?;
+        let maps = db.query_maps("smin>30 and dmin between 50 and 100")?;
         let map = maps[0].clone();
 
         // Music (TODO: play from db)
@@ -91,6 +94,20 @@ impl<'a> Game<'a> {
         let font = graphics::Font::new(&mut ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?;
         let text = graphics::Text::new(("_", font, fs));
         let fps_text = graphics::Text::new((ggez::timer::fps(&mut ctx).to_string(), font, 48.0));
+        let fg = graphics::Mesh::new_rectangle(
+            &mut ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(0.0, 0.0, 400.0, 100.0),
+            graphics::Color::new(0.1, 0.2, 0.3, 1.0),
+        )
+        .unwrap();
+        let bg = graphics::Mesh::new_rectangle(
+            &mut ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(0.0, 0.0, 800.0, 100.0),
+            graphics::Color::new(0.2, 0.2, 0.2, 1.0),
+        )
+        .unwrap();
 
         Ok(Game {
             playing: true,
@@ -112,6 +129,9 @@ impl<'a> Game<'a> {
             h,
             fs,
             lw: 0.0,
+            fg,
+            bg,
+            chars: vec![],
         })
     }
     pub fn tick(&mut self) -> Result<(), String> {
