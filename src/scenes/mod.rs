@@ -1,9 +1,8 @@
-pub mod config;
 pub mod help;
-pub mod main;
 pub mod playing;
 pub mod score;
 pub mod select;
+pub mod settings;
 
 use crate::game::Game;
 use ggez::{
@@ -17,15 +16,8 @@ use ggez::{
     Context, ContextBuilder,
 };
 
-pub fn process(
-    el: &mut EventsLoop,
-) -> Vec<(
-    Event,
-    Option<ElementState>,
-    Option<KeyCode>,
-    Option<ModifiersState>,
-    Option<char>,
-)> {
+// TODO: change
+pub fn process(el: &mut EventsLoop) -> Vec<(Event, ElementState, KeyCode, ModifiersState, char)> {
     let mut events = vec![];
     el.poll_events(|event| match event {
         Event::WindowEvent {
@@ -41,26 +33,12 @@ pub fn process(
                     ..
                 },
             ..
-        } => events.push((event, Some(state), Some(key), Some(modifiers), None)),
+        } => events.push((event, state, key, modifiers, '\0')),
         Event::WindowEvent {
             event: WindowEvent::ReceivedCharacter(c),
             ..
-        } => events.push((event, None, None, None, Some(c))),
+        } => events.push((event, ElementState::Released, KeyCode::G, ModifiersState::default(), c)),
         _ => (),
     });
     events
 }
-
-/*
-// TODO: this should belong in an overlay?
-pub font: graphics::Font,
-pub fps_text: graphics::Text,
-// Resources (TODO:where do I store all these?)
-// they should be in their respective Scene/Overlay
-// TODO: fonts should be selectable from the system?
-// TODO: font size should be changable and come from Settings
-let font = graphics::Font::new(&mut ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?;
-let fps_text = graphics::Text::new((ggez::timer::fps(&mut ctx).to_string(), font, 48.0));
-self.fps_text = graphics::Text::new((format!("FPS: {}", ggez::timer::fps(&mut self.ctx)), self.font, 48.0));
-graphics::draw(&mut self.ctx, &self.fps_text, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
-*/

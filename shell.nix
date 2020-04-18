@@ -1,3 +1,4 @@
+# TODO: prune all of this to bare essentials
 { pkgs ? import <nixpkgs> { config.allowUnfree = true; } }:
 let
   libbass = (pkgs.libbass.overrideAttrs (_: {
@@ -52,7 +53,7 @@ in pkgs.mkShell {
   +"${pkgs.llvmPackages.libclang}/lib:"
   +"$LD_LIBRARY_PATH";
   shellHook = ''
-    echo Welcome to my shell.nix uwu
+    echo Welcome to the taipo build environment
   '';
   installPhase = ''
     rustup install stable

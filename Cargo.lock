@@ -1965,6 +1965,9 @@ name = "serde"
 version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "36df6ac6412072f67cf767ebbde4133a5b2e88e76dc6187fa7104cd16f783399"
+dependencies = [
+ "serde_derive",
+]
 
 [[package]]
 name = "serde_derive"
@@ -2191,6 +2194,8 @@ dependencies = [
  "nalgebra 0.21.0",
  "num",
  "rayon",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

@@ -2,8 +2,9 @@ use crate::{
     audio::MusicPlayer,
     database::Database,
     parsers::{osu::Osu, parser::Parser},
-    scenes::{main::*, playing::*},
+    scenes::{help::*, playing::*, score::*, select::*, settings::*},
     schema::Map,
+    settings::Settings,
 };
 use ggez::{
     conf::WindowMode,
@@ -18,54 +19,43 @@ use ggez::{
 };
 use std::{cell::RefCell, rc::Rc, time::Duration};
 
-pub struct Game<'a> {
+#[derive(Clone,Copy)]
+pub enum Scene {
+    Select,
+    Playing,
+    Score,
+    Help,
+    Settings,
+}
+
+pub struct Game {
     pub playing: bool,
+    pub settings: Settings,
     pub ctx: Context,
     pub el: EventsLoop,
     pub db: Database,
     pub mp: MusicPlayer,
     pub osu_p: Parser<Osu>,
-    // TODO: Scene Stack?
-    // SceneManager?
-    pub scene: &'a str,
-    pub main_scene: MainScene,
-    pub playing_scene: PlayingScene,
-    // TODO: these shouldn't be in Game
-    // Some also shouldn't be in Scenes because they should be in Settings
-    pub maps: Vec<Map>,
-    pub chars: Vec<graphics::Text>, // just store glyphs?
-    pub map: Map,
-    pub w: f32,
-    pub h: f32,
-    pub fs: f32,
-    pub lw: f32,
-    pub mi: usize,
-    pub text: graphics::Text,
-    pub font: graphics::Font,
-    pub fps_text: graphics::Text,
-    pub bg: graphics::Mesh,
-    pub fg: graphics::Mesh,
-    pub img: graphics::Image,
-    pub param: graphics::DrawParam,
+    pub scene: Scene,
+    pub select_scene: Option<SelectScene>,
+    pub playing_scene: Option<PlayingScene>,
+    pub help_scene: Option<HelpScene>,
+    pub settings_scene: Option<SettingsScene>,
+    pub score_scene: Option<ScoreScene>,
 }
 
-impl<'a> Game<'a> {
-    pub fn init() -> Result<Game<'a>, String> {
-        // TODO:
-        // let settings = Settings::init(); // this will load settings.[filetype]
-
-        let w = 800.0;
-        let h = 600.0;
-        let fs = 100.0;
+impl Game {
+    pub fn init() -> Result<Self, String> {
+        let settings = Settings::init()?;
 
         let (mut ctx, el) = ContextBuilder::new("taipo", "notgate")
             .window_mode(
                 WindowMode::default()
-                    .dimensions(w, h)
-                    .borderless(true)
-                    .maximized(false)
-                    .fullscreen_type(ggez::conf::FullscreenType::Windowed),
-                // .resizable(false),
+                    .dimensions(settings.w as f32, settings.h as f32)
+                    .borderless(settings.borderless)
+                    .maximized(settings.maximized)
+                    .fullscreen_type(ggez::conf::FullscreenType::Windowed)
+                    .resizable(false),
             )
             .add_resource_path("assets")
             .add_resource_path(".")
@@ -82,71 +72,33 @@ impl<'a> Game<'a> {
         let osu_p = Parser::init("maps/osu".into()); // this should come from settings
         osu_p.parse_directory(&db);
 
-        // TODO: this is too expensive from a general sense -> request certain chunks at a time (limit+offset)
-        let maps = db.query_maps("smin>30 and dmin between 50 and 100")?;
-        let map = maps[0].clone();
-
         // Music (TODO: play from db)
         let mut mp = MusicPlayer::init()?;
-        mp.load(&map.audio)?;
-        mp.seek(map.preview as f64 / 1000.0)?;
-        mp.set_speed(1.2)?;
-        mp.set_volume(0.1)?;
-        mp.play()?;
-
-        let font = graphics::Font::new(&mut ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?;
-        let text = graphics::Text::new(("_", font, fs));
-        let fps_text = graphics::Text::new((ggez::timer::fps(&mut ctx).to_string(), font, 48.0));
-        let fg = graphics::Mesh::new_rectangle(
-            &mut ctx,
-            graphics::DrawMode::fill(),
-            graphics::Rect::new(0.0, 0.0, 400.0, 100.0),
-            graphics::Color::new(0.1, 0.2, 0.3, 1.0),
-        )
-        .unwrap();
-        let bg = graphics::Mesh::new_rectangle(
-            &mut ctx,
-            graphics::DrawMode::fill(),
-            graphics::Rect::new(0.0, 0.0, 800.0, 100.0),
-            graphics::Color::new(0.2, 0.2, 0.2, 1.0),
-        )
-        .unwrap();
-
-        let mut img = graphics::Image::new(&mut ctx, format!("/{}",map.background.clone()))
-            .map_err(|e| format!("Could not find img: {}", e))
-            .unwrap();
-        img.set_filter(graphics::FilterMode::Nearest);
-        let param = graphics::DrawParam::new()
-            .dest(nalgebra::Point2::new(0.0, 0.0))
-            .offset(nalgebra::Point2::new(0.0, 0.0))
-            .scale(nalgebra::Vector2::new(1.0, 1.0));
 
         Ok(Game {
             playing: true,
+            settings,
             ctx,
             el,
             db,
             mp,
             osu_p,
-            scene: "Main",
-            main_scene: MainScene::init()?,
-            playing_scene: PlayingScene::init()?,
-            maps,
-            map,
-            mi: 0,
-            font,
-            text,
-            fps_text,
-            w,
-            h,
-            fs,
-            lw: 0.0,
-            fg,
-            bg,
-            chars: vec![],
-            img,
-            param,
+            scene: Scene::Select,
+            select_scene: None,
+            playing_scene: None,
+            help_scene: None,
+            settings_scene: None,
+            score_scene: None,
         })
+    }
+    // gross hack because Rust constructors are annoying
+    pub fn load(&mut self) -> Result<(), String> {
+        self.select_scene = Some(SelectScene::init(self)?);
+        self.playing_scene = Some(PlayingScene::init(self)?);
+        self.help_scene = Some(HelpScene::init(self)?);
+        self.settings_scene = Some(SettingsScene::init(self)?);
+        self.score_scene = Some(ScoreScene::init(self)?);
+        Ok(())
     }
     pub fn tick(&mut self) -> Result<(), String> {
         self.ctx.timer_context.tick();
@@ -154,36 +106,35 @@ impl<'a> Game<'a> {
         Ok(())
     }
     pub fn poll(&mut self) -> Result<(), String> {
-        // self.scene.poll();
         match self.scene {
-            "Main" => MainScene::poll(self)?,
-            "Playing" => PlayingScene::poll(self)?,
-            _ => (),
+            Scene::Select => SelectScene::poll(self)?,
+            Scene::Playing => PlayingScene::poll(self)?,
+            Scene::Score => ScoreScene::poll(self)?,
+            Scene::Help =>HelpScene::poll(self)?,
+            Scene::Settings => SettingsScene::poll(self)?,
         }
         Ok(())
     }
-    // self.scene.update();
     pub fn update(&mut self) -> Result<(), String> {
         match self.scene {
-            "Main" => MainScene::update(self)?,
-            "Playing" => PlayingScene::update(self)?,
-            _ => (),
+            Scene::Select => SelectScene::update(self)?,
+            Scene::Playing => PlayingScene::update(self)?,
+            Scene::Score => ScoreScene::update(self)?,
+            Scene::Help =>HelpScene::update(self)?,
+            Scene::Settings => SettingsScene::update(self)?,
         }
         Ok(())
     }
     pub fn render(&mut self) -> Result<(), String> {
         graphics::clear(&mut self.ctx, [0.1, 0.2, 0.3, 1.0].into());
 
-        // TODO: each scene should have a list of overlays to render but so should main?
-        // self.scene.render();
         match self.scene {
-            "Main" => MainScene::render(self)?,
-            "Playing" => PlayingScene::render(self)?,
-            _ => (),
+            Scene::Select => SelectScene::poll(self)?,
+            Scene::Playing => PlayingScene::poll(self)?,
+            Scene::Score => ScoreScene::poll(self)?,
+            Scene::Help =>HelpScene::poll(self)?,
+            Scene::Settings => SettingsScene::poll(self)?,
         }
-
-        self.fps_text = graphics::Text::new((format!("FPS: {}", ggez::timer::fps(&mut self.ctx)), self.font, 10.0));
-        graphics::draw(&mut self.ctx, &self.fps_text, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
 
         graphics::present(&mut self.ctx).unwrap();
         Ok(())

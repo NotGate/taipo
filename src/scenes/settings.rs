@@ -16,12 +16,12 @@ use std::{
     time::Duration,
 };
 
-pub struct ScoreScene {
+pub struct SettingsScene {
     pub index: usize,
 }
-impl ScoreScene {
-    pub fn init(g: &Game) -> Result<ScoreScene, String> {
-        Ok(ScoreScene {
+impl SettingsScene {
+    pub fn init(g: &Game) -> Result<SettingsScene, String> {
+        Ok(SettingsScene {
             index: 0,
         })
     }

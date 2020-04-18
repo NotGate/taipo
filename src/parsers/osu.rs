@@ -95,7 +95,12 @@ impl MapType for Osu {
                 let kv = line.split(':').collect::<Vec<_>>();
                 let v = kv[1].trim();
                 match kv[0] {
-                    "CircleSize" => self.map.keys = v.parse::<f32>().map_err(|e| format!("Invalid CircleSize: {}",self.path.display())).unwrap() as i32,
+                    "CircleSize" => {
+                        self.map.keys = v
+                            .parse::<f32>()
+                            .map_err(|e| format!("Invalid CircleSize: {}", self.path.display()))
+                            .unwrap() as i32
+                    }
                     _ => (),
                 }
             }
@@ -132,12 +137,12 @@ impl MapType for Osu {
                 let typ = ho[3].parse::<u8>().expect("Invalid note type");
                 // println!("{:08b},{},{},{}",typ,x,y,time);
                 // if self.map.mode != "mania" {
-                    if self.map.notes.0.len() == 0
-                        || (self.map.notes.0.len() > 0 && (time - self.map.notes.0[self.map.notes.0.len() - 1].0 as i32) > 10)
-                    {
-                        // TODO: you'll need to actually add duplicates for manias so you cover chords
-                        self.map.notes.0.push((time as u32,x as u32));
-                    }
+                if self.map.notes.0.len() == 0
+                    || (self.map.notes.0.len() > 0 && (time - self.map.notes.0[self.map.notes.0.len() - 1].0 as i32) > 10)
+                {
+                    // TODO: you'll need to actually add duplicates for manias so you cover chords
+                    self.map.notes.0.push((time as u32, x as u32));
+                }
                 // } else {
                 //     self.map.notes.0.push((time as u32,x as u32));
                 // }
