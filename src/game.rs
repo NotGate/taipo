@@ -116,6 +116,13 @@ impl Game {
             Scene::Config => ConfigScene::render(self)?,
         }
 
+        let text = graphics::Text::new((
+            format!("FPS: {}", ggez::timer::fps(&mut self.ctx)),
+            self.ms.font.unwrap(),
+            20.0,
+        ));
+        graphics::draw(&mut self.ctx, &text, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
+
         graphics::present(&mut self.ctx).unwrap();
         Ok(())
     }

@@ -56,10 +56,12 @@ impl Database {
         allow_tables_to_appear_in_same_query!(maps, scores);
         allow_tables_to_appear_in_same_query!(scores, collections);
         allow_tables_to_appear_in_same_query!(maps, collections);
+        // TODO: order by??
         let m = maps::table
             .left_join(scores::table.on(maps::id.eq(scores::map)))
             .left_join(collections::table.on(maps::id.eq(collections::map)))
             .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
+            .order(maps::nps.asc())
             .load::<(Map, Option<Score>, Option<Collection>)>(&self.conn)
             .map_err(|e| format!("Could not query maps: {}", e))?
             .iter()

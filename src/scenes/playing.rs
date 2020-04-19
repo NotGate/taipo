@@ -18,119 +18,130 @@ use std::{
 
 pub struct PlayingScene {
     pub index: usize,
-    // pub fg: graphics::Mesh,
-    // pub bg: graphics::Mesh,
-    // pub fs: f32,
-    // pub lw: f32,
-    // pub font: graphics::Font,
-    // pub text: graphics::Text,
-
-    // pub chars: Vec<graphics::Text>,
+    pub fs: f32,
+    pub lw: f32,
+    pub chars: Vec<graphics::Text>,
+    pub fg: Option<graphics::Mesh>,
+    pub bg: Option<graphics::Mesh>,
+    pub font: Option<graphics::Font>,
+    pub text: Option<graphics::Text>,
 }
 
 impl PlayingScene {
     pub fn init() -> Result<PlayingScene, String> {
-        // let fs = 100.0;
-        // let lw = 0.0;
-
-        // // TODO: settings.font
-        // let font = graphics::Font::new(&mut g.ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?;
-        // let text = graphics::Text::new(("_", font, fs));
-
-        // let fg = graphics::Mesh::new_rectangle(
-        //     &mut g.ctx,
-        //     graphics::DrawMode::fill(),
-        //     graphics::Rect::new(0.0, 0.0, 400.0, 100.0),
-        //     graphics::Color::new(0.1, 0.2, 0.3, 1.0),
-        // )
-        // .unwrap();
-        // let bg = graphics::Mesh::new_rectangle(
-        //     &mut g.ctx,
-        //     graphics::DrawMode::fill(),
-        //     graphics::Rect::new(0.0, 0.0, g.settings.w as f32 as f32, 100.0),
-        //     graphics::Color::new(0.2, 0.2, 0.2, 1.0),
-        // )
-        // .unwrap();
-
         Ok(PlayingScene {
             index: 0,
-            // fg,
-            // bg,
-            // fs,
-            // lw,
-            // font,
-            // text,
-            // chars: vec![]
+            fs: 0.0,
+            lw: 0.0,
+            chars: vec![],
+            fg: None,
+            bg: None,
+            font: None,
+            text: None,
         })
     }
     pub fn enter(g: &mut Game) -> Result<(), String> {
         g.scene = Scene::Playing;
+        g.ps.index = 0;
+        g.ps.fs = 150.0; //g.settings.fs;
+
+        // TODO: settings.font
+        g.ps.font =
+            Some(graphics::Font::new(&mut g.ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?);
+        g.ps.text = Some(graphics::Text::new(("_", g.ps.font.unwrap(), g.ps.fs)));
+
+        g.ps.fg = Some(
+            graphics::Mesh::new_rectangle(
+                &mut g.ctx,
+                graphics::DrawMode::fill(),
+                graphics::Rect::new(0.0, 0.0, g.settings.w as f32 / 2.0, g.ps.fs),
+                graphics::Color::new(1.0, 0.2, 0.3, 1.0),
+            )
+            .unwrap(),
+        );
+        g.ps.bg = Some(
+            graphics::Mesh::new_rectangle(
+                &mut g.ctx,
+                graphics::DrawMode::fill(),
+                graphics::Rect::new(0.0, 0.0, g.settings.w as f32 / 2.0, g.ps.fs),
+                graphics::Color::new(0.2, 0.2, 0.2, 1.0),
+            )
+            .unwrap(),
+        );
+
+        g.ps.lw = graphics::Text::new("_")
+            .set_font(g.ps.font.unwrap(), graphics::Scale::uniform(g.ps.fs))
+            .width(&mut g.ctx) as f32;
         g.mp.seek(g.ms.map.notes.0[0].0 as f64 / 1000.0 - 1.00)?;
+
+        g.ps.chars = vec![];
+        for note in g.ms.map.notes.0.iter() {
+            g.ps.chars.push(
+                graphics::Text::new("a")
+                    .set_font(g.ps.font.unwrap(), graphics::Scale::uniform(g.ps.fs))
+                    .to_owned(),
+            );
+        }
         Ok(())
-
-        //     let g = self.g.borrow_mut().as_mut();
-
-        //     // or load this from file, stdin, etc.
-        //     self.chars = vec![];
-        //     for note in g.select_scene.unwrap().map.notes.0.iter() {
-        //         self.chars.push(
-        //             graphics::Text::new("a")
-        //                 .set_font(self.font, graphics::Scale::uniform(self.fs))
-        //                 .to_owned(),
-        //         );
-        //     }
-
-        //     self.lw = graphics::Text::new("_")
-        //         .set_font(self.font, graphics::Scale::uniform(self.fs))
-        //         .width(&mut g.ctx) as f32;
     }
     pub fn poll(g: &mut Game) -> Result<(), String> {
-        //     let g = self.g.borrow_mut().as_mut();
-        //     for (e, s, k, m, c) in process(&mut g.el) {
-        //         g.ctx.process_event(&e);
-        //         if k == KeyCode::Escape {
-        //             // g.scene = "Main".into();
-        //         } else {
-        //             println!("{} {}", c, self.chars[self.index].contents().pop().unwrap());
-        //             if c == self.chars[self.index].contents().pop().unwrap() {
-        //                 println!(
-        //                     "good :) {}",
-        //                     g.select_scene.unwrap().map.notes.0[self.index].0 as f64 / 1000.0 - g.mp.pos().unwrap() + 0.06
-        //                 );
-        //             }
-        //         }
-        //     }
+        for (e, s, k, m, c) in process(&mut g.el) {
+            g.ctx.process_event(&e);
+            if k == KeyCode::Escape {
+                map::MapScene::enter(g)?;
+            } else {
+                println!("{} {}", c, g.ps.chars[g.ps.index].contents().pop().unwrap());
+                if c == g.ps.chars[g.ps.index].contents().pop().unwrap() {
+                    println!(
+                        "good :) {}",
+                        g.ms.map.notes.0[g.ps.index].0 as f64 / 1000.0 - g.mp.pos().unwrap() + 0.06
+                    );
+                }
+            }
+        }
         Ok(())
     }
     pub fn update(g: &mut Game) -> Result<(), String> {
-        // let g = self.g.borrow_mut().as_mut();
-        // // Typing
-        // let dx = self.lw as f64 / (g.select_scene.unwrap().map.dmin as f64 / 1000.0);
-        // let travel = (g.settings.w as f32 / 2.0 + self.lw) as f64 / dx;
-        // let mut i = self.index;
-        // while i < g.select_scene.unwrap().map.notes.0.len() && (g.select_scene.unwrap().map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) < travel as f64 {
-        //     let x = (g.select_scene.unwrap().map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) * dx + (g.settings.w as f32 / 2.0) as f64;
-        //     graphics::queue_text(
-        //         &mut g.ctx,
-        //         &self.chars[i as usize],
-        //         nalgebra::Point2::new(x as f32, (g.settings.h as f32 - self.fs) as f32 / 2.0),
-        //         None,
-        //     );
-        //     if (g.mp.pos()? - (g.select_scene.unwrap().map.notes.0[i].0 as f64 / 1000.0)) > 0.075 {
-        //         self.index += 1;
-        //     }
-        //     i += 1;
-        // }
-
-        // Mania
+        let dx = g.ps.lw as f64 / (g.ms.map.dmin as f64 / 1000.0);
+        let travel = (g.settings.w as f32 / 2.0 + g.ps.lw) as f64 / dx;
+        let mut i = g.ps.index;
+        while i < g.ms.map.notes.0.len() && (g.ms.map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) < travel as f64 {
+            let x = (g.ms.map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) * dx + (g.settings.w as f32 / 2.0) as f64;
+            graphics::queue_text(
+                &mut g.ctx,
+                &g.ps.chars[i as usize],
+                nalgebra::Point2::new(x as f32, (g.settings.h as f32 - g.ps.fs) as f32 / 2.0),
+                None,
+            );
+            if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
+                g.ps.index += 1;
+            }
+            i += 1;
+        }
 
         Ok(())
     }
     pub fn render(g: &mut Game) -> Result<(), String> {
-        // let g = self.g.borrow_mut().as_mut();
-        // graphics::draw(&mut g.ctx, &self.bg, (nalgebra::Point2::new(g.settings.w as f32 / 2.0, (g.settings.h as f32 - self.fs) / 2.0),)).unwrap();
-        // graphics::draw_queued_text(&mut g.ctx, graphics::DrawParam::default(), None, graphics::FilterMode::Linear).unwrap();
-        // graphics::draw(&mut g.ctx, &self.fg, (nalgebra::Point2::new(0.0, (g.settings.h as f32 - self.fs) / 2.0),)).unwrap();
+        graphics::draw(
+            &mut g.ctx,
+            &g.ps.bg.clone().unwrap(),
+            (nalgebra::Point2::new(
+                g.settings.w as f32 / 2.0,
+                (g.settings.h as f32 - g.ps.fs) / 2.0,
+            ),),
+        )
+        .unwrap();
+        graphics::draw_queued_text(&mut g.ctx, graphics::DrawParam::default(), None, graphics::FilterMode::Linear).unwrap();
+        graphics::draw(
+            &mut g.ctx,
+            &g.ps.fg.clone().unwrap(),
+            (nalgebra::Point2::new(0.0, (g.settings.h as f32 - g.ps.fs) / 2.0),),
+        )
+        .unwrap();
+
+        // TODO: draw error
+
+        
         Ok(())
     }
 }
