@@ -18,6 +18,7 @@ mod settings;
 
 fn main() -> Result<(), String> {
     let mut g = game::Game::init()?;
+    g.load()?;
     while g.playing {
         g.tick()?;
         g.poll()?;

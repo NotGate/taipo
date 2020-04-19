@@ -31,13 +31,13 @@ pub struct Settings {
 impl Settings {
     pub fn init() -> Result<Settings, String> {
         serde_json::from_str(
-            &String::from_utf8(std::fs::read("settings.json").map_or(vec![],|v| v))
+            &String::from_utf8(std::fs::read("settings.json").map_or(vec![], |v| v))
                 .map_err(|e| format!("Could not convert file contents to string: {}", e))?,
         )
         .map_or(
             Ok(Settings {
                 version: "1.0.0".into(),
-                query: "smin>30 and dmin between 50 and 100".into(),
+                query: "dmin between 150 and 200".into(), //smin>30 and dmin between 50 and 100
                 parse_date: 0,
 
                 mode: "4k".into(),

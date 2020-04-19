@@ -1,8 +1,8 @@
+pub mod config;
 pub mod help;
+pub mod map;
 pub mod playing;
 pub mod score;
-pub mod select;
-pub mod settings;
 
 use crate::game::Game;
 use ggez::{
@@ -16,7 +16,15 @@ use ggez::{
     Context, ContextBuilder,
 };
 
-// TODO: change
+#[derive(Clone, Copy)]
+pub enum Scene {
+    Map,
+    Playing,
+    Score,
+    Help,
+    Config,
+}
+
 pub fn process(el: &mut EventsLoop) -> Vec<(Event, ElementState, KeyCode, ModifiersState, char)> {
     let mut events = vec![];
     el.poll_events(|event| match event {

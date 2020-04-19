@@ -17,7 +17,7 @@ use std::{
 };
 
 pub struct PlayingScene {
-    // pub index: usize,
+    pub index: usize,
     // pub fg: graphics::Mesh,
     // pub bg: graphics::Mesh,
     // pub fs: f32,
@@ -27,8 +27,9 @@ pub struct PlayingScene {
 
     // pub chars: Vec<graphics::Text>,
 }
+
 impl PlayingScene {
-    pub fn init(g: &Game) -> Result<PlayingScene, String> {
+    pub fn init() -> Result<PlayingScene, String> {
         // let fs = 100.0;
         // let lw = 0.0;
 
@@ -52,8 +53,7 @@ impl PlayingScene {
         // .unwrap();
 
         Ok(PlayingScene {
-            // g: RefCell::new(Box::new(*g)),
-            // index: 0,
+            index: 0,
             // fg,
             // bg,
             // fs,
@@ -63,39 +63,43 @@ impl PlayingScene {
             // chars: vec![]
         })
     }
-    pub fn enter(g: &mut Game) {
-    //     let g = self.g.borrow_mut().as_mut();
+    pub fn enter(g: &mut Game) -> Result<(), String> {
+        g.scene = Scene::Playing;
+        g.mp.seek(g.ms.map.notes.0[0].0 as f64 / 1000.0 - 1.00)?;
+        Ok(())
 
-    //     // or load this from file, stdin, etc.
-    //     self.chars = vec![];
-    //     for note in g.select_scene.unwrap().map.notes.0.iter() {
-    //         self.chars.push(
-    //             graphics::Text::new("a")
-    //                 .set_font(self.font, graphics::Scale::uniform(self.fs))
-    //                 .to_owned(),
-    //         );
-    //     }
+        //     let g = self.g.borrow_mut().as_mut();
 
-    //     self.lw = graphics::Text::new("_")
-    //         .set_font(self.font, graphics::Scale::uniform(self.fs))
-    //         .width(&mut g.ctx) as f32;
+        //     // or load this from file, stdin, etc.
+        //     self.chars = vec![];
+        //     for note in g.select_scene.unwrap().map.notes.0.iter() {
+        //         self.chars.push(
+        //             graphics::Text::new("a")
+        //                 .set_font(self.font, graphics::Scale::uniform(self.fs))
+        //                 .to_owned(),
+        //         );
+        //     }
+
+        //     self.lw = graphics::Text::new("_")
+        //         .set_font(self.font, graphics::Scale::uniform(self.fs))
+        //         .width(&mut g.ctx) as f32;
     }
     pub fn poll(g: &mut Game) -> Result<(), String> {
-    //     let g = self.g.borrow_mut().as_mut();
-    //     for (e, s, k, m, c) in process(&mut g.el) {
-    //         g.ctx.process_event(&e);
-    //         if k == KeyCode::Escape {
-    //             // g.scene = "Main".into();
-    //         } else {
-    //             println!("{} {}", c, self.chars[self.index].contents().pop().unwrap());
-    //             if c == self.chars[self.index].contents().pop().unwrap() {
-    //                 println!(
-    //                     "good :) {}",
-    //                     g.select_scene.unwrap().map.notes.0[self.index].0 as f64 / 1000.0 - g.mp.pos().unwrap() + 0.06
-    //                 );
-    //             }
-    //         }
-    //     }
+        //     let g = self.g.borrow_mut().as_mut();
+        //     for (e, s, k, m, c) in process(&mut g.el) {
+        //         g.ctx.process_event(&e);
+        //         if k == KeyCode::Escape {
+        //             // g.scene = "Main".into();
+        //         } else {
+        //             println!("{} {}", c, self.chars[self.index].contents().pop().unwrap());
+        //             if c == self.chars[self.index].contents().pop().unwrap() {
+        //                 println!(
+        //                     "good :) {}",
+        //                     g.select_scene.unwrap().map.notes.0[self.index].0 as f64 / 1000.0 - g.mp.pos().unwrap() + 0.06
+        //                 );
+        //             }
+        //         }
+        //     }
         Ok(())
     }
     pub fn update(g: &mut Game) -> Result<(), String> {

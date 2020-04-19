@@ -2,7 +2,7 @@ use crate::{
     audio::MusicPlayer,
     database::Database,
     parsers::{osu::Osu, parser::Parser},
-    scenes::{help::*, playing::*, score::*, select::*, settings::*},
+    scenes::{config::*, help::*, map::*, playing::*, score::*, Scene},
     schema::Map,
     settings::Settings,
 };
@@ -19,15 +19,6 @@ use ggez::{
 };
 use std::{cell::RefCell, rc::Rc, time::Duration};
 
-#[derive(Clone,Copy)]
-pub enum Scene {
-    Select,
-    Playing,
-    Score,
-    Help,
-    Settings,
-}
-
 pub struct Game {
     pub playing: bool,
     pub settings: Settings,
@@ -37,18 +28,18 @@ pub struct Game {
     pub mp: MusicPlayer,
     pub osu_p: Parser<Osu>,
     pub scene: Scene,
-    pub select_scene: Option<SelectScene>,
-    pub playing_scene: Option<PlayingScene>,
-    pub help_scene: Option<HelpScene>,
-    pub settings_scene: Option<SettingsScene>,
-    pub score_scene: Option<ScoreScene>,
+    pub ms: MapScene,
+    pub ps: PlayingScene,
+    pub hs: HelpScene,
+    pub cs: ConfigScene,
+    pub ss: ScoreScene,
 }
 
 impl Game {
     pub fn init() -> Result<Self, String> {
         let settings = Settings::init()?;
 
-        let (mut ctx, el) = ContextBuilder::new("taipo", "notgate")
+        let (ctx, el) = ContextBuilder::new("taipo", "notgate")
             .window_mode(
                 WindowMode::default()
                     .dimensions(settings.w as f32, settings.h as f32)
@@ -62,43 +53,32 @@ impl Game {
             .build()
             .map_err(|e| format!("Could not build ggez context: {}", e))?;
 
-        // Database (TODO: setup)
-        let db = Database::connect()?;
-        db.drop_tables()?;
-        db.create_tables()?;
-
-        // Parser (TODO: looks for `new` maps on start and add them)
-        // TODO: parse async so it doesn't block the game
-        let osu_p = Parser::init("maps/osu".into()); // this should come from settings
-        osu_p.parse_directory(&db);
-
-        // Music (TODO: play from db)
-        let mut mp = MusicPlayer::init()?;
-
         Ok(Game {
             playing: true,
             settings,
             ctx,
             el,
-            db,
-            mp,
-            osu_p,
-            scene: Scene::Select,
-            select_scene: None,
-            playing_scene: None,
-            help_scene: None,
-            settings_scene: None,
-            score_scene: None,
+            db: Database::connect()?,
+            mp: MusicPlayer::init()?,
+            osu_p: Parser::init("maps/osu".into()), // TODO: async, look for new maps on start
+            scene: Scene::Map,
+            ms: MapScene::init()?,
+            ps: PlayingScene::init()?,
+            hs: HelpScene::init()?,
+            cs: ConfigScene::init()?,
+            ss: ScoreScene::init()?,
         })
     }
-    // gross hack because Rust constructors are annoying
     pub fn load(&mut self) -> Result<(), String> {
-        self.select_scene = Some(SelectScene::init(self)?);
-        self.playing_scene = Some(PlayingScene::init(self)?);
-        self.help_scene = Some(HelpScene::init(self)?);
-        self.settings_scene = Some(SettingsScene::init(self)?);
-        self.score_scene = Some(ScoreScene::init(self)?);
-        Ok(())
+        self.db.drop_tables()?;
+        self.db.create_tables()?;
+        self.osu_p.parse_directory(&self.db);
+
+        self.ms.maps = self.db.query_maps(&self.settings.query)?;
+        self.ms.map = self.ms.maps[0].clone();
+
+        println!("{}", self.ms.maps.len());
+        MapScene::enter(self)
     }
     pub fn tick(&mut self) -> Result<(), String> {
         self.ctx.timer_context.tick();
@@ -107,21 +87,21 @@ impl Game {
     }
     pub fn poll(&mut self) -> Result<(), String> {
         match self.scene {
-            Scene::Select => SelectScene::poll(self)?,
+            Scene::Map => MapScene::poll(self)?,
             Scene::Playing => PlayingScene::poll(self)?,
             Scene::Score => ScoreScene::poll(self)?,
-            Scene::Help =>HelpScene::poll(self)?,
-            Scene::Settings => SettingsScene::poll(self)?,
+            Scene::Help => HelpScene::poll(self)?,
+            Scene::Config => ConfigScene::poll(self)?,
         }
         Ok(())
     }
     pub fn update(&mut self) -> Result<(), String> {
         match self.scene {
-            Scene::Select => SelectScene::update(self)?,
+            Scene::Map => MapScene::update(self)?,
             Scene::Playing => PlayingScene::update(self)?,
             Scene::Score => ScoreScene::update(self)?,
-            Scene::Help =>HelpScene::update(self)?,
-            Scene::Settings => SettingsScene::update(self)?,
+            Scene::Help => HelpScene::update(self)?,
+            Scene::Config => ConfigScene::update(self)?,
         }
         Ok(())
     }
@@ -129,11 +109,11 @@ impl Game {
         graphics::clear(&mut self.ctx, [0.1, 0.2, 0.3, 1.0].into());
 
         match self.scene {
-            Scene::Select => SelectScene::poll(self)?,
-            Scene::Playing => PlayingScene::poll(self)?,
-            Scene::Score => ScoreScene::poll(self)?,
-            Scene::Help =>HelpScene::poll(self)?,
-            Scene::Settings => SettingsScene::poll(self)?,
+            Scene::Map => MapScene::render(self)?,
+            Scene::Playing => PlayingScene::render(self)?,
+            Scene::Score => ScoreScene::render(self)?,
+            Scene::Help => HelpScene::render(self)?,
+            Scene::Config => ConfigScene::render(self)?,
         }
 
         graphics::present(&mut self.ctx).unwrap();

@@ -20,18 +20,21 @@ pub struct HelpScene {
     pub index: usize,
 }
 impl HelpScene {
-    pub fn init(g: &Game) -> Result<HelpScene, String> {
-        Ok(HelpScene {
-            index: 0,
-        })
+    pub fn init() -> Result<HelpScene, String> {
+        Ok(HelpScene { index: 0 })
     }
-    pub fn poll(g: &mut Game) -> Result<(),String> {
+    pub fn enter(g: &mut Game) -> Result<(), String> {
+        g.scene = Scene::Playing;
+        g.mp.seek(g.ms.map.notes.0[0].0 as f64 / 1000.0 - 1.00)?;
         Ok(())
     }
-    pub fn update(g: &mut Game) -> Result<(),String> {
+    pub fn poll(g: &mut Game) -> Result<(), String> {
         Ok(())
     }
-    pub fn render(g: &mut Game) -> Result<(),String> {
+    pub fn update(g: &mut Game) -> Result<(), String> {
+        Ok(())
+    }
+    pub fn render(g: &mut Game) -> Result<(), String> {
         Ok(())
     }
 }
