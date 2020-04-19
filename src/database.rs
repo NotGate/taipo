@@ -57,6 +57,7 @@ impl Database {
         allow_tables_to_appear_in_same_query!(scores, collections);
         allow_tables_to_appear_in_same_query!(maps, collections);
         // TODO: order by??
+        // TODO: only top score?
         let m = maps::table
             .left_join(scores::table.on(maps::id.eq(scores::map)))
             .left_join(collections::table.on(maps::id.eq(collections::map)))

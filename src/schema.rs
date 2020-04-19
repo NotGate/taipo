@@ -10,6 +10,7 @@ use std::io::Write;
 
 #[derive(Debug, AsExpression, FromSqlRow, Clone, PartialEq, Eq, Hash)]
 #[sql_type = "Binary"]
+// TODO: would manually separating a Vec<u64> into two numbers have better performance?
 pub struct MapType(pub Vec<(u32, u32)>);
 use bytevec::{ByteDecodable, ByteEncodable};
 impl<DB: Backend + HasSqlType<Binary>> ToSql<Binary, DB> for MapType {
@@ -35,6 +36,8 @@ impl Default for MapType {
     }
 }
 
+// TODO: date_added, last_played
+// TODO: top score?
 #[derive(Default, Clone, Debug, Insertable, Queryable, QueryableByName)]
 #[table_name = "maps"]
 pub struct Map {

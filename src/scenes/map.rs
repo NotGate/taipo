@@ -20,9 +20,11 @@ pub struct MapScene {
     pub index: usize,
     pub maps: Vec<Map>,
     pub map: Map,
-    pub bg: Option<graphics::Image>,
     pub font: Option<graphics::Font>,
+    pub ctext: Option<graphics::Text>,
     pub mtext: Option<graphics::Text>,
+    pub stext: Option<graphics::Text>,
+    pub bg: Option<graphics::Image>,
 }
 impl MapScene {
     pub fn init() -> Result<MapScene, String> {
@@ -30,9 +32,11 @@ impl MapScene {
             index: 0,
             maps: vec![],
             map: Map::default(),
-            bg: None,
             font: None,
+            ctext: None,
             mtext: None,
+            stext: None,
+            bg: None,
         })
     }
     pub fn enter(g: &mut Game) -> Result<(), String> {
@@ -48,29 +52,35 @@ impl MapScene {
         for (e, s, k, m, c) in process(&mut g.el) {
             g.ctx.process_event(&e);
             if c == '\0' && s == ElementState::Pressed {
+                use ggez::event::KeyCode;
                 match k {
-                    KeyCode::Escape => g.playing = false,
+                    KeyCode::Q => g.playing = false, // TODO: proper closing (save settings)
+                    KeyCode::Escape => config::ConfigScene::enter(g)?,
                     KeyCode::Return => playing::PlayingScene::enter(g)?,
+                    KeyCode::Slash => help::HelpScene::enter(g)?,
+                    // Speed
                     KeyCode::A => {
                         g.mp.set_speed(g.mp.get_speed()? - 0.1)?;
                         g.settings.speed = g.mp.get_speed()?;
-                        MapScene::update_mtext(g)?;
+                        MapScene::update_ctext(g)?;
                     }
                     KeyCode::D => {
                         g.mp.set_speed(g.mp.get_speed()? + 0.1)?;
                         g.settings.speed = g.mp.get_speed()?;
-                        MapScene::update_mtext(g)?;
+                        MapScene::update_ctext(g)?;
                     }
+                    // Volume
                     KeyCode::S => {
                         g.mp.set_volume(g.mp.get_volume()? - 0.1)?;
                         g.settings.volume = g.mp.get_volume()?;
-                        MapScene::update_mtext(g)?;
+                        MapScene::update_ctext(g)?;
                     }
                     KeyCode::W => {
                         g.mp.set_volume(g.mp.get_volume()? + 0.1)?;
                         g.settings.volume = g.mp.get_volume()?;
-                        MapScene::update_mtext(g)?;
+                        MapScene::update_ctext(g)?;
                     }
+                    // Index
                     KeyCode::H => {
                         g.ms.index = MapScene::wrap(g.ms.index as i32, -1, g.ms.maps.len() as i32);
                         MapScene::change_map(g)?;
@@ -79,6 +89,17 @@ impl MapScene {
                         g.ms.index = MapScene::wrap(g.ms.index as i32, 1, g.ms.maps.len() as i32);
                         MapScene::change_map(g)?;
                     }
+                    KeyCode::R => {
+                        use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
+                        let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed as u64);
+                        g.settings.seed = rng.gen_range(1000, 10000) as u64;
+                        MapScene::update_ctext(g)?;
+                    }
+                    // aset+-
+                    // iset+-
+                    // window+-
+                    // offset+-
+                    // mode
                     _ => (),
                 }
             }
@@ -89,22 +110,33 @@ impl MapScene {
         Ok(())
     }
     pub fn render(g: &mut Game) -> Result<(), String> {
+        // draw Settings{}
+        if let Some(ctext) = g.ms.ctext.as_ref() {
+            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0,0.0),)).unwrap();
+        }
+        // draw Map{}
+        // draw diff color bg?
+        if let Some(mtext) = g.ms.mtext.as_ref() {
+            graphics::draw(&mut g.ctx, mtext, (nalgebra::Point2::new(0.0, g.settings.h as f32 / 3.0),)).unwrap();
+        }
+        // draw Scores[{}]
+        if let Some(stext) = g.ms.stext.as_ref() {
+            graphics::draw(&mut g.ctx, stext, (nalgebra::Point2::new(0.0, g.settings.h as f32 * 2.0 / 3.0),)).unwrap();
+        }
+        // draw Maps[Image]
         if let Some(bg) = g.ms.bg.as_ref() {
             graphics::draw(
                 &mut g.ctx,
                 bg,
                 graphics::DrawParam::new()
-                    .dest(nalgebra::Point2::new(0.0, 0.0))
+                    .dest(nalgebra::Point2::new(g.settings.w as f32 / 2.0, g.settings.h as f32 / 4.0))
                     .offset(nalgebra::Point2::new(0.0, 0.0))
                     .scale(nalgebra::Vector2::new(
-                        g.settings.w as f32 / bg.width() as f32,
-                        g.settings.h as f32 / bg.height() as f32,
+                        g.settings.w as f32 / bg.width() as f32 / 2.0,
+                        g.settings.h as f32 / bg.height() as f32 / 2.0,
                     )),
             )
             .unwrap();
-        }
-        if let Some(mtext) = g.ms.mtext.as_ref() {
-            graphics::draw(&mut g.ctx, mtext, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
         }
 
         Ok(())
@@ -135,22 +167,15 @@ impl MapScene {
             g.mp.set_volume(g.settings.volume)?;
             g.mp.play()?;
         }
+        MapScene::update_ctext(g)?;
         MapScene::update_mtext(g)?;
         MapScene::update_bg(g)
     }
     fn update_mtext(g: &mut Game) -> Result<(), String> {
         g.ms.mtext = Some(graphics::Text::new(format!(
-            "
-Collection:{}
-Map:{}/{}
-{} - {} [{}] ({})
+            "{} - {} [{}] ({})
 Mode:{} Keys:{} Length:{} Count:{} BPM:{:.2}
-Difficulty:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]
-Local:{} Speed:{:.2} Volume:{:.2} Mode:{} Seed:{}
-aset:{} iset:{} window:{}",
-            "", //g.collections[g.c_i],
-            g.ms.index + 1,
-            g.ms.maps.len(),
+Difficulty:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]",
             g.ms.map.artist,
             g.ms.map.title,
             g.ms.map.version,
@@ -168,17 +193,35 @@ aset:{} iset:{} window:{}",
             g.ms.map.smin,
             g.ms.map.savg,
             g.ms.map.smax,
-            g.ms.map.offsetms,
+        )));
+        if let Some(v) = g.ms.mtext.as_mut() {
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(15.0)).set_bounds(
+                nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
+                graphics::Align::Left,
+            );
+        }
+        Ok(())
+    }
+    fn update_ctext(g: &mut Game) -> Result<(), String> {
+        g.ms.ctext = Some(graphics::Text::new(format!(
+            "Collection:{}
+Map:{}/{}
+Speed:{:.2} Volume:{:.2} Mode:{} Seed:{}
+aset:{} iset:{} window:{} local:{}",
+            "", //g.collections[g.c_i],
+            g.ms.index + 1,
+            g.ms.maps.len(),
             g.settings.speed,
             g.settings.volume,
             g.settings.mode,
             g.settings.seed,
             g.settings.aset,
             g.settings.iset,
-            g.settings.window
+            g.settings.window,
+            g.ms.map.offsetms,
         )));
-        if let Some(v) = g.ms.mtext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
+        if let Some(v) = g.ms.ctext.as_mut() {
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(15.0)).set_bounds(
                 nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
                 graphics::Align::Left,
             );

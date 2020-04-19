@@ -17,6 +17,14 @@ in pkgs.mkShell {
     libbass_fx
     sqlite
     rustup
+
+    # ?
+    gcc-unwrapped.lib
+    stdenv.cc.cc.lib
+    glxinfo
+    libGL
+    llvm
+    llvmPackages.libclang
   ];
   LD_LIBRARY_PATH=
   "${pkgs.llvmPackages.libclang}/lib:"
@@ -26,6 +34,12 @@ in pkgs.mkShell {
   +"${pkgs.xorg.libXrandr}/lib:"
   +"${pkgs.xorg.libXi}/lib:"
   +"${pkgs.libGL}/lib:"
+
+  # ?
+  +"${pkgs.glxinfo}/lib:"
+  +"${pkgs.stdenv.cc.cc.lib}/lib:"
+  +"${pkgs.alsaLib}/lib:"
+  +"${pkgs.gcc-unwrapped.lib}/lib:"
   +"$LD_LIBRARY_PATH";
   shellHook = ''
     echo Welcome to the taipo build environment
