@@ -43,6 +43,7 @@ impl MapScene {
         // g.mp.seek(g.ms.map.preview as f64 / 1000.0)?;
         Ok(())
     }
+    // TODO: reduce repitition
     pub fn poll(g: &mut Game) -> Result<(), String> {
         for (e, s, k, m, c) in process(&mut g.el) {
             g.ctx.process_event(&e);
@@ -50,10 +51,26 @@ impl MapScene {
                 match k {
                     KeyCode::Escape => g.playing = false,
                     KeyCode::Return => playing::PlayingScene::enter(g)?,
-                    KeyCode::A => g.mp.set_speed(g.mp.get_speed()? - 0.1)?,
-                    KeyCode::D => g.mp.set_speed(g.mp.get_speed()? + 0.1)?,
-                    KeyCode::S => g.mp.set_volume(g.mp.get_volume()? - 0.1)?,
-                    KeyCode::W => g.mp.set_volume(g.mp.get_volume()? + 0.1)?,
+                    KeyCode::A => {
+                        g.mp.set_speed(g.mp.get_speed()? - 0.1)?;
+                        g.settings.speed = g.mp.get_speed()?;
+                        MapScene::update_mtext(g)?;
+                    }
+                    KeyCode::D => {
+                        g.mp.set_speed(g.mp.get_speed()? + 0.1)?;
+                        g.settings.speed = g.mp.get_speed()?;
+                        MapScene::update_mtext(g)?;
+                    }
+                    KeyCode::S => {
+                        g.mp.set_volume(g.mp.get_volume()? - 0.1)?;
+                        g.settings.volume = g.mp.get_volume()?;
+                        MapScene::update_mtext(g)?;
+                    }
+                    KeyCode::W => {
+                        g.mp.set_volume(g.mp.get_volume()? + 0.1)?;
+                        g.settings.volume = g.mp.get_volume()?;
+                        MapScene::update_mtext(g)?;
+                    }
                     KeyCode::H => {
                         g.ms.index = MapScene::wrap(g.ms.index as i32, -1, g.ms.maps.len() as i32);
                         MapScene::change_map(g)?;
@@ -118,15 +135,19 @@ impl MapScene {
             g.mp.set_volume(g.settings.volume)?;
             g.mp.play()?;
         }
-
+        MapScene::update_mtext(g)?;
+        MapScene::update_bg(g)
+    }
+    fn update_mtext(g: &mut Game) -> Result<(), String> {
         g.ms.mtext = Some(graphics::Text::new(format!(
             "
 Collection:{}
 Map:{}/{}
-{} - {} [{}]
-Creator:{} Mode:{} Keys:{} Length:{} Count:{} Local:{}
-BPM:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]
-Difficulty:{:.2}",
+{} - {} [{}] ({})
+Mode:{} Keys:{} Length:{} Count:{} BPM:{:.2}
+Difficulty:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]
+Local:{} Speed:{:.2} Volume:{:.2} Mode:{} Seed:{}
+aset:{} iset:{} window:{}",
             "", //g.collections[g.c_i],
             g.ms.index + 1,
             g.ms.maps.len(),
@@ -138,8 +159,8 @@ Difficulty:{:.2}",
             g.ms.map.keys,
             (g.ms.map.length / g.settings.speed) as i32, // Duration::milliseconds(map.length as i64).format("%H:%M:%S"),
             g.ms.map.count,
-            g.ms.map.offsetms,
             g.ms.map.bpm * g.settings.speed,
+            g.ms.map.difficulty * g.settings.speed,
             g.ms.map.nps * g.settings.speed,
             (g.ms.map.dmin as f32 / g.settings.speed) as i32,
             (g.ms.map.davg as f32 / g.settings.speed) as i32,
@@ -147,7 +168,14 @@ Difficulty:{:.2}",
             g.ms.map.smin,
             g.ms.map.savg,
             g.ms.map.smax,
-            g.ms.map.difficulty
+            g.ms.map.offsetms,
+            g.settings.speed,
+            g.settings.volume,
+            g.settings.mode,
+            g.settings.seed,
+            g.settings.aset,
+            g.settings.iset,
+            g.settings.window
         )));
         if let Some(v) = g.ms.mtext.as_mut() {
             v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
@@ -155,7 +183,6 @@ Difficulty:{:.2}",
                 graphics::Align::Left,
             );
         }
-
-        MapScene::update_bg(g)
+        Ok(())
     }
 }

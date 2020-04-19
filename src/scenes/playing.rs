@@ -10,6 +10,7 @@ use ggez::{
 };
 
 use crate::{database::Database, game::Game, scenes::*};
+use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 use std::{
     cell::RefCell,
     rc::{Rc, Weak},
@@ -55,7 +56,7 @@ impl PlayingScene {
                 &mut g.ctx,
                 graphics::DrawMode::fill(),
                 graphics::Rect::new(0.0, 0.0, g.settings.w as f32 / 2.0, g.ps.fs),
-                graphics::Color::new(1.0, 0.2, 0.3, 1.0),
+                graphics::Color::new(0.1, 0.2, 0.3, 1.0),
             )
             .unwrap(),
         );
@@ -74,12 +75,29 @@ impl PlayingScene {
             .width(&mut g.ctx) as f32;
         g.mp.seek(g.ms.map.notes.0[0].0 as f64 / 1000.0 - 1.00)?;
 
+        let ascii: Vec<char> = (32u8..127).chain(9..10).chain(13..14).map(|n| n as char).collect();
+        let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed as u64);
         g.ps.chars = vec![];
         for note in g.ms.map.notes.0.iter() {
+            let ch = *ascii.choose(&mut rng).unwrap();
             g.ps.chars.push(
-                graphics::Text::new("a")
-                    .set_font(g.ps.font.unwrap(), graphics::Scale::uniform(g.ps.fs))
-                    .to_owned(),
+                graphics::Text::new(graphics::TextFragment {
+                    text: if ch == ' ' || ch == '\r' || ch == '\t' {
+                        '\u{263B}'
+                    } else {
+                        ch
+                    }
+                    .to_string(),
+                    color: Some(match ch {
+                        ' ' => graphics::Color::new(0.0, 1.0, 0.0, 1.0),
+                        '\r' => graphics::Color::new(1.0, 1.0, 0.0, 1.0),
+                        '\t' => graphics::Color::new(1.0, 0.0, 1.0, 1.0),
+                        _ => graphics::Color::new(1.0, 1.0, 1.0, 1.0),
+                    }),
+                    font: Some(g.ps.font.unwrap()),
+                    scale: Some(graphics::Scale::uniform(g.ps.fs)),
+                })
+                .to_owned(),
             );
         }
         Ok(())
@@ -141,7 +159,6 @@ impl PlayingScene {
 
         // TODO: draw error
 
-        
         Ok(())
     }
 }
