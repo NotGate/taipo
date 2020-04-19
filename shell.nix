@@ -1,4 +1,3 @@
-# TODO: prune all of this to bare essentials
 { pkgs ? import <nixpkgs> { config.allowUnfree = true; } }:
 let
   libbass = (pkgs.libbass.overrideAttrs (_: {
@@ -10,47 +9,23 @@ let
   }));
 in pkgs.mkShell {
   buildInputs = with pkgs; [
-    # rust
     cargo
-    rustup
-    # audio
     alsaLib
+    eudev
+    pkgconfig
     libbass
     libbass_fx
-    # sqlite3
     sqlite
-    # gcc, rust
-    gcc-unwrapped.lib
-    pkgconfig
-    eudev
-    stdenv.cc.cc.lib
-    # graphics
-    SDL2
-    SDL2_ttf
-    xorg.libX11
-    xorg.libXcursor
-    xorg.libXrandr
-    xorg.libXi
-    glxinfo
-    libGL
-    # bindgen
-    llvm
-    llvmPackages.libclang
-    # dev
-    # gdb
-    # rr
+    rustup
   ];
   LD_LIBRARY_PATH=
-  "${pkgs.stdenv.cc.cc.lib}/lib:"
-  +"${pkgs.alsaLib}/lib:"
-  +"${pkgs.gcc-unwrapped.lib}/lib:"
+  "${pkgs.llvmPackages.libclang}/lib:"
+  +"${pkgs.stdenv.cc.cc.lib}/lib:"
   +"${pkgs.xorg.libX11}/lib:"
   +"${pkgs.xorg.libXcursor}/lib:"
   +"${pkgs.xorg.libXrandr}/lib:"
   +"${pkgs.xorg.libXi}/lib:"
-  +"${pkgs.glxinfo}/lib:"
   +"${pkgs.libGL}/lib:"
-  +"${pkgs.llvmPackages.libclang}/lib:"
   +"$LD_LIBRARY_PATH";
   shellHook = ''
     echo Welcome to the taipo build environment
