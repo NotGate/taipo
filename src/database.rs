@@ -62,7 +62,7 @@ impl Database {
             .left_join(scores::table.on(maps::id.eq(scores::map)))
             .left_join(collections::table.on(maps::id.eq(collections::map)))
             .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
-            .order(maps::nps.asc())
+            .order(maps::dmin.desc())
             .load::<(Map, Option<Score>, Option<Collection>)>(&self.conn)
             .map_err(|e| format!("Could not query maps: {}", e))?
             .iter()

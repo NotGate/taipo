@@ -70,9 +70,9 @@ impl Game {
         })
     }
     pub fn load(&mut self) -> Result<(), String> {
-        self.db.drop_tables()?;
-        self.db.create_tables()?;
-        self.osu_p.parse_directory(&self.db);
+        // self.db.drop_tables()?;
+        // self.db.create_tables()?;
+        // self.osu_p.parse_directory(&self.db);
 
         self.ms.maps = self.db.query_maps(&self.settings.query)?;
         self.ms.map = self.ms.maps[0].clone();

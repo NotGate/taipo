@@ -44,7 +44,7 @@ impl MapScene {
         g.ms.font =
             Some(graphics::Font::new(&mut g.ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?);
         MapScene::change_map(g)?;
-        // g.mp.seek(g.ms.map.preview as f64 / 1000.0)?;
+        // g.mp.unmute()?;
         Ok(())
     }
     // TODO: reduce repitition
@@ -52,54 +52,60 @@ impl MapScene {
         for (e, s, k, m, c) in process(&mut g.el) {
             g.ctx.process_event(&e);
             if c == '\0' && s == ElementState::Pressed {
-                use ggez::event::KeyCode;
+                let amt = if m.alt { 5 } else { 1 } * if m.shift { -1 } else { 1 };
                 match k {
                     KeyCode::Q => g.playing = false, // TODO: proper closing (save settings)
                     KeyCode::Escape => config::ConfigScene::enter(g)?,
                     KeyCode::Return => playing::PlayingScene::enter(g)?,
-                    KeyCode::Slash => help::HelpScene::enter(g)?,
-                    // Speed
-                    KeyCode::A => {
-                        g.mp.set_speed(g.mp.get_speed()? - 0.1)?;
-                        g.settings.speed = g.mp.get_speed()?;
-                        MapScene::update_ctext(g)?;
+                    KeyCode::Slash => help::HelpScene::enter(g)?, // TODO: question mark instead of slash
+                    KeyCode::Space => {
+                        if g.mp.is_playing()? {
+                            g.mp.pause()?
+                        } else {
+                            g.mp.play()?
+                        }
                     }
-                    KeyCode::D => {
-                        g.mp.set_speed(g.mp.get_speed()? + 0.1)?;
+                    // Index
+                    KeyCode::N => {
+                        g.ms.index = MapScene::wrap(g.ms.index as i32, amt, g.ms.maps.len() as i32);
+                        MapScene::change_map(g)?;
+                    }
+                    // Speed
+                    KeyCode::S => {
+                        g.mp.set_speed(g.mp.get_speed()? + amt as f32 / 100.0)?;
                         g.settings.speed = g.mp.get_speed()?;
                         MapScene::update_ctext(g)?;
                     }
                     // Volume
-                    KeyCode::S => {
-                        g.mp.set_volume(g.mp.get_volume()? - 0.1)?;
+                    KeyCode::V => {
+                        g.mp.set_volume(g.mp.get_volume()? + amt as f32 / 100.0)?;
                         g.settings.volume = g.mp.get_volume()?;
+                        MapScene::update_ctext(g)?;
+                    }
+                    KeyCode::A => {
+                        g.settings.aset = num::clamp(g.settings.aset + amt, -10000, 10000);
+                        MapScene::update_ctext(g)?;
+                    }
+                    KeyCode::I => {
+                        g.settings.iset = num::clamp(g.settings.iset + amt, -10000, 10000);
                         MapScene::update_ctext(g)?;
                     }
                     KeyCode::W => {
-                        g.mp.set_volume(g.mp.get_volume()? + 0.1)?;
-                        g.settings.volume = g.mp.get_volume()?;
+                        g.settings.window = num::clamp(g.settings.window + amt, -10000, 10000);
                         MapScene::update_ctext(g)?;
                     }
-                    // Index
-                    KeyCode::H => {
-                        g.ms.index = MapScene::wrap(g.ms.index as i32, -1, g.ms.maps.len() as i32);
-                        MapScene::change_map(g)?;
+                    KeyCode::O => {
+                        // TODO: update db
+                        g.ms.map.offsetms = num::clamp(g.ms.map.offsetms + amt, -10000, 10000);
+                        MapScene::update_ctext(g)?;
                     }
-                    KeyCode::L => {
-                        g.ms.index = MapScene::wrap(g.ms.index as i32, 1, g.ms.maps.len() as i32);
-                        MapScene::change_map(g)?;
-                    }
+                    // mode
                     KeyCode::R => {
                         use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
                         let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed as u64);
                         g.settings.seed = rng.gen_range(1000, 10000) as u64;
                         MapScene::update_ctext(g)?;
                     }
-                    // aset+-
-                    // iset+-
-                    // window+-
-                    // offset+-
-                    // mode
                     _ => (),
                 }
             }
@@ -112,7 +118,7 @@ impl MapScene {
     pub fn render(g: &mut Game) -> Result<(), String> {
         // draw Settings{}
         if let Some(ctext) = g.ms.ctext.as_ref() {
-            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0,0.0),)).unwrap();
+            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
         }
         // draw Map{}
         // draw diff color bg?
@@ -121,7 +127,12 @@ impl MapScene {
         }
         // draw Scores[{}]
         if let Some(stext) = g.ms.stext.as_ref() {
-            graphics::draw(&mut g.ctx, stext, (nalgebra::Point2::new(0.0, g.settings.h as f32 * 2.0 / 3.0),)).unwrap();
+            graphics::draw(
+                &mut g.ctx,
+                stext,
+                (nalgebra::Point2::new(0.0, g.settings.h as f32 * 2.0 / 3.0),),
+            )
+            .unwrap();
         }
         // draw Maps[Image]
         if let Some(bg) = g.ms.bg.as_ref() {
@@ -160,6 +171,8 @@ impl MapScene {
     fn change_map(g: &mut Game) -> Result<(), String> {
         let old_audio = &g.ms.map.audio.clone();
         g.ms.map = g.ms.maps[g.ms.index].clone();
+        println!("{:?}", g.ms.map);
+        println!("\n{}\n", g.ms.map.preview);
         if g.ms.map.audio != *old_audio || !g.mp.is_playing()? {
             g.mp.load(&g.ms.map.audio)?;
             g.mp.seek(g.ms.map.preview as f64)?;

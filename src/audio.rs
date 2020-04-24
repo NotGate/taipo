@@ -9,6 +9,7 @@ include!("bass/bindings.rs");
 
 pub struct MusicPlayer {
     handle: u32,
+    volume: f32,
     buffer: Vec<u8>,
 }
 
@@ -21,6 +22,7 @@ impl MusicPlayer {
         Bass::init(44100, 0)?;
         Ok(MusicPlayer {
             handle: 0,
+            volume: 0.0,
             buffer: vec![],
         })
     }
@@ -53,7 +55,10 @@ impl MusicPlayer {
         Ok(())
     }
     pub fn seek(&self, pos: f64) -> Result<(), String> {
-        Bass::channel_set_position(self.handle, Bass::channel_seconds2bytes(self.handle, pos.max(0.01))?)
+        Bass::channel_set_position(
+            self.handle,
+            Bass::channel_seconds2bytes(self.handle, num::clamp(pos, 0.0, self.len()? - 1.0))?,
+        )
     }
     pub fn pos(&self) -> Result<f64, String> {
         Bass::channel_bytes2seconds(self.handle, Bass::channel_get_position(self.handle)?)
@@ -66,6 +71,13 @@ impl MusicPlayer {
     }
     pub fn pause(&self) -> Result<(), String> {
         Bass::channel_pause(self.handle)
+    }
+    pub fn mute(&mut self) -> Result<(), String> {
+        self.volume = self.get_volume()?;
+        self.set_volume(0.0)
+    }
+    pub fn unmute(&self) -> Result<(), String> {
+        self.set_volume(self.volume)
     }
     pub fn set_speed(&self, val: f32) -> Result<(), String> {
         Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO, (num::clamp(val, 0.5, 2.0) - 1.0) * 100.0)

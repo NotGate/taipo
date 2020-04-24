@@ -15,13 +15,16 @@ use std::{
     cell::RefCell,
     rc::{Rc, Weak},
     time::Duration,
+    collections::HashMap,
 };
 
 pub struct PlayingScene {
     pub index: usize,
     pub fs: f32,
     pub lw: f32,
-    pub chars: Vec<graphics::Text>,
+    // pub seek: f64,
+    pub chars: Vec<char>,
+    pub cmap: HashMap<char,graphics::Text>,
     pub fg: Option<graphics::Mesh>,
     pub bg: Option<graphics::Mesh>,
     pub font: Option<graphics::Font>,
@@ -34,7 +37,9 @@ impl PlayingScene {
             index: 0,
             fs: 0.0,
             lw: 0.0,
+            // seek: 0.0,
             chars: vec![],
+            cmap: HashMap::new(),
             fg: None,
             bg: None,
             font: None,
@@ -73,47 +78,64 @@ impl PlayingScene {
         g.ps.lw = graphics::Text::new("_")
             .set_font(g.ps.font.unwrap(), graphics::Scale::uniform(g.ps.fs))
             .width(&mut g.ctx) as f32;
-        g.mp.seek(g.ms.map.notes.0[0].0 as f64 / 1000.0 - 1.00)?;
+
+        let prep = 1.0;
+        g.mp.seek((g.ms.map.notes.0[0].0 as f64 / 1000.0 - prep).max(0.0))?;
+        // g.ps.seek = g.ms.map.notes.0[0].0 as f64 / 1000.0 - prep;
+        // if g.ps.seek < 0.0 {
+        //     g.mp.mute()?;
+        //     g.mp.seek(g.mp.len()?-g.ps.seek)?;
+        // } else {
+        //     g.mp.seek(g.ps.seek)?;
+        // }
 
         let ascii: Vec<char> = (32u8..127).chain(9..10).chain(13..14).map(|n| n as char).collect();
         let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed as u64);
         g.ps.chars = vec![];
         for note in g.ms.map.notes.0.iter() {
             let ch = *ascii.choose(&mut rng).unwrap();
-            g.ps.chars.push(
-                graphics::Text::new(graphics::TextFragment {
-                    text: if ch == ' ' || ch == '\r' || ch == '\t' {
-                        '\u{263B}'
-                    } else {
-                        ch
-                    }
-                    .to_string(),
-                    color: Some(match ch {
-                        ' ' => graphics::Color::new(0.0, 1.0, 0.0, 1.0),
-                        '\r' => graphics::Color::new(1.0, 1.0, 0.0, 1.0),
-                        '\t' => graphics::Color::new(1.0, 0.0, 1.0, 1.0),
-                        _ => graphics::Color::new(1.0, 1.0, 1.0, 1.0),
-                    }),
-                    font: Some(g.ps.font.unwrap()),
-                    scale: Some(graphics::Scale::uniform(g.ps.fs)),
-                })
-                .to_owned(),
-            );
+            g.ps.chars.push(ch);
+            g.ps.cmap.insert(ch,graphics::Text::new(graphics::TextFragment {
+                text: if ch == ' ' || ch == '\r' || ch == '\t' {
+                    '\u{263B}'
+                } else {
+                    ch
+                }
+                .to_string(),
+                color: Some(match ch {
+                    ' ' => graphics::Color::new(0.0, 1.0, 0.0, 1.0),
+                    '\r' => graphics::Color::new(1.0, 1.0, 0.0, 1.0),
+                    '\t' => graphics::Color::new(1.0, 0.0, 1.0, 1.0),
+                    _ => graphics::Color::new(1.0, 1.0, 1.0, 1.0),
+                }),
+                font: Some(g.ps.font.unwrap()),
+                scale: Some(graphics::Scale::uniform(g.ps.fs)),
+            })
+            .to_owned());
         }
         Ok(())
     }
+    // TODO: input timestamp
     pub fn poll(g: &mut Game) -> Result<(), String> {
         for (e, s, k, m, c) in process(&mut g.el) {
             g.ctx.process_event(&e);
             if k == KeyCode::Escape {
+                println!("You quit!");
                 map::MapScene::enter(g)?;
-            } else {
-                println!("{} {}", c, g.ps.chars[g.ps.index].contents().pop().unwrap());
-                if c == g.ps.chars[g.ps.index].contents().pop().unwrap() {
+            } else if c != '\0' && c != '\u{1b}' {
+                let diff = g.mp.pos()? - g.ms.map.notes.0[g.ps.index].0 as f64 / 1000.0 + g.settings.iset as f64 / 1000.0;
+                if c == g.ps.chars[g.ps.index] && diff.abs() <= g.settings.window as f64 / 1000.0 {
+                    println!("error: {}", diff);
+                    // g.ps.errors.push(diff);
+                    g.ps.index += 1;
+                } else {
                     println!(
-                        "good :) {}",
-                        g.ms.map.notes.0[g.ps.index].0 as f64 / 1000.0 - g.mp.pos().unwrap() + 0.06
+                        "Hit {:?} instead of {:?}",
+                        c,
+                        g.ps.chars[g.ps.index]
                     );
+                    // submit_score();
+                    score::ScoreScene::enter(g)?;
                 }
             }
         }
@@ -127,12 +149,14 @@ impl PlayingScene {
             let x = (g.ms.map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) * dx + (g.settings.w as f32 / 2.0) as f64;
             graphics::queue_text(
                 &mut g.ctx,
-                &g.ps.chars[i as usize],
+                &g.ps.cmap.get(&g.ps.chars[i as usize]).unwrap(),
                 nalgebra::Point2::new(x as f32, (g.settings.h as f32 - g.ps.fs) as f32 / 2.0),
                 None,
             );
             if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
-                g.ps.index += 1;
+                // g.ps.index += 1;
+                println!("You missed!");
+                score::ScoreScene::enter(g)?;
             }
             i += 1;
         }

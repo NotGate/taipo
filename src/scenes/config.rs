@@ -24,11 +24,17 @@ impl ConfigScene {
         Ok(ConfigScene { index: 0 })
     }
     pub fn enter(g: &mut Game) -> Result<(), String> {
-        g.scene = Scene::Playing;
-        g.mp.seek(g.ms.map.notes.0[0].0 as f64 / 1000.0 - 1.00)?;
+        g.scene = Scene::Config;
         Ok(())
     }
     pub fn poll(g: &mut Game) -> Result<(), String> {
+        for (e, s, k, m, c) in process(&mut g.el) {
+            g.ctx.process_event(&e);
+            if c == '\0' && s == ElementState::Pressed {
+                match k {
+                    KeyCode::Escape => map::MapScene::enter(g)?,
+                    _ => (),
+                }}}
         Ok(())
     }
     pub fn update(g: &mut Game) -> Result<(), String> {

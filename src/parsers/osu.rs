@@ -154,7 +154,7 @@ impl MapType for Osu {
         };
     }
     fn get(&mut self) -> Option<Map> {
-        if self.map.notes.0.len() < 10 {
+        if self.map.notes.0.len() < 10 || self.map.audio.ends_with("/virtual") {
             return None;
         }
         // println!("{}",self.map.keys);
