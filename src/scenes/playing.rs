@@ -134,8 +134,7 @@ impl PlayingScene {
                         c,
                         g.ps.chars[g.ps.index]
                     );
-                    // submit_score();
-                    score::ScoreScene::enter(g)?;
+                    score::ScoreScene::enter(g)?; // TODO: submit score
                 }
             }
         }
@@ -154,7 +153,7 @@ impl PlayingScene {
                 None,
             );
             if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
-                // g.ps.index += 1;
+                // g.ps.index += 1; // TODO: allow misses for other modes?
                 println!("You missed!");
                 score::ScoreScene::enter(g)?;
             }
