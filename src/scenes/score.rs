@@ -48,7 +48,7 @@ impl ScoreScene {
         println!("{}, {}", now.timestamp() as i32, date);
 
         let score = Score {
-            id: "".into(),
+            id,
             map: g.ms.map.id.clone(),
             score,
             acc,

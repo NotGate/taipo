@@ -37,16 +37,16 @@ impl Settings {
         .map_or(
             Ok(Settings {
                 version: "1.0.0".into(),
-                query: "dmin between 130 and 300 and nps>3".into(), //smin>30 and dmin between 50 and 100
+                query: "dmin between 100 and 260 and nps>3.2".into(), //smin>30 and dmin between 50 and 100
                 parse_date: 0,
 
                 mode: "4k".into(),
                 seed: 0,
                 speed: 1.0,
                 volume: 0.1,
-                aset: 0,   // -mp.latency()
-                iset: -60, // -score.offset
-                window: 300,
+                aset: 0,
+                iset: -60,
+                window: 100,
 
                 skin: "".into(),
                 font: "".into(),

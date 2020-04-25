@@ -115,22 +115,23 @@ impl MapScene {
     pub fn update(g: &mut Game) -> Result<(), String> {
         Ok(())
     }
+    // TODO: the information is there, just make it prettier and cleaner
     pub fn render(g: &mut Game) -> Result<(), String> {
         // draw Settings{}
         if let Some(ctext) = g.ms.ctext.as_ref() {
-            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
+            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, 20.0),)).unwrap();
         }
         // draw Map{}
         // draw diff color bg?
         if let Some(mtext) = g.ms.mtext.as_ref() {
-            graphics::draw(&mut g.ctx, mtext, (nalgebra::Point2::new(0.0, g.settings.h as f32 / 3.0),)).unwrap();
+            graphics::draw(&mut g.ctx, mtext, (nalgebra::Point2::new(0.0, g.settings.h as f32 / 3.0 + 20.0),)).unwrap();
         }
         // draw Scores[{}]
         if let Some(stext) = g.ms.stext.as_ref() {
             graphics::draw(
                 &mut g.ctx,
                 stext,
-                (nalgebra::Point2::new(0.0, g.settings.h as f32 * 2.0 / 3.0),),
+                (nalgebra::Point2::new(0.0, g.settings.h as f32 * 2.0 / 3.0 + 20.0),),
             )
             .unwrap();
         }
@@ -149,6 +150,38 @@ impl MapScene {
             )
             .unwrap();
         }
+
+        // draw graph
+        let dt = g.ms.map.dmin as f32;
+        let t = g.ms.map.notes.0.last().unwrap().0 as f32;
+        let dx = dt / t * g.settings.w as f32;
+        let wr = graphics::Mesh::new_rectangle(
+            &mut g.ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(0.0, 0.0, dx, 20.0),
+            graphics::WHITE,
+        ).unwrap();
+        let cursor = graphics::Mesh::new_rectangle(
+            &mut g.ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(0.0, 0.0, dx * 10.0, 20.0),
+            graphics::Color::new(1.0, 0.0, 0.0, 1.0),
+        ).unwrap();
+        for note in g.ms.map.notes.0.iter() {
+            graphics::draw(
+                &mut g.ctx,
+                &wr,
+                (nalgebra::Point2::new(note.0 as f32 / t * g.settings.w as f32, 0.0),),
+            ).unwrap();
+        }
+        graphics::draw(
+            &mut g.ctx,
+            &cursor,
+            (nalgebra::Point2::new(
+                g.mp.pos()? as f32 * 1000.0 / t * g.settings.w as f32,
+                0.0,
+            ),),
+        ).unwrap();
 
         Ok(())
     }
@@ -243,12 +276,19 @@ aset:{} iset:{} window:{} local:{}",
         Ok(())
     }
     fn update_stext(g: &mut Game) -> Result<(), String> {
-        let scores = g.db.query_scores(&format!("map={}",g.ms.map.id))?;
+        let scores = g.db.query_scores(&format!("map={}", g.ms.map.id))?;
         let mut text = graphics::Text::default();
         for score in scores {
             text.add(format!(
                 "score:{:.2} acc:{:.2} error:{:.2} combo:{} speed:{:.2} date:{} mode:{} seed:{}\n",
-                score.score, score.acc * 100.0, score.error * 1000.0, score.combo, score.speed, score.date, score.mode, score.seed
+                score.score,
+                score.acc * 100.0,
+                score.error * 1000.0,
+                score.combo,
+                score.speed,
+                score.date,
+                score.mode,
+                score.seed
             ));
         }
         g.ms.stext = Some(text);

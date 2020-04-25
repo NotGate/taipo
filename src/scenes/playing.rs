@@ -52,6 +52,7 @@ impl PlayingScene {
         g.scene = Scene::Playing;
         g.ps.index = 0;
         g.ps.fs = 150.0; //g.settings.fs;
+        g.ps.errors = vec![];
 
         // TODO: settings.font
         g.ps.font =
@@ -130,7 +131,7 @@ impl PlayingScene {
             } else if c != '\0' && c != '\u{1b}' {
                 let diff = g.mp.pos()? as f32 - g.ms.map.notes.0[g.ps.index].0 as f32 / 1000.0 + g.settings.iset as f32 / 1000.0;
                 if c == g.ps.chars[g.ps.index] && diff.abs() <= g.settings.window as f32 / 1000.0 {
-                    println!("error: {}", diff);
+                    // println!("error: {}", diff);
                     g.ps.errors.push(diff);
                     g.ps.index += 1;
                 } else {
@@ -181,49 +182,44 @@ impl PlayingScene {
         )
         .unwrap();
 
-        // TODO: draw error
-
-        Ok(())
-    }
-}
-
-/*
-fn draw_error(&mut self, ctx: &mut Context) -> GameResult {
-        //
-        let n = 10.min(self.errors.len());
+        // error
+        let n = 10.min(g.ps.errors.len());
         if n == 0 {
             return Ok(());
         }
-        let slice = &self.errors[self.errors.len() - n..];
-        let mean = slice.iter().fold(0, |acc, err| acc + err) / n as i32;
-        //
-        let w = GFONT_SIZE / 40.0;
-        let h = GFONT_SIZE / 5.0;
-        let y = (self.h + GFONT_SIZE) / 2.0;
+        let slice = &g.ps.errors[g.ps.errors.len() - n..];
+        let mean = slice.iter().fold(0.0, |acc, err| acc + err) / n as f32 * 1000.0;
+        let w = g.ps.fs / 40.0;
+        let h = g.ps.fs / 5.0;
+        let y = (g.settings.h as f32 + g.ps.fs) / 2.0;
         let bar = graphics::Mesh::new_rectangle(
-            ctx,
+            &mut g.ctx,
             graphics::DrawMode::fill(),
             graphics::Rect::new(0.0, 0.0, w, h),
             graphics::Color::new(1.0, 1.0, 1.0, 1.0),
-        )?;
+        )
+        .unwrap();
         for err in slice {
-            let ratio = *err as f32 / self.hwin as f32;
-            let x = -(ratio * self.lw) + self.w/2.0;
+            let ratio = *err * 1000.0 / g.settings.window as f32;
+            let x = -(ratio * g.ps.lw) + g.settings.w as f32 / 2.0;
             graphics::draw(
-                ctx,
+                &mut g.ctx,
                 &bar,
                 (
                     nalgebra::Point2::new(x, y),
                     graphics::Color::new(1.0 * ratio.abs(), 1.0 * (1.0 - ratio.abs()), 0.0, 1.0),
                 ),
-            )?;
+            )
+            .unwrap();
         }
-        let x = -(mean as f32 / self.hwin as f32 * self.lw) + self.w/2.0;
+        let x = -(mean / g.settings.window as f32 * g.ps.lw) + g.settings.w as f32 / 2.0;
         graphics::draw(
-            ctx,
-            &graphics::Text::new(format!("{}", mean)),
+            &mut g.ctx,
+            &graphics::Text::new(format!("{:.0}", mean)),
             (nalgebra::Point2::new(x, y + h),),
-        )?;
+        )
+        .unwrap();
+
         Ok(())
     }
-*/
+}
