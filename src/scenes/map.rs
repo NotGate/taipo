@@ -17,6 +17,9 @@ use std::{
     rc::{Rc, Weak},
     time::Duration,
 };
+
+const FONT_SIZE: f32 = 20.0;
+
 pub struct MapScene {
     pub index: usize,
     pub maps: Vec<Map>,
@@ -98,6 +101,7 @@ impl MapScene {
                     KeyCode::O => {
                         // TODO: update db
                         g.ms.map.offsetms = num::clamp(g.ms.map.offsetms + amt, -10000, 10000);
+                        g.db.update_map_offset(&g.ms.map)?;
                         MapScene::update_ctext(g)?;
                     }
                     // mode
@@ -139,14 +143,14 @@ impl MapScene {
         // draw Settings{}
         if let Some(ctext) = g.ms.ctext.as_ref() {
             graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
-            y += ctext.height(&mut g.ctx) as f32 + 20.0;
+            y += ctext.height(&mut g.ctx) as f32 + FONT_SIZE
         }
 
         // draw Map{}
         // draw diff color bg?
         if let Some(mtext) = g.ms.mtext.as_ref() {
             graphics::draw(&mut g.ctx, mtext, (nalgebra::Point2::new(0.0, y),)).unwrap();
-            y += mtext.height(&mut g.ctx) as f32 + 20.0;
+            y += mtext.height(&mut g.ctx) as f32 + FONT_SIZE
         }
 
         // draw graph
@@ -189,7 +193,7 @@ impl MapScene {
         // draw Scores[{}]
         if let Some(stext) = g.ms.stext.as_ref() {
             graphics::draw(&mut g.ctx, stext, (nalgebra::Point2::new(0.0, y),)).unwrap();
-            y += stext.height(&mut g.ctx) as f32 + 20.0;
+            // y += stext.height(&mut g.ctx) as f32 + FONT_SIZE
         }
 
         Ok(())

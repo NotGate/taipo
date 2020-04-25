@@ -52,6 +52,13 @@ impl Database {
             .map_err(|e| format!("Could not insert maps: {}", e))?;
         Ok(())
     }
+    pub fn update_map_offset(&self, map: &Map) -> Result<(), String> {
+        diesel::update(maps::table.filter(maps::id.eq(map.id.clone())))
+            .set(maps::offsetms.eq(map.offsetms))
+            .execute(&self.conn)
+            .map_err(|e| format!("Could not update map: {}", e))?;
+        Ok(())
+    }
     pub fn query_maps(&self, query: &str) -> Result<Vec<Map>, String> {
         allow_tables_to_appear_in_same_query!(maps, scores);
         allow_tables_to_appear_in_same_query!(scores, collections);
