@@ -9,6 +9,7 @@ use ggez::{
     input::keyboard::KeyCode,
     Context, ContextBuilder,
 };
+use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 
 use crate::{game::Game, scenes::*, schema::Map};
 use std::{
@@ -45,10 +46,10 @@ impl MapScene {
     }
     pub fn enter(g: &mut Game) -> Result<(), String> {
         g.scene = Scene::Map;
+        // TODO: settings.font
         g.ms.font =
             Some(graphics::Font::new(&mut g.ctx, "/fonts/consola.ttf").map_err(|e| format!("Could not find font: {}", e))?);
         MapScene::change_map(g)?;
-        // g.mp.unmute()?;
         Ok(())
     }
     // TODO: reduce repitition
@@ -57,8 +58,10 @@ impl MapScene {
             g.ctx.process_event(&e);
             if c == '\0' && s == ElementState::Pressed {
                 let amt = if m.alt { 5 } else { 1 } * if m.shift { -1 } else { 1 };
+                // used: QSNVAIWOR
+                // 
                 match k {
-                    KeyCode::Q => g.playing = false, // TODO: proper closing (save settings)
+                    KeyCode::Q => g.playing = false,
                     KeyCode::Escape => config::ConfigScene::enter(g)?,
                     KeyCode::Return => playing::PlayingScene::enter(g)?,
                     KeyCode::Slash => help::HelpScene::enter(g)?, // TODO: question mark instead of slash
@@ -69,18 +72,15 @@ impl MapScene {
                             g.mp.play()?
                         }
                     }
-                    // Index
                     KeyCode::N => {
                         g.ms.index = MapScene::wrap(g.ms.index as i32, amt, g.ms.maps.len() as i32);
                         MapScene::change_map(g)?;
                     }
-                    // Speed
                     KeyCode::S => {
                         g.mp.set_speed(g.mp.get_speed()? + amt as f32 / 100.0)?;
                         g.settings.speed = g.mp.get_speed()?;
                         MapScene::update_ctext(g)?;
                     }
-                    // Volume
                     KeyCode::V => {
                         g.mp.set_volume(g.mp.get_volume()? + amt as f32 / 100.0)?;
                         g.settings.volume = g.mp.get_volume()?;
@@ -99,18 +99,21 @@ impl MapScene {
                         MapScene::update_ctext(g)?;
                     }
                     KeyCode::O => {
-                        // TODO: update db
                         g.ms.map.offsetms = num::clamp(g.ms.map.offsetms + amt, -10000, 10000);
                         g.db.update_map_offset(&g.ms.map)?;
                         MapScene::update_ctext(g)?;
                     }
-                    // mode
                     KeyCode::R => {
-                        use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
                         let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed as u64);
                         g.settings.seed = rng.gen_range(1000, 10000) as u64;
                         MapScene::update_ctext(g)?;
                     }
+                    KeyCode::J => {
+                        let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed + g.ms.index as u64);
+                        g.ms.index = rng.gen_range(0, g.ms.maps.len());
+                        MapScene::change_map(g)?;
+                    }
+                    // TODO: toggle modes
                     _ => (),
                 }
             }

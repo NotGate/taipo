@@ -78,7 +78,7 @@ impl Game {
         self.ms.maps = self.db.query_maps(&self.settings.query)?;
         self.ms.map = self.ms.maps[0].clone();
 
-        self.settings.aset = self.mp.get_latency()? as i32;
+        self.settings.aset = -(self.mp.get_latency()? as i32);
 
         println!("{}", self.ms.maps.len());
         MapScene::enter(self)

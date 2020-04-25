@@ -39,7 +39,7 @@ impl Settings {
             mode: "4k".into(),
             seed: 0,
             speed: 1.0,
-            volume: 0.1,
+            volume: 0.05,
             aset: 0,
             iset: -60,
             window: 100,
