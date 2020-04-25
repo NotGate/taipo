@@ -182,6 +182,7 @@ impl MapScene {
         }
         MapScene::update_ctext(g)?;
         MapScene::update_mtext(g)?;
+        MapScene::update_stext(g)?;
         MapScene::update_bg(g)
     }
     fn update_mtext(g: &mut Game) -> Result<(), String> {
@@ -208,7 +209,7 @@ Difficulty:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]",
             g.ms.map.smax,
         )));
         if let Some(v) = g.ms.mtext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(15.0)).set_bounds(
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(12.0)).set_bounds(
                 nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
                 graphics::Align::Left,
             );
@@ -234,7 +235,25 @@ aset:{} iset:{} window:{} local:{}",
             g.ms.map.offsetms,
         )));
         if let Some(v) = g.ms.ctext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(15.0)).set_bounds(
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(12.0)).set_bounds(
+                nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
+                graphics::Align::Left,
+            );
+        }
+        Ok(())
+    }
+    fn update_stext(g: &mut Game) -> Result<(), String> {
+        let scores = g.db.query_scores(&format!("map={}",g.ms.map.id))?;
+        let mut text = graphics::Text::default();
+        for score in scores {
+            text.add(format!(
+                "score:{:.2} acc:{:.2} error:{:.2} combo:{} speed:{:.2} date:{} mode:{} seed:{}\n",
+                score.score, score.acc * 100.0, score.error * 1000.0, score.combo, score.speed, score.date, score.mode, score.seed
+            ));
+        }
+        g.ms.stext = Some(text);
+        if let Some(v) = g.ms.stext.as_mut() {
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(12.0)).set_bounds(
                 nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
                 graphics::Align::Left,
             );

@@ -33,10 +33,7 @@ impl ScoreScene {
         let abs_error = g.ps.errors.iter().fold(0.0, |acc, e| acc + e.abs()) / g.ps.errors.len() as f32;
 
         let error = g.ps.errors.iter().fold(0.0, |acc, e| acc + e) / g.ps.errors.len() as f32;
-        let acc =
-            g.ps.errors
-                .iter()
-                .fold(0.0, |acc, e| acc + ((win-e.abs()) / win)) / g.ps.errors.len() as f32;
+        let acc = g.ps.errors.iter().fold(0.0, |acc, e| acc + ((win - e.abs()) / win)) / g.ps.errors.len() as f32;
 
         // 1.3 * 100^0.95/100 * 1000 * 13 / 100
         let score = g.settings.speed * (100 as f32).powf(acc) / 100.0 * g.ps.index as f32 * g.ms.map.difficulty
@@ -63,6 +60,9 @@ impl ScoreScene {
             date: now.timestamp() as i32,
         };
         println!("{:?}", score);
+
+        g.db.insert_score(score)?;
+
         Ok(())
     }
     pub fn poll(g: &mut Game) -> Result<(), String> {

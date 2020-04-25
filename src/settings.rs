@@ -37,7 +37,7 @@ impl Settings {
         .map_or(
             Ok(Settings {
                 version: "1.0.0".into(),
-                query: "smin>3 and dmin between 130 and 300 and nps>3".into(), //smin>30 and dmin between 50 and 100
+                query: "dmin between 130 and 300 and nps>3".into(), //smin>30 and dmin between 50 and 100
                 parse_date: 0,
 
                 mode: "4k".into(),
