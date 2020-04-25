@@ -59,17 +59,27 @@ impl Database {
         // TODO: order by??
         // TODO: filter only on top score?
         // TODO: distinct on??
-        let m = maps::table
-            .left_join(scores::table.on(maps::id.eq(scores::map)))
-            .left_join(collections::table.on(maps::id.eq(collections::map)))
-            .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
-            .order(maps::dmin.desc())
-            // .distinct_on(maps::id)
-            .load::<(Map, Option<Score>, Option<Collection>)>(&self.conn)
-            .map_err(|e| format!("Could not query maps: {}", e))?
-            .iter()
-            .map(|j| j.0.clone())
-            .collect::<Vec<Map>>();
+        // let m = maps::table
+        //     .left_join(scores::table.on(maps::id.eq(scores::map)))
+        //     .left_join(collections::table.on(maps::id.eq(collections::map)))
+        //     .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
+        //     .order(maps::dmin.desc())
+        //     // .distinct_on(maps::id)
+        //     .load::<(Map, Option<Score>, Option<Collection>)>(&self.conn)
+        //     .map_err(|e| format!("Could not query maps: {}", e))?
+        //     .iter()
+        //     .map(|j| j.0.clone())
+        //     .collect::<Vec<Map>>();
+        let m = sql_query(format!(
+            "select distinct m.*
+            from maps as m
+            left join scores as s on s.map = m.id
+            left join collections as c on c.map = m.id
+            where {}",
+            if query.len() > 0 { query } else { "TRUE" }
+        ))
+        .load::<Map>(&self.conn)
+        .map_err(|e| format!("Could not query maps: {}", e))?;
         Ok(m)
     }
     pub fn delete_maps(&self, maps: &[Map]) -> Result<(), String> {

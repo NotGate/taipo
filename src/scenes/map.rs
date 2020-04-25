@@ -124,7 +124,12 @@ impl MapScene {
         // draw Map{}
         // draw diff color bg?
         if let Some(mtext) = g.ms.mtext.as_ref() {
-            graphics::draw(&mut g.ctx, mtext, (nalgebra::Point2::new(0.0, g.settings.h as f32 / 3.0 + 20.0),)).unwrap();
+            graphics::draw(
+                &mut g.ctx,
+                mtext,
+                (nalgebra::Point2::new(0.0, g.settings.h as f32 / 3.0 + 20.0),),
+            )
+            .unwrap();
         }
         // draw Scores[{}]
         if let Some(stext) = g.ms.stext.as_ref() {
@@ -160,19 +165,22 @@ impl MapScene {
             graphics::DrawMode::fill(),
             graphics::Rect::new(0.0, 0.0, dx, 20.0),
             graphics::WHITE,
-        ).unwrap();
+        )
+        .unwrap();
         let cursor = graphics::Mesh::new_rectangle(
             &mut g.ctx,
             graphics::DrawMode::fill(),
             graphics::Rect::new(0.0, 0.0, dx * 10.0, 20.0),
             graphics::Color::new(1.0, 0.0, 0.0, 1.0),
-        ).unwrap();
+        )
+        .unwrap();
         for note in g.ms.map.notes.0.iter() {
             graphics::draw(
                 &mut g.ctx,
                 &wr,
                 (nalgebra::Point2::new(note.0 as f32 / t * g.settings.w as f32, 0.0),),
-            ).unwrap();
+            )
+            .unwrap();
         }
         graphics::draw(
             &mut g.ctx,
@@ -181,7 +189,8 @@ impl MapScene {
                 g.mp.pos()? as f32 * 1000.0 / t * g.settings.w as f32,
                 0.0,
             ),),
-        ).unwrap();
+        )
+        .unwrap();
 
         Ok(())
     }
@@ -220,7 +229,8 @@ impl MapScene {
     }
     fn update_mtext(g: &mut Game) -> Result<(), String> {
         g.ms.mtext = Some(graphics::Text::new(format!(
-            "{} - {} [{}] ({})
+            "{} - {} [{}]
+Mapped by {}
 Mode:{} Keys:{} Length:{} Count:{} BPM:{:.2}
 Difficulty:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]",
             g.ms.map.artist,
