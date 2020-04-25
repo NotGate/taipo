@@ -25,5 +25,6 @@ fn main() -> Result<(), String> {
         g.update()?;
         g.render()?;
     }
+    g.close()?;
     Ok(())
 }

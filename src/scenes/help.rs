@@ -19,6 +19,8 @@ use std::{
 pub struct HelpScene {
     pub index: usize,
 }
+
+// TODO: draw available binds for MapScene
 impl HelpScene {
     pub fn init() -> Result<HelpScene, String> {
         Ok(HelpScene { index: 0 })

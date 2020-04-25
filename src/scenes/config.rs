@@ -19,6 +19,8 @@ use std::{
 pub struct ConfigScene {
     pub index: usize,
 }
+
+// TODO: GUI for changing, testing, and saving all types of in-game settings
 impl ConfigScene {
     pub fn init() -> Result<ConfigScene, String> {
         Ok(ConfigScene { index: 0 })

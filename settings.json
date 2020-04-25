@@ -1,0 +1,1 @@
+{"version":"1.0.0","query":"m.dmin between 100 and 260 and m.nps>3.2 and s.acc>0.9 order by m.dmin desc, m.nps asc","parse_date":1587850062,"mode":"4k","seed":0,"speed":1.0,"volume":0.049999997,"aset":36,"iset":-60,"window":100,"skin":"","font":"","w":1280,"h":720,"borderless":true,"maximized":false,"window_mode":"","bindings":{}}

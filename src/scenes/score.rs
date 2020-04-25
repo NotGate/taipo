@@ -55,7 +55,7 @@ impl ScoreScene {
             error,
             speed: g.settings.speed,
             combo: g.ps.index as i32,
-            mode: g.settings.mode.clone(), // this should be a string or enum (4k, typing, etc.)
+            mode: g.settings.mode.clone(),
             seed: g.settings.seed as i32,
             date: now.timestamp() as i32,
         };

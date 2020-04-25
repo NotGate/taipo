@@ -70,6 +70,7 @@ impl Game {
         })
     }
     pub fn load(&mut self) -> Result<(), String> {
+        // TODO: smart-parse
         // self.db.drop_tables()?;
         // self.db.create_tables()?;
         // self.osu_p.parse_directory(&self.db);
@@ -81,6 +82,9 @@ impl Game {
 
         println!("{}", self.ms.maps.len());
         MapScene::enter(self)
+    }
+    pub fn close(&mut self) -> Result<(), String> {
+        self.settings.save()
     }
     pub fn tick(&mut self) -> Result<(), String> {
         self.ctx.timer_context.tick();
@@ -118,6 +122,7 @@ impl Game {
             Scene::Config => ConfigScene::render(self)?,
         }
 
+        // TODO: dynamic overlays
         // let text = graphics::Text::new((
         //     format!("FPS: {}", ggez::timer::fps(&mut self.ctx)),
         //     self.ms.font.unwrap(),

@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -30,40 +31,46 @@ pub struct Settings {
 
 impl Settings {
     pub fn init() -> Result<Settings, String> {
-        serde_json::from_str(
-            &String::from_utf8(std::fs::read("settings.json").map_or(vec![], |v| v))
-                .map_err(|e| format!("Could not convert file contents to string: {}", e))?,
-        )
-        .map_or(
-            Ok(Settings {
-                version: "1.0.0".into(),
-                query: "m.dmin between 100 and 260 and m.nps>3.2 and s.acc>0.9 order by m.dmin desc, m.nps asc".into(), //smin>30 and dmin between 50 and 100
-                parse_date: 0,
+        let default = Settings {
+            version: "1.0.0".into(),
+            query: "m.dmin between 100 and 260 and m.nps>3.2 and s.acc>0.9 order by m.dmin desc, m.nps asc".into(), //smin>30 and dmin between 50 and 100
+            parse_date: Utc::now().timestamp() as u64,
 
-                mode: "4k".into(),
-                seed: 0,
-                speed: 1.0,
-                volume: 0.1,
-                aset: 0,
-                iset: -60,
-                window: 100,
+            mode: "4k".into(),
+            seed: 0,
+            speed: 1.0,
+            volume: 0.1,
+            aset: 0,
+            iset: -60,
+            window: 100,
 
-                skin: "".into(),
-                font: "".into(),
-                w: 1280,
-                h: 720,
-                borderless: true,
-                maximized: false,
-                window_mode: "".into(),
-                bindings: HashMap::new(),
-            }),
-            |v| v,
-        )
+            skin: "".into(),
+            font: "".into(),
+            w: 1280,
+            h: 720,
+            borderless: true,
+            maximized: false,
+            window_mode: "".into(),
+            bindings: HashMap::new(),
+        };
+
+        let s = String::from_utf8(std::fs::read("settings.json").map_or(vec![], |v| v))
+            .map_err(|e| format!("Could not convert file contents to string: {}", e))?;
+        println!("loaded: {}", s);
+
+        // TODO: golf this
+        if let Ok(v) = serde_json::from_str(&s) {
+            Ok(v)
+        } else {
+            Ok(default)
+        }
     }
     pub fn save(&mut self) -> Result<(), String> {
+        let s = serde_json::to_string(self).map_err(|e| format!("Could not convert Settings to String: {}", e))?;
+        println!("saved: {}",s);
         std::fs::write(
             "settings.json",
-            serde_json::to_string(self).map_err(|e| format!("Could not convert Settings to String: {}", e))?,
+            s,
         )
         .map_err(|e| format!("Could not write to file: {}", e))
     }

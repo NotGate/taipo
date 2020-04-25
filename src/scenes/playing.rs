@@ -32,6 +32,7 @@ pub struct PlayingScene {
     pub text: Option<graphics::Text>,
 }
 
+// TODO: split into multiple modes
 impl PlayingScene {
     pub fn init() -> Result<PlayingScene, String> {
         Ok(PlayingScene {
@@ -84,6 +85,8 @@ impl PlayingScene {
 
         let prep = 1.0;
         g.mp.seek((g.ms.map.notes.0[0].0 as f64 / 1000.0 - prep).max(0.0))?;
+
+        // TODO: how to do prep-time now that notes are mapped to audio??
         // g.ps.seek = g.ms.map.notes.0[0].0 as f64 / 1000.0 - prep;
         // if g.ps.seek < 0.0 {
         //     g.mp.mute()?;
@@ -126,17 +129,15 @@ impl PlayingScene {
         for (e, s, k, m, c) in process(&mut g.el) {
             g.ctx.process_event(&e);
             if k == KeyCode::Escape {
-                println!("You quit!");
                 map::MapScene::enter(g)?;
             } else if c != '\0' && c != '\u{1b}' {
                 let diff = g.mp.pos()? as f32 - g.ms.map.notes.0[g.ps.index].0 as f32 / 1000.0 + g.settings.iset as f32 / 1000.0;
                 if c == g.ps.chars[g.ps.index] && diff.abs() <= g.settings.window as f32 / 1000.0 {
-                    // println!("error: {}", diff);
                     g.ps.errors.push(diff);
                     g.ps.index += 1;
                 } else {
                     println!("Hit {:?} instead of {:?}", c, g.ps.chars[g.ps.index]);
-                    score::ScoreScene::enter(g)?; // TODO: submit score
+                    score::ScoreScene::enter(g)?;
                 }
             }
         }
