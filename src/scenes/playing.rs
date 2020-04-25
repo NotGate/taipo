@@ -13,9 +13,9 @@ use crate::{database::Database, game::Game, scenes::*};
 use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 use std::{
     cell::RefCell,
+    collections::HashMap,
     rc::{Rc, Weak},
     time::Duration,
-    collections::HashMap,
 };
 
 pub struct PlayingScene {
@@ -24,7 +24,8 @@ pub struct PlayingScene {
     pub lw: f32,
     // pub seek: f64,
     pub chars: Vec<char>,
-    pub cmap: HashMap<char,graphics::Text>,
+    pub errors: Vec<f32>,
+    pub cmap: HashMap<char, graphics::Text>,
     pub fg: Option<graphics::Mesh>,
     pub bg: Option<graphics::Mesh>,
     pub font: Option<graphics::Font>,
@@ -39,6 +40,7 @@ impl PlayingScene {
             lw: 0.0,
             // seek: 0.0,
             chars: vec![],
+            errors: vec![],
             cmap: HashMap::new(),
             fg: None,
             bg: None,
@@ -95,23 +97,26 @@ impl PlayingScene {
         for note in g.ms.map.notes.0.iter() {
             let ch = *ascii.choose(&mut rng).unwrap();
             g.ps.chars.push(ch);
-            g.ps.cmap.insert(ch,graphics::Text::new(graphics::TextFragment {
-                text: if ch == ' ' || ch == '\r' || ch == '\t' {
-                    '\u{263B}'
-                } else {
-                    ch
-                }
-                .to_string(),
-                color: Some(match ch {
-                    ' ' => graphics::Color::new(0.0, 1.0, 0.0, 1.0),
-                    '\r' => graphics::Color::new(1.0, 1.0, 0.0, 1.0),
-                    '\t' => graphics::Color::new(1.0, 0.0, 1.0, 1.0),
-                    _ => graphics::Color::new(1.0, 1.0, 1.0, 1.0),
-                }),
-                font: Some(g.ps.font.unwrap()),
-                scale: Some(graphics::Scale::uniform(g.ps.fs)),
-            })
-            .to_owned());
+            g.ps.cmap.insert(
+                ch,
+                graphics::Text::new(graphics::TextFragment {
+                    text: if ch == ' ' || ch == '\r' || ch == '\t' {
+                        '\u{263B}'
+                    } else {
+                        ch
+                    }
+                    .to_string(),
+                    color: Some(match ch {
+                        ' ' => graphics::Color::new(0.0, 1.0, 0.0, 1.0),
+                        '\r' => graphics::Color::new(1.0, 1.0, 0.0, 1.0),
+                        '\t' => graphics::Color::new(1.0, 0.0, 1.0, 1.0),
+                        _ => graphics::Color::new(1.0, 1.0, 1.0, 1.0),
+                    }),
+                    font: Some(g.ps.font.unwrap()),
+                    scale: Some(graphics::Scale::uniform(g.ps.fs)),
+                })
+                .to_owned(),
+            );
         }
         Ok(())
     }
@@ -123,17 +128,13 @@ impl PlayingScene {
                 println!("You quit!");
                 map::MapScene::enter(g)?;
             } else if c != '\0' && c != '\u{1b}' {
-                let diff = g.mp.pos()? - g.ms.map.notes.0[g.ps.index].0 as f64 / 1000.0 + g.settings.iset as f64 / 1000.0;
-                if c == g.ps.chars[g.ps.index] && diff.abs() <= g.settings.window as f64 / 1000.0 {
+                let diff = g.mp.pos()? as f32 - g.ms.map.notes.0[g.ps.index].0 as f32 / 1000.0 + g.settings.iset as f32 / 1000.0;
+                if c == g.ps.chars[g.ps.index] && diff.abs() <= g.settings.window as f32 / 1000.0 {
                     println!("error: {}", diff);
-                    // g.ps.errors.push(diff);
+                    g.ps.errors.push(diff);
                     g.ps.index += 1;
                 } else {
-                    println!(
-                        "Hit {:?} instead of {:?}",
-                        c,
-                        g.ps.chars[g.ps.index]
-                    );
+                    println!("Hit {:?} instead of {:?}", c, g.ps.chars[g.ps.index]);
                     score::ScoreScene::enter(g)?; // TODO: submit score
                 }
             }
@@ -185,3 +186,44 @@ impl PlayingScene {
         Ok(())
     }
 }
+
+/*
+fn draw_error(&mut self, ctx: &mut Context) -> GameResult {
+        //
+        let n = 10.min(self.errors.len());
+        if n == 0 {
+            return Ok(());
+        }
+        let slice = &self.errors[self.errors.len() - n..];
+        let mean = slice.iter().fold(0, |acc, err| acc + err) / n as i32;
+        //
+        let w = GFONT_SIZE / 40.0;
+        let h = GFONT_SIZE / 5.0;
+        let y = (self.h + GFONT_SIZE) / 2.0;
+        let bar = graphics::Mesh::new_rectangle(
+            ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(0.0, 0.0, w, h),
+            graphics::Color::new(1.0, 1.0, 1.0, 1.0),
+        )?;
+        for err in slice {
+            let ratio = *err as f32 / self.hwin as f32;
+            let x = -(ratio * self.lw) + self.w/2.0;
+            graphics::draw(
+                ctx,
+                &bar,
+                (
+                    nalgebra::Point2::new(x, y),
+                    graphics::Color::new(1.0 * ratio.abs(), 1.0 * (1.0 - ratio.abs()), 0.0, 1.0),
+                ),
+            )?;
+        }
+        let x = -(mean as f32 / self.hwin as f32 * self.lw) + self.w/2.0;
+        graphics::draw(
+            ctx,
+            &graphics::Text::new(format!("{}", mean)),
+            (nalgebra::Point2::new(x, y + h),),
+        )?;
+        Ok(())
+    }
+*/

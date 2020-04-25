@@ -34,7 +34,9 @@ impl HelpScene {
                 match k {
                     KeyCode::Escape => map::MapScene::enter(g)?,
                     _ => (),
-                }}}
+                }
+            }
+        }
         Ok(())
     }
     pub fn update(g: &mut Game) -> Result<(), String> {

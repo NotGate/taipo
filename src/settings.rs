@@ -44,7 +44,7 @@ impl Settings {
                 seed: 0,
                 speed: 1.0,
                 volume: 0.1,
-                aset: 0, // -mp.latency()
+                aset: 0,   // -mp.latency()
                 iset: -60, // -score.offset
                 window: 300,
 

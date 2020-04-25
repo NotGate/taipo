@@ -48,7 +48,6 @@ pub struct Map {
     pub tags: String,
     pub preview: f32,
 
-    pub map: i32,
     pub audio: String,
     pub background: String,
 
@@ -84,7 +83,6 @@ table! {
         tags -> Text,
         preview -> Float,
 
-        map -> Integer,
         audio -> Text,
         background -> Text,
 
@@ -123,9 +121,8 @@ format          text,       -- file format (v6|v7|v8|..)
 tags            text,       -- space separated list of strings
 preview         real,       -- audio preview (s)
 
-map             integer,    -- hash of map
-audio           text,       -- path (later: hash of audio file)
-background      text,       -- path (later: hash of image file (background offset for osu?))
+audio           text,       -- path (hash of audio file?)
+background      text,       -- path (hash of image file?)
 
 title           text,
 artist          text,
@@ -157,12 +154,12 @@ pub struct Score {
     pub id: String,
     pub map: String,
 
+    pub mode: String,
     pub score: f32,
     pub acc: f32,
     pub error: f32,
     pub speed: f32,
     pub combo: i32,
-    pub mode: i32,
     pub seed: i32,
     pub date: i32,
 }
@@ -172,12 +169,12 @@ table! {
         id -> Text,
         map -> Text,
 
+        mode ->            Text,
         score ->           Float,
         acc ->             Float,
         error ->           Float,
         speed ->           Float,
         combo ->           Integer,
-        mode ->            Integer,
         seed ->            Integer,
         date ->            Integer,
     }
@@ -188,13 +185,13 @@ table! {
 pub const SCORE_SCHEMA: &'static str = r#"
 id              text,       -- score id
 map             text,       -- map id
+mode            text,    -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
 
 score           real,       -- f(map.difficulty,acc,combo,speed,mode)
 acc             real,       -- percent accuracy out of 100
 error           real,       -- average error (s)
 speed           real,       -- speed the map was played at (0.5-3.0)
 combo           integer,    -- max combo
-mode            integer,    -- other|taiko|1k|2k|3k|4k|5k|6k|7k|8k|9k|10k
 seed            integer,    -- the random seed
 date            integer     -- date the score was achieved
 "#;
