@@ -2193,6 +2193,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tabwriter"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "36205cfc997faadcc4b0b87aaef3fbedafe20d38d4959a7ca6ff803564051111"
+dependencies = [
+ "unicode-width",
+]
+
+[[package]]
 name = "taipo"
 version = "0.1.0"
 dependencies = [
@@ -2209,6 +2218,7 @@ dependencies = [
  "rayon",
  "serde",
  "serde_json",
+ "tabwriter",
 ]
 
 [[package]]

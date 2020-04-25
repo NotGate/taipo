@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use chrono::{DateTime, NaiveDateTime, Utc};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -33,7 +33,7 @@ impl Settings {
     pub fn init() -> Result<Settings, String> {
         let default = Settings {
             version: "1.0.0".into(),
-            query: "m.dmin between 100 and 260 and m.nps>3.2 and s.acc>0.9 order by m.dmin desc, m.nps asc".into(), //smin>30 and dmin between 50 and 100
+            query: "m.dmin between 100 and 260 and m.nps>3.2 order by m.dmin desc, m.nps asc".into(), //and s.acc>0.9
             parse_date: Utc::now().timestamp() as u64,
 
             mode: "4k".into(),
@@ -67,11 +67,7 @@ impl Settings {
     }
     pub fn save(&mut self) -> Result<(), String> {
         let s = serde_json::to_string(self).map_err(|e| format!("Could not convert Settings to String: {}", e))?;
-        println!("saved: {}",s);
-        std::fs::write(
-            "settings.json",
-            s,
-        )
-        .map_err(|e| format!("Could not write to file: {}", e))
+        println!("saved: {}", s);
+        std::fs::write("settings.json", s).map_err(|e| format!("Could not write to file: {}", e))
     }
 }

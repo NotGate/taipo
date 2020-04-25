@@ -138,7 +138,7 @@ impl Database {
         let scores = scores::table
             .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
             .order(scores::score.desc())
-            .limit(20)
+            .limit(10)
             .load(&self.conn)
             .map_err(|e| format!("Could not query scores: {}", e))?;
         Ok(scores)

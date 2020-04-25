@@ -1,3 +1,4 @@
+use chrono::{DateTime, NaiveDateTime, Utc};
 use ggez::{
     event::{
         self,
@@ -117,49 +118,41 @@ impl MapScene {
     }
     // TODO: the information is there, just make it prettier and cleaner
     pub fn render(g: &mut Game) -> Result<(), String> {
-        // draw Settings{}
-        if let Some(ctext) = g.ms.ctext.as_ref() {
-            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, 20.0),)).unwrap();
-        }
-        // draw Map{}
-        // draw diff color bg?
-        if let Some(mtext) = g.ms.mtext.as_ref() {
-            graphics::draw(
-                &mut g.ctx,
-                mtext,
-                (nalgebra::Point2::new(0.0, g.settings.h as f32 / 3.0 + 20.0),),
-            )
-            .unwrap();
-        }
-        // draw Scores[{}]
-        if let Some(stext) = g.ms.stext.as_ref() {
-            graphics::draw(
-                &mut g.ctx,
-                stext,
-                (nalgebra::Point2::new(0.0, g.settings.h as f32 * 2.0 / 3.0 + 20.0),),
-            )
-            .unwrap();
-        }
         // draw Maps[Image]
         if let Some(bg) = g.ms.bg.as_ref() {
             graphics::draw(
                 &mut g.ctx,
                 bg,
                 graphics::DrawParam::new()
-                    .dest(nalgebra::Point2::new(g.settings.w as f32 / 2.0, g.settings.h as f32 / 4.0))
+                    .dest(nalgebra::Point2::new(g.settings.w as f32 * 2.0 / 3.0, 0.0))
                     .offset(nalgebra::Point2::new(0.0, 0.0))
                     .scale(nalgebra::Vector2::new(
-                        g.settings.w as f32 / bg.width() as f32 / 2.0,
-                        g.settings.h as f32 / bg.height() as f32 / 2.0,
+                        g.settings.w as f32 / bg.width() as f32 / 3.0,
+                        g.settings.h as f32 / bg.height() as f32 / 3.0,
                     )),
             )
             .unwrap();
         }
 
+        let mut y = 0.0;
+
+        // draw Settings{}
+        if let Some(ctext) = g.ms.ctext.as_ref() {
+            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
+            y += ctext.height(&mut g.ctx) as f32 + 20.0;
+        }
+
+        // draw Map{}
+        // draw diff color bg?
+        if let Some(mtext) = g.ms.mtext.as_ref() {
+            graphics::draw(&mut g.ctx, mtext, (nalgebra::Point2::new(0.0, y),)).unwrap();
+            y += mtext.height(&mut g.ctx) as f32 + 20.0;
+        }
+
         // draw graph
         let dt = g.ms.map.dmin as f32;
         let t = g.ms.map.notes.0.last().unwrap().0 as f32;
-        let dx = dt / t * g.settings.w as f32;
+        let dx = dt / t * g.settings.w as f32 * 0.66;
         let wr = graphics::Mesh::new_rectangle(
             &mut g.ctx,
             graphics::DrawMode::fill(),
@@ -170,7 +163,7 @@ impl MapScene {
         let cursor = graphics::Mesh::new_rectangle(
             &mut g.ctx,
             graphics::DrawMode::fill(),
-            graphics::Rect::new(0.0, 0.0, dx * 10.0, 20.0),
+            graphics::Rect::new(0.0, 0.0, 10.0, 20.0),
             graphics::Color::new(1.0, 0.0, 0.0, 1.0),
         )
         .unwrap();
@@ -178,7 +171,7 @@ impl MapScene {
             graphics::draw(
                 &mut g.ctx,
                 &wr,
-                (nalgebra::Point2::new(note.0 as f32 / t * g.settings.w as f32, 0.0),),
+                (nalgebra::Point2::new(note.0 as f32 / t * g.settings.w as f32 * 0.66, y),),
             )
             .unwrap();
         }
@@ -186,11 +179,18 @@ impl MapScene {
             &mut g.ctx,
             &cursor,
             (nalgebra::Point2::new(
-                g.mp.pos()? as f32 * 1000.0 / t * g.settings.w as f32,
-                0.0,
+                g.mp.pos()? as f32 * 1000.0 / t * g.settings.w as f32 * 0.66,
+                y,
             ),),
         )
         .unwrap();
+        y += 40.0;
+
+        // draw Scores[{}]
+        if let Some(stext) = g.ms.stext.as_ref() {
+            graphics::draw(&mut g.ctx, stext, (nalgebra::Point2::new(0.0, y),)).unwrap();
+            y += stext.height(&mut g.ctx) as f32 + 20.0;
+        }
 
         Ok(())
     }
@@ -252,7 +252,7 @@ Difficulty:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]",
             g.ms.map.smax,
         )));
         if let Some(v) = g.ms.mtext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(12.0)).set_bounds(
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
                 nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
                 graphics::Align::Left,
             );
@@ -278,7 +278,7 @@ aset:{} iset:{} window:{} local:{}",
             g.ms.map.offsetms,
         )));
         if let Some(v) = g.ms.ctext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(12.0)).set_bounds(
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
                 nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
                 graphics::Align::Left,
             );
@@ -287,23 +287,37 @@ aset:{} iset:{} window:{} local:{}",
     }
     fn update_stext(g: &mut Game) -> Result<(), String> {
         let scores = g.db.query_scores(&format!("map={}", g.ms.map.id))?;
-        let mut text = graphics::Text::default();
+        let mut tw = TabWriter::new(vec![]);
+        use std::io::Write;
+        use tabwriter::TabWriter;
+        write!(&mut tw, "Score\tAcc\tError\tCombo\tSpeed\tDate\tMode\tSeed\n")
+            .map_err(|e| format!("Couldn't write tabwriter header: {}", e))?;
         for score in scores {
-            text.add(format!(
-                "score:{:.2} acc:{:.2} error:{:.2} combo:{} speed:{:.2} date:{} mode:{} seed:{}\n",
+            write!(
+                &mut tw,
+                "{:.2}\t{:.2}\t{:.2}\t{}\t{:.2}\t{}\t{}\t{}\n",
                 score.score,
                 score.acc * 100.0,
                 score.error * 1000.0,
                 score.combo,
                 score.speed,
-                score.date,
+                DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(score.date as i64, 0), Utc)
+                    .format("%a %d/%m/%y %I:%M %p"), // Day D/M/Y H:M
                 score.mode,
                 score.seed
-            ));
+            )
+            .map_err(|e| format!("Couldn't write to tabwriter: {}", e))?;
         }
-        g.ms.stext = Some(text);
+        tw.flush().map_err(|e| format!("Couldn't flush tabwriter: {}", e))?;
+        g.ms.stext = Some(graphics::Text::new(
+            String::from_utf8(
+                tw.into_inner()
+                    .map_err(|e| format!("Couldn't convert tabwriter to writer: {}", e))?,
+            )
+            .map_err(|e| format!("Couldn't convert tabwriter to string: {}", e))?,
+        ));
         if let Some(v) = g.ms.stext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(12.0)).set_bounds(
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
                 nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
                 graphics::Align::Left,
             );
