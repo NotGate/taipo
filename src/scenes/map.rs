@@ -58,8 +58,8 @@ impl MapScene {
             g.ctx.process_event(&e);
             if c == '\0' && s == ElementState::Pressed {
                 let amt = if m.alt { 5 } else { 1 } * if m.shift { -1 } else { 1 };
-                // used: QSNVAIWOR
-                // 
+                // used: QSNVAIWORJF
+                //
                 match k {
                     KeyCode::Q => g.playing = false,
                     KeyCode::Escape => config::ConfigScene::enter(g)?,
@@ -100,6 +100,7 @@ impl MapScene {
                     }
                     KeyCode::O => {
                         g.ms.map.offsetms = num::clamp(g.ms.map.offsetms + amt, -10000, 10000);
+                        g.ms.maps[g.ms.index].offsetms = g.ms.map.offsetms;
                         g.db.update_map_offset(&g.ms.map)?;
                         MapScene::update_ctext(g)?;
                     }
@@ -113,7 +114,12 @@ impl MapScene {
                         g.ms.index = rng.gen_range(0, g.ms.maps.len());
                         MapScene::change_map(g)?;
                     }
-                    // TODO: toggle modes
+                    KeyCode::F => {
+                        // focus query input
+                    }
+                    KeyCode::M => {
+                        // TODO: toggle modes
+                    }
                     _ => (),
                 }
             }
@@ -124,6 +130,7 @@ impl MapScene {
         Ok(())
     }
     // TODO: the information is there, just make it prettier and cleaner
+    // TODO: remove asset creation into a load function instead of creating them every frame
     pub fn render(g: &mut Game) -> Result<(), String> {
         // draw Maps[Image]
         if let Some(bg) = g.ms.bg.as_ref() {
@@ -143,9 +150,32 @@ impl MapScene {
 
         let mut y = 0.0;
 
+        // draw query
+        let text_box = graphics::Mesh::new_rectangle(
+            &mut g.ctx,
+            graphics::DrawMode::fill(),
+            graphics::Rect::new(0.0, 0.0, g.settings.w as f32, FONT_SIZE),
+            graphics::Color::new(1.0, 1.0, 1.0, 1.0),
+        )
+        .unwrap();
+        graphics::draw(&mut g.ctx, &text_box, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
+        let mut text = graphics::Text::new(g.settings.query.clone());
+        text.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(FONT_SIZE))
+            .set_bounds(
+                nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
+                graphics::Align::Left,
+            );
+        graphics::draw(
+            &mut g.ctx,
+            &text,
+            graphics::DrawParam::new().dest(nalgebra::Point2::new(0.0, y)).color(graphics::Color::new(0.0, 0.0, 0.0, 1.0)),
+        )
+        .unwrap();
+        y += FONT_SIZE;
+
         // draw Settings{}
         if let Some(ctext) = g.ms.ctext.as_ref() {
-            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, 0.0),)).unwrap();
+            graphics::draw(&mut g.ctx, ctext, (nalgebra::Point2::new(0.0, y),)).unwrap();
             y += ctext.height(&mut g.ctx) as f32 + FONT_SIZE
         }
 
@@ -163,14 +193,14 @@ impl MapScene {
         let wr = graphics::Mesh::new_rectangle(
             &mut g.ctx,
             graphics::DrawMode::fill(),
-            graphics::Rect::new(0.0, 0.0, dx, 20.0),
+            graphics::Rect::new(0.0, 0.0, dx, FONT_SIZE),
             graphics::WHITE,
         )
         .unwrap();
         let cursor = graphics::Mesh::new_rectangle(
             &mut g.ctx,
             graphics::DrawMode::fill(),
-            graphics::Rect::new(0.0, 0.0, 10.0, 20.0),
+            graphics::Rect::new(0.0, 0.0, 10.0, FONT_SIZE),
             graphics::Color::new(1.0, 0.0, 0.0, 1.0),
         )
         .unwrap();
@@ -259,10 +289,11 @@ Difficulty:{:.2} NPS:{:.2} Delta:[{},{},{}] Streak:[{},{},{}]",
             g.ms.map.smax,
         )));
         if let Some(v) = g.ms.mtext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
-                nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
-                graphics::Align::Left,
-            );
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(FONT_SIZE))
+                .set_bounds(
+                    nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
+                    graphics::Align::Left,
+                );
         }
         Ok(())
     }
@@ -285,10 +316,11 @@ aset:{} iset:{} window:{} local:{}",
             g.ms.map.offsetms,
         )));
         if let Some(v) = g.ms.ctext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
-                nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
-                graphics::Align::Left,
-            );
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(FONT_SIZE))
+                .set_bounds(
+                    nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
+                    graphics::Align::Left,
+                );
         }
         Ok(())
     }
@@ -324,10 +356,11 @@ aset:{} iset:{} window:{} local:{}",
             .map_err(|e| format!("Couldn't convert tabwriter to string: {}", e))?,
         ));
         if let Some(v) = g.ms.stext.as_mut() {
-            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(20.0)).set_bounds(
-                nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
-                graphics::Align::Left,
-            );
+            v.set_font(g.ms.font.unwrap(), graphics::Scale::uniform(FONT_SIZE))
+                .set_bounds(
+                    nalgebra::Point2::new(g.settings.w as f32, f32::INFINITY),
+                    graphics::Align::Left,
+                );
         }
         Ok(())
     }

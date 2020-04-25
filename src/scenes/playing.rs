@@ -131,7 +131,8 @@ impl PlayingScene {
             if k == KeyCode::Escape {
                 map::MapScene::enter(g)?;
             } else if c != '\0' && c != '\u{1b}' {
-                let diff = g.mp.pos()? as f32 - g.ms.map.notes.0[g.ps.index].0 as f32 / 1000.0 + g.settings.iset as f32 / 1000.0;
+                let diff = g.mp.pos()? as f32 - g.ms.map.notes.0[g.ps.index].0 as f32 / 1000.0
+                    + (g.settings.iset + g.ms.map.offsetms) as f32 / 1000.0;
                 if c == g.ps.chars[g.ps.index] && diff.abs() <= g.settings.window as f32 / 1000.0 {
                     g.ps.errors.push(diff);
                     g.ps.index += 1;
@@ -165,6 +166,7 @@ impl PlayingScene {
 
         Ok(())
     }
+    // TODO: take asset creation out of this function
     pub fn render(g: &mut Game) -> Result<(), String> {
         graphics::draw(
             &mut g.ctx,
