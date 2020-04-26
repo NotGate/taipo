@@ -45,7 +45,7 @@ impl ScoreScene {
         let id = s.finish().to_string();
 
         let date: DateTime<Utc> = DateTime::from_utc(NaiveDateTime::from_timestamp(now.timestamp() as i64, 0), Utc);
-        println!("{}, {}", now.timestamp() as i32, date);
+        // println!("{}, {}", now.timestamp() as i32, date);
 
         let score = Score {
             id,

@@ -134,6 +134,7 @@ impl Database {
 
     // Score (iqd)
     pub fn insert_score(&self, score: Score) -> Result<(), String> {
+        // println!("WHY ISN'T THIS INSERTING");
         insert_into(scores::table)
             .values(score)
             .execute(&self.conn)
@@ -142,6 +143,9 @@ impl Database {
     }
     pub fn query_scores(&self, query: &str) -> Result<Vec<Score>, String> {
         // TODO: limit? (vs proactive deletion)
+        // println!("or is it not querying properly?? {}",query);
+        // println!("{:?}",sql_query("select * from scores where acc>0.8").load::<Score>(&self.conn).unwrap());
+
         let scores = scores::table
             .filter(sql(if query.len() > 0 { query } else { "TRUE" }))
             .order(scores::score.desc())

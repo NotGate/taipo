@@ -65,7 +65,7 @@ impl PlayingScene {
                 &mut g.ctx,
                 graphics::DrawMode::fill(),
                 graphics::Rect::new(0.0, 0.0, g.settings.w as f32 / 2.0, g.ps.fs),
-                graphics::Color::new(0.1, 0.2, 0.3, 1.0),
+                graphics::Color::new(0.1, 0.1, 0.1, 1.0),
             )
             .unwrap(),
         );
@@ -158,7 +158,7 @@ impl PlayingScene {
             );
             if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
                 // g.ps.index += 1; // TODO: allow misses for other modes?
-                println!("You missed!");
+                println!("You missed: {:?}",g.ps.chars[i as usize]);
                 score::ScoreScene::enter(g)?;
             }
             i += 1;

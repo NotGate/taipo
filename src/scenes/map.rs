@@ -9,10 +9,12 @@ use ggez::{
     input::keyboard::KeyCode,
     Context, ContextBuilder,
 };
+use tabwriter::TabWriter;
 use rand::{rngs::StdRng, seq::SliceRandom, Rng, SeedableRng};
 
 use crate::{game::Game, scenes::*, schema::Map};
 use std::{
+    io::Write,
     cell::RefCell,
     f32,
     rc::{Rc, Weak},
@@ -251,7 +253,7 @@ impl MapScene {
         let old_audio = &g.ms.map.audio.clone();
         g.ms.map = g.ms.maps[g.ms.index].clone();
         println!("{:?}", g.ms.map);
-        println!("\n{}\n", g.ms.map.preview);
+        // println!("\n{}\n", g.ms.map.preview);
         if g.ms.map.audio != *old_audio || !g.mp.is_playing()? {
             g.mp.load(&g.ms.map.audio)?;
             g.mp.seek(g.ms.map.preview as f64)?;
@@ -325,10 +327,10 @@ aset:{} iset:{} window:{} local:{}",
         Ok(())
     }
     fn update_stext(g: &mut Game) -> Result<(), String> {
+        println!("{}",g.ms.map.id);
         let scores = g.db.query_scores(&format!("map={}", g.ms.map.id))?;
+        println!("scores: {:?}",scores);
         let mut tw = TabWriter::new(vec![]);
-        use std::io::Write;
-        use tabwriter::TabWriter;
         write!(&mut tw, "Score\tAcc\tError\tCombo\tSpeed\tDate\tMode\tSeed\n")
             .map_err(|e| format!("Couldn't write tabwriter header: {}", e))?;
         for score in scores {
