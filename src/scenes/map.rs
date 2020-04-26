@@ -82,6 +82,7 @@ impl MapScene {
                         g.mp.set_speed(g.mp.get_speed()? + amt as f32 / 100.0)?;
                         g.settings.speed = g.mp.get_speed()?;
                         MapScene::update_ctext(g)?;
+                        MapScene::update_mtext(g)?;
                     }
                     KeyCode::V => {
                         g.mp.set_volume(g.mp.get_volume()? + amt as f32 / 100.0)?;

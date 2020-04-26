@@ -61,7 +61,9 @@ impl ScoreScene {
         };
         println!("{:?}", score);
 
-        g.db.insert_score(score)?;
+        if !score.score.is_nan() && !score.acc.is_nan() && !score.error.is_nan() {
+            g.db.insert_score(score)?;
+        }
 
         Ok(())
     }

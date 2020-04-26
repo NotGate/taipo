@@ -41,8 +41,8 @@ impl Settings {
             speed: 1.0,
             volume: 0.05,
             aset: 0,
-            iset: -60,
-            window: 100,
+            iset: -30,
+            window: 75,
 
             skin: "".into(),
             font: "".into(),

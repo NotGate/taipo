@@ -125,19 +125,21 @@ impl PlayingScene {
         Ok(())
     }
     // TODO: input timestamp
+    // TODO: aset and iset not being used in the right places might be causing weird bugs
+    // TODO: print 5 expected (xxaxx) and 3 recieved (xxb)? would need to log presses
     pub fn poll(g: &mut Game) -> Result<(), String> {
         for (e, s, k, m, c) in process(&mut g.el) {
             g.ctx.process_event(&e);
             if k == KeyCode::Escape {
                 map::MapScene::enter(g)?;
             } else if c != '\0' && c != '\u{1b}' {
+                println!("{:?} {:?}",c, g.ps.chars[g.ps.index]);
                 let diff = g.mp.pos()? as f32 - g.ms.map.notes.0[g.ps.index].0 as f32 / 1000.0
                     + (g.settings.iset + g.ms.map.offsetms) as f32 / 1000.0;
-                if c == g.ps.chars[g.ps.index] && diff.abs() <= g.settings.window as f32 / 1000.0 {
+                if diff.abs() <= g.settings.window as f32 / 1000.0 && c == g.ps.chars[g.ps.index] {
                     g.ps.errors.push(diff);
                     g.ps.index += 1;
                 } else {
-                    println!("Hit {:?} instead of {:?}", c, g.ps.chars[g.ps.index]);
                     score::ScoreScene::enter(g)?;
                 }
             }
@@ -156,7 +158,7 @@ impl PlayingScene {
                 nalgebra::Point2::new(x as f32, (g.settings.h as f32 - g.ps.fs) as f32 / 2.0),
                 None,
             );
-            if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
+            if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0 + (g.settings.iset + g.ms.map.offsetms) as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
                 // g.ps.index += 1; // TODO: allow misses for other modes?
                 println!("You missed: {:?}",g.ps.chars[i as usize]);
                 score::ScoreScene::enter(g)?;
