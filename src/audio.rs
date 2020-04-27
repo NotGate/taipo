@@ -16,8 +16,8 @@ pub struct MusicPlayer {
 impl MusicPlayer {
     pub fn init() -> Result<MusicPlayer, String> {
         // TODO: fine-tune configs
-        Bass::set_config(BASS_CONFIG_BUFFER, 5000)?; // 5000 ms instead of 500 ms (lower is choppier)
-        Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?; // more consistent playback latency
+        // Bass::set_config(BASS_CONFIG_BUFFER, 5000)?; // 5000 ms instead of 500 ms (lower is choppier)
+        // Bass::set_config(BASS_CONFIG_DEV_NONSTOP, 1)?; // more consistent playback latency
 
         Bass::init(44100, 0)?;
         Ok(MusicPlayer {
@@ -49,9 +49,9 @@ impl MusicPlayer {
             BASS_FX_FREESOURCE | BASS_MUSIC_LOOP,
         )?;
         // TODO: fine-tune attributes
-        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_USE_QUICKALGO, 1.0)?;
-        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 30.0)?;
-        Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 4.0)?;
+        // Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_USE_QUICKALGO, 1.0)?;
+        // Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 30.0)?;
+        // Bass::channel_set_attribute(self.handle, BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 4.0)?;
         Ok(())
     }
     pub fn seek(&self, pos: f64) -> Result<(), String> {

@@ -33,7 +33,7 @@ impl Settings {
     pub fn init() -> Result<Settings, String> {
         let default = Settings {
             version: "1.0.0".into(),
-            query: "m.dmin between 70 and 260 and m.nps between 3 and 7 order by m.dmin desc, m.nps asc".into(), //and s.acc>0.9
+            query: "m.dmin between 120 and 250 and m.nps between 3.5 and 7 order by m.dmin desc, m.nps asc".into(), //and s.acc>0.9
             parse_date: Utc::now().timestamp() as u64,
 
             mode: "4k".into(),

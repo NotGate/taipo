@@ -108,7 +108,7 @@ impl MapScene {
                         MapScene::update_ctext(g)?;
                     }
                     KeyCode::R => {
-                        let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed as u64);
+                        let mut rng: StdRng = SeedableRng::seed_from_u64(g.settings.seed + g.ms.index as u64);
                         g.settings.seed = rng.gen_range(1000, 10000) as u64;
                         MapScene::update_ctext(g)?;
                     }

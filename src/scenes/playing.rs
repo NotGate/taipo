@@ -151,14 +151,14 @@ impl PlayingScene {
         let travel = (g.settings.w as f32 / 2.0 + g.ps.lw) as f64 / dx;
         let mut i = g.ps.index;
         while i < g.ms.map.notes.0.len() && (g.ms.map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) < travel as f64 {
-            let x = (g.ms.map.notes.0[i].0 as f64 / 1000.0 - g.mp.pos()?) * dx + (g.settings.w as f32 / 2.0) as f64;
+            let x = (g.ms.map.notes.0[i].0 as f64 / 1000.0 - (g.settings.iset + g.ms.map.offsetms) as f64 / 1000.0 - g.mp.pos()?) * dx + (g.settings.w as f32 / 2.0) as f64;
             graphics::queue_text(
                 &mut g.ctx,
                 &g.ps.cmap.get(&g.ps.chars[i as usize]).unwrap(),
                 nalgebra::Point2::new(x as f32, (g.settings.h as f32 - g.ps.fs) as f32 / 2.0),
                 None,
             );
-            if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0 + (g.settings.iset + g.ms.map.offsetms) as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
+            if (g.mp.pos()? - (g.ms.map.notes.0[i].0 as f64 / 1000.0 - (g.settings.iset + g.ms.map.offsetms) as f64 / 1000.0)) > g.settings.window as f64 / 1000.0 {
                 // g.ps.index += 1; // TODO: allow misses for other modes?
                 println!("You missed: {:?}",g.ps.chars[i as usize]);
                 score::ScoreScene::enter(g)?;
