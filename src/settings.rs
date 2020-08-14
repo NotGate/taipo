@@ -46,8 +46,8 @@ impl Settings {
 
             skin: "".into(),
             font: "".into(),
-            w: 1280,
-            h: 720,
+            w: 1920,
+            h: 1080,
             borderless: true,
             maximized: false,
             window_mode: "".into(),

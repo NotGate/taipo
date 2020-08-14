@@ -190,6 +190,7 @@ impl MapType for Osu {
                 streak += 1;
             } else if streak != 0 {
                 streaks.push(streak as i32 + 1);
+                streak = 0;
             } else {
                 streak = 0;
             }

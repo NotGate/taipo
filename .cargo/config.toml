@@ -1,0 +1,17 @@
+# [target.x86_64-unknown-linux-gnu]                                                                   
+# rustflags = [                                                                                       
+#     "-C", "link-arg=-fuse-ld=lld",                                                    
+# ]
+
+
+# [target.<triple>]
+# linker = "…"            # linker to use
+# runner = "…"            # wrapper to run executables
+# rustflags = ["…", "…"]  # custom flags for `rustc`
+
+# [alias]     # command aliases
+# b = "build"
+# c = "check"
+# t = "test"
+# r = "run"
+# rr = "run --release"
